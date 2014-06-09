@@ -1,0 +1,72 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlycoSeqDLL", "GlycoSeqDLL\GlycoSeqDLL.csproj", "{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlycanSeq_Form", "GlycanSeq_Form\GlycanSeq_Form.csproj", "{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GlycanSequencing_Setup", "GlycanSequencing_Setup\GlycanSequencing_Setup.vdproj", "{58AB6B81-B876-43BD-9386-B1E22343E8AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Debug|Any CPU.Build.0 = Debug|x64
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Debug|x64.ActiveCfg = Debug|x64
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Debug|x86.ActiveCfg = Debug|x86
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Release|x64.ActiveCfg = Release|x64
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Release|x64.Build.0 = Release|x64
+		{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}.Release|x86.ActiveCfg = Release|x86
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Debug|x64.ActiveCfg = Debug|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Debug|x64.Build.0 = Debug|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Debug|x86.ActiveCfg = Debug|x86
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Debug|x86.Build.0 = Debug|x86
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Release|Any CPU.ActiveCfg = Release|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Release|Mixed Platforms.Build.0 = Release|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Release|x64.ActiveCfg = Release|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Release|x64.Build.0 = Release|x64
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Release|x86.ActiveCfg = Release|x86
+		{BDDC25E6-1DD5-489A-90F3-53B1F85E9DBD}.Release|x86.Build.0 = Release|x86
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|Any CPU.ActiveCfg = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|Any CPU.Build.0 = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|Mixed Platforms.Build.0 = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|x64.ActiveCfg = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|x64.Build.0 = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|x86.ActiveCfg = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Debug|x86.Build.0 = Debug
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|Any CPU.ActiveCfg = Release
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|Any CPU.Build.0 = Release
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|Mixed Platforms.ActiveCfg = Release
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|Mixed Platforms.Build.0 = Release
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|x64.ActiveCfg = Release
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|x64.Build.0 = Release
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|x86.ActiveCfg = Release
+		{58AB6B81-B876-43BD-9386-B1E22343E8AD}.Release|x86.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		VisualSVNWorkingCopyRoot = .
+	EndGlobalSection
+EndGlobal
