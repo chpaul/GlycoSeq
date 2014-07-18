@@ -64,25 +64,40 @@ namespace COL.GlycoSequence
                 for (int i = 0; i < GS.SequencedStructures.Count; i++)
                 {
                     GlycanStructure Gt = GS.SequencedStructures[i];
-                    string BGColor = "#FFFFFF";
+                    string BGColor = "#FFFFFF"; //White
                     if (MassUtility.GetMassPPM(Gt.GlycanMonoMass, GS.GlycanMonoMass) <= GS.PrecursorTorelance && Gt.HasNGlycanCore())
                     {
-                        BGColor = "#FF0000";
+                        BGColor = "#FF0000"; //Red
                     }
-
-                    Draw = new GlycansDrawer(Gt.IUPACString, false);
-                    Image Pic = Draw.GetImage();
-                    Pic.Save(argFolder + "\\Pics\\FullStructure_" + (i + 1).ToString("000") + ".png");
-                    Pic.Dispose();
-                    Pic = null;
-                    sb.AppendLine("<tr>");
-                    sb.AppendLine("<td bgcolor=\"" + BGColor + "\"><a href=\"#" + (i + 1).ToString() + "\">" + (i + 1).ToString() + "</a></td>");
-                    sb.AppendLine("<td bgcolor=\"" + BGColor + "\">" + Gt.GlycanMonoMass.ToString() + "</td>");
-                    sb.AppendLine("<td bgcolor=\"" + BGColor + "\">" + Gt.Score.ToString("0.0000") + "(" + MassUtility.GetMassPPM(Gt.GlycanMonoMass, GS.GlycanMonoMass).ToString("0.0") + ")" + "</td>");
-                    sb.AppendLine("<td><img src=\".\\Pics\\FullStructure_" + (i + 1).ToString("000") + ".png\"/></td>");
-                    sb.AppendLine("<td colspan=\"2\" bgcolor=\"" + BGColor + "\">" + Gt.IUPACString + "</td>");
-                    sb.AppendLine("</tr>");
-
+                    try
+                    {
+                        string PicLocation = argFolder + "\\Pics\\" + Gt.IUPACString.ToString() + ".png";
+                        if (!File.Exists(PicLocation))
+                        {
+                            Draw = new GlycansDrawer(Gt.IUPACString, false);
+                            Image Pic = Draw.GetImage();
+                            Pic.Save(PicLocation);
+                            Pic.Dispose();
+                            Pic = null;
+                        }
+                        sb.AppendLine("<tr>");
+                        sb.AppendLine("<td bgcolor=\"" + BGColor + "\"><a href=\"#" + (i + 1).ToString() + "\">" + (i + 1).ToString() + "</a></td>");
+                        sb.AppendLine("<td bgcolor=\"" + BGColor + "\">" + Gt.GlycanMonoMass.ToString() + "</td>");
+                        sb.AppendLine("<td bgcolor=\"" + BGColor + "\">" + Gt.Score.ToString("0.0000") + "(" + MassUtility.GetMassPPM(Gt.GlycanMonoMass, GS.GlycanMonoMass).ToString("0.0") + ")" + "</td>");
+                        sb.AppendLine("<td><img src=\".\\Pics\\" + Gt.IUPACString.ToString() + ".png\"/></td>");
+                        sb.AppendLine("<td colspan=\"2\" bgcolor=\"" + BGColor + "\">" + Gt.IUPACString + "</td>");
+                        sb.AppendLine("</tr>");
+                    }
+                    catch
+                    {
+                        sb.AppendLine("<tr>");
+                        sb.AppendLine("<td bgcolor=\"" + BGColor + "\"><a href=\"#" + (i + 1).ToString() + "\">" + (i + 1).ToString() + "</a></td>");
+                        sb.AppendLine("<td bgcolor=\"" + BGColor + "\">" + Gt.GlycanMonoMass.ToString() + "</td>");
+                        sb.AppendLine("<td bgcolor=\"" + BGColor + "\">" + Gt.Score.ToString("0.0000") + "(" + MassUtility.GetMassPPM(Gt.GlycanMonoMass, GS.GlycanMonoMass).ToString("0.0") + ")" + "</td>");
+                        sb.AppendLine("<td></td>");
+                        sb.AppendLine("<td colspan=\"2\" bgcolor=\"" + BGColor + "\">" + Gt.IUPACString + "</td>");
+                        sb.AppendLine("</tr>");
+                    }
                 }
                 sb.AppendLine("</table><br><br>");
 
@@ -99,7 +114,7 @@ namespace COL.GlycoSequence
                     sb.AppendLine("<td>Score" + Gt.Score.ToString() + "</td>");
                     sb.AppendLine("</tr>");
                     sb.AppendLine("<tr>");
-                    sb.AppendLine("<td><img src=\".\\Pics\\FullStructure_" + idx.ToString("000") + ".png\"/></td>");
+                    sb.AppendLine("<td><img src=\".\\Pics\\" + Gt.IUPACString.ToString() + ".png\"/></td>");
                     sb.AppendLine("<td>" + Gt.IUPACString + "</td>");
                     sb.AppendLine("</tr>");
                     sb.AppendLine("</table><br>");
@@ -132,12 +147,17 @@ namespace COL.GlycoSequence
                         {
                             sb.AppendLine("<tr>");
                             sb.AppendLine("<td>" + (GlycanMass.GetGlycanMasswithCharge(lstFragement[j].GlycanType, Gt.Charge) + GS.Y1 - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, Gt.Charge)).ToString() + "</td>");
-                            Draw = new GlycansDrawer(lstFragement[j].GetIUPACString(), false);
-                            Image tmpImg = Draw.GetImage();
-                            tmpImg.Save(argFolder + "\\Pics\\SubStructure_" + idx.ToString("000") + "-F" + (j + 1).ToString("00") + ".png");
-                            tmpImg.Dispose();
-                            tmpImg = null;
-                            sb.AppendLine("<td><img src=\".\\Pics\\SubStructure_" + idx.ToString("000") + "-F" + (j + 1).ToString("00") + ".png\"/>" + "</td>");
+                            string PicLocation = argFolder + "\\Pics\\" + lstFragement[j].GetIUPACString() + ".png";
+                            if (!File.Exists(PicLocation))
+                            {
+                                Draw = new GlycansDrawer(lstFragement[j].GetIUPACString(), false);
+                                Image tmpImg = Draw.GetImage();
+                                tmpImg.Save(PicLocation);
+                                tmpImg.Dispose();
+                                tmpImg = null;
+                            }
+                            
+                            sb.AppendLine("<td><img src=\".\\Pics\\" + lstFragement[j].GetIUPACString() + ".png\"/>" + "</td>");
 
                             if (j < lstIDPeaksMz.Count)
                             {

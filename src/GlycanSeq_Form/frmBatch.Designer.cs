@@ -42,6 +42,10 @@
             this.rdoScanList = new System.Windows.Forms.RadioButton();
             this.rdoScanRange = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkEnzy_GlucE = new System.Windows.Forms.CheckBox();
+            this.chkEnzy_Trypsin = new System.Windows.Forms.CheckBox();
+            this.chkEnzy_GlucED = new System.Windows.Forms.CheckBox();
+            this.chkEnzy_None = new System.Windows.Forms.CheckBox();
             this.cboMissCleavage = new System.Windows.Forms.ComboBox();
             this.lstModification = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -66,8 +70,10 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.grpGlycan = new System.Windows.Forms.GroupBox();
             this.rdoNeuAc = new System.Windows.Forms.RadioButton();
+            this.chkHuman = new System.Windows.Forms.CheckBox();
             this.rdoNeuGc = new System.Windows.Forms.RadioButton();
             this.txtHexNAc = new System.Windows.Forms.TextBox();
+            this.chkAvgMass = new System.Windows.Forms.CheckBox();
             this.txtdeHex = new System.Windows.Forms.TextBox();
             this.txtSia = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -78,15 +84,13 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.btnGlycanList = new System.Windows.Forms.Button();
             this.txtGlycanList = new System.Windows.Forms.TextBox();
-            this.chkHuman = new System.Windows.Forms.CheckBox();
             this.chkReducedReducingEnd = new System.Windows.Forms.CheckBox();
             this.chkPerm = new System.Windows.Forms.CheckBox();
             this.chkGlycanList = new System.Windows.Forms.CheckBox();
-            this.chkAvgMass = new System.Windows.Forms.CheckBox();
-            this.chkEnzy_None = new System.Windows.Forms.CheckBox();
-            this.chkEnzy_GlucED = new System.Windows.Forms.CheckBox();
-            this.chkEnzy_Trypsin = new System.Windows.Forms.CheckBox();
-            this.chkEnzy_GlucE = new System.Windows.Forms.CheckBox();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.cboThreading = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -94,6 +98,7 @@
             this.groupBox6.SuspendLayout();
             this.grpGlycan.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnRawBrowse
@@ -122,7 +127,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(490, 321);
+            this.btnStart.Location = new System.Drawing.Point(485, 299);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 25;
@@ -236,6 +241,52 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Fasta";
             // 
+            // chkEnzy_GlucE
+            // 
+            this.chkEnzy_GlucE.AutoSize = true;
+            this.chkEnzy_GlucE.Location = new System.Drawing.Point(99, 62);
+            this.chkEnzy_GlucE.Name = "chkEnzy_GlucE";
+            this.chkEnzy_GlucE.Size = new System.Drawing.Size(65, 17);
+            this.chkEnzy_GlucE.TabIndex = 29;
+            this.chkEnzy_GlucE.Text = "GluC (E)";
+            this.chkEnzy_GlucE.UseVisualStyleBackColor = true;
+            this.chkEnzy_GlucE.CheckedChanged += new System.EventHandler(this.chkEnzy_GlucE_CheckedChanged);
+            // 
+            // chkEnzy_Trypsin
+            // 
+            this.chkEnzy_Trypsin.AutoSize = true;
+            this.chkEnzy_Trypsin.Location = new System.Drawing.Point(13, 82);
+            this.chkEnzy_Trypsin.Name = "chkEnzy_Trypsin";
+            this.chkEnzy_Trypsin.Size = new System.Drawing.Size(60, 17);
+            this.chkEnzy_Trypsin.TabIndex = 28;
+            this.chkEnzy_Trypsin.Text = "Trypsin";
+            this.chkEnzy_Trypsin.UseVisualStyleBackColor = true;
+            this.chkEnzy_Trypsin.CheckedChanged += new System.EventHandler(this.chkEnzy_Trypsin_CheckedChanged);
+            // 
+            // chkEnzy_GlucED
+            // 
+            this.chkEnzy_GlucED.AutoSize = true;
+            this.chkEnzy_GlucED.Location = new System.Drawing.Point(99, 82);
+            this.chkEnzy_GlucED.Name = "chkEnzy_GlucED";
+            this.chkEnzy_GlucED.Size = new System.Drawing.Size(73, 17);
+            this.chkEnzy_GlucED.TabIndex = 27;
+            this.chkEnzy_GlucED.Text = "GluC (ED)";
+            this.chkEnzy_GlucED.UseVisualStyleBackColor = true;
+            this.chkEnzy_GlucED.CheckedChanged += new System.EventHandler(this.chkEnzy_GlucED_CheckedChanged);
+            // 
+            // chkEnzy_None
+            // 
+            this.chkEnzy_None.AutoSize = true;
+            this.chkEnzy_None.Checked = true;
+            this.chkEnzy_None.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkEnzy_None.Location = new System.Drawing.Point(13, 62);
+            this.chkEnzy_None.Name = "chkEnzy_None";
+            this.chkEnzy_None.Size = new System.Drawing.Size(52, 17);
+            this.chkEnzy_None.TabIndex = 26;
+            this.chkEnzy_None.Text = "None";
+            this.chkEnzy_None.UseVisualStyleBackColor = true;
+            this.chkEnzy_None.CheckedChanged += new System.EventHandler(this.chkEnzy_None_CheckedChanged);
+            // 
             // cboMissCleavage
             // 
             this.cboMissCleavage.FormattingEnabled = true;
@@ -301,9 +352,9 @@
             this.groupBox3.Controls.Add(this.chkCompletedOnly);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.cboTopRank);
-            this.groupBox3.Location = new System.Drawing.Point(6, 344);
+            this.groupBox3.Location = new System.Drawing.Point(426, 70);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(414, 71);
+            this.groupBox3.Size = new System.Drawing.Size(183, 95);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Export";
@@ -311,9 +362,9 @@
             // txtCompReward
             // 
             this.txtCompReward.Enabled = false;
-            this.txtCompReward.Location = new System.Drawing.Point(333, 36);
+            this.txtCompReward.Location = new System.Drawing.Point(148, 65);
             this.txtCompReward.Name = "txtCompReward";
-            this.txtCompReward.Size = new System.Drawing.Size(62, 20);
+            this.txtCompReward.Size = new System.Drawing.Size(29, 20);
             this.txtCompReward.TabIndex = 35;
             this.txtCompReward.Text = "1.0";
             // 
@@ -321,18 +372,18 @@
             // 
             this.lblCompReward.AutoSize = true;
             this.lblCompReward.Enabled = false;
-            this.lblCompReward.Location = new System.Drawing.Point(150, 40);
+            this.lblCompReward.Location = new System.Drawing.Point(11, 68);
             this.lblCompReward.Name = "lblCompReward";
-            this.lblCompReward.Size = new System.Drawing.Size(177, 13);
+            this.lblCompReward.Size = new System.Drawing.Size(131, 13);
             this.lblCompReward.TabIndex = 34;
-            this.lblCompReward.Text = "Completed Structure Score Reward:";
+            this.lblCompReward.Text = "Completed Score Reward:";
             // 
             // chkCompletedOnly
             // 
             this.chkCompletedOnly.AutoSize = true;
             this.chkCompletedOnly.Checked = true;
             this.chkCompletedOnly.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCompletedOnly.Location = new System.Drawing.Point(153, 16);
+            this.chkCompletedOnly.Location = new System.Drawing.Point(13, 42);
             this.chkCompletedOnly.Name = "chkCompletedOnly";
             this.chkCompletedOnly.Size = new System.Drawing.Size(137, 17);
             this.chkCompletedOnly.TabIndex = 33;
@@ -381,9 +432,9 @@
             this.groupBox4.Controls.Add(this.txtPeaKTol);
             this.groupBox4.Controls.Add(this.label5);
             this.groupBox4.Controls.Add(this.txtPrecusorTol);
-            this.groupBox4.Location = new System.Drawing.Point(427, 164);
+            this.groupBox4.Location = new System.Drawing.Point(426, 172);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(181, 122);
+            this.groupBox4.Size = new System.Drawing.Size(183, 100);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Torelance";
@@ -471,17 +522,20 @@
             // grpGlycan
             // 
             this.grpGlycan.Controls.Add(this.rdoNeuAc);
+            this.grpGlycan.Controls.Add(this.chkHuman);
             this.grpGlycan.Controls.Add(this.rdoNeuGc);
             this.grpGlycan.Controls.Add(this.txtHexNAc);
+            this.grpGlycan.Controls.Add(this.chkAvgMass);
             this.grpGlycan.Controls.Add(this.txtdeHex);
             this.grpGlycan.Controls.Add(this.txtSia);
             this.grpGlycan.Controls.Add(this.label7);
             this.grpGlycan.Controls.Add(this.txtHex);
             this.grpGlycan.Controls.Add(this.label8);
             this.grpGlycan.Controls.Add(this.label9);
-            this.grpGlycan.Location = new System.Drawing.Point(426, 16);
+            this.grpGlycan.Controls.Add(this.chkNLinked);
+            this.grpGlycan.Location = new System.Drawing.Point(7, 344);
             this.grpGlycan.Name = "grpGlycan";
-            this.grpGlycan.Size = new System.Drawing.Size(185, 90);
+            this.grpGlycan.Size = new System.Drawing.Size(413, 90);
             this.grpGlycan.TabIndex = 31;
             this.grpGlycan.TabStop = false;
             this.grpGlycan.Text = "Contain";
@@ -490,7 +544,7 @@
             // 
             this.rdoNeuAc.AutoSize = true;
             this.rdoNeuAc.Checked = true;
-            this.rdoNeuAc.Location = new System.Drawing.Point(94, 16);
+            this.rdoNeuAc.Location = new System.Drawing.Point(85, 10);
             this.rdoNeuAc.Name = "rdoNeuAc";
             this.rdoNeuAc.Size = new System.Drawing.Size(58, 17);
             this.rdoNeuAc.TabIndex = 11;
@@ -498,10 +552,22 @@
             this.rdoNeuAc.Text = "NeuAc";
             this.rdoNeuAc.UseVisualStyleBackColor = true;
             // 
+            // chkHuman
+            // 
+            this.chkHuman.AutoSize = true;
+            this.chkHuman.Checked = true;
+            this.chkHuman.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkHuman.Location = new System.Drawing.Point(176, 31);
+            this.chkHuman.Name = "chkHuman";
+            this.chkHuman.Size = new System.Drawing.Size(60, 17);
+            this.chkHuman.TabIndex = 4;
+            this.chkHuman.Text = "Human";
+            this.chkHuman.UseVisualStyleBackColor = true;
+            // 
             // rdoNeuGc
             // 
             this.rdoNeuGc.AutoSize = true;
-            this.rdoNeuGc.Location = new System.Drawing.Point(94, 39);
+            this.rdoNeuGc.Location = new System.Drawing.Point(85, 33);
             this.rdoNeuGc.Name = "rdoNeuGc";
             this.rdoNeuGc.Size = new System.Drawing.Size(59, 17);
             this.rdoNeuGc.TabIndex = 10;
@@ -510,15 +576,27 @@
             // 
             // txtHexNAc
             // 
-            this.txtHexNAc.Location = new System.Drawing.Point(54, 36);
+            this.txtHexNAc.Location = new System.Drawing.Point(54, 31);
             this.txtHexNAc.Name = "txtHexNAc";
             this.txtHexNAc.Size = new System.Drawing.Size(26, 20);
             this.txtHexNAc.TabIndex = 8;
             this.txtHexNAc.Text = "99";
             // 
+            // chkAvgMass
+            // 
+            this.chkAvgMass.AutoSize = true;
+            this.chkAvgMass.Checked = true;
+            this.chkAvgMass.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAvgMass.Location = new System.Drawing.Point(176, 52);
+            this.chkAvgMass.Name = "chkAvgMass";
+            this.chkAvgMass.Size = new System.Drawing.Size(94, 17);
+            this.chkAvgMass.TabIndex = 32;
+            this.chkAvgMass.Text = "Average Mass";
+            this.chkAvgMass.UseVisualStyleBackColor = true;
+            // 
             // txtdeHex
             // 
-            this.txtdeHex.Location = new System.Drawing.Point(54, 62);
+            this.txtdeHex.Location = new System.Drawing.Point(54, 52);
             this.txtdeHex.Name = "txtdeHex";
             this.txtdeHex.Size = new System.Drawing.Size(26, 20);
             this.txtdeHex.TabIndex = 7;
@@ -526,7 +604,7 @@
             // 
             // txtSia
             // 
-            this.txtSia.Location = new System.Drawing.Point(154, 21);
+            this.txtSia.Location = new System.Drawing.Point(145, 15);
             this.txtSia.Name = "txtSia";
             this.txtSia.Size = new System.Drawing.Size(25, 20);
             this.txtSia.TabIndex = 6;
@@ -535,7 +613,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 66);
+            this.label7.Location = new System.Drawing.Point(10, 56);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(38, 13);
             this.label7.TabIndex = 2;
@@ -552,7 +630,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(1, 40);
+            this.label8.Location = new System.Drawing.Point(1, 35);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(47, 13);
             this.label8.TabIndex = 1;
@@ -572,7 +650,7 @@
             this.chkNLinked.AutoSize = true;
             this.chkNLinked.Checked = true;
             this.chkNLinked.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkNLinked.Location = new System.Drawing.Point(430, 119);
+            this.chkNLinked.Location = new System.Drawing.Point(176, 10);
             this.chkNLinked.Name = "chkNLinked";
             this.chkNLinked.Size = new System.Drawing.Size(69, 17);
             this.chkNLinked.TabIndex = 6;
@@ -608,22 +686,10 @@
             this.txtGlycanList.Size = new System.Drawing.Size(370, 20);
             this.txtGlycanList.TabIndex = 0;
             // 
-            // chkHuman
-            // 
-            this.chkHuman.AutoSize = true;
-            this.chkHuman.Checked = true;
-            this.chkHuman.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkHuman.Location = new System.Drawing.Point(520, 118);
-            this.chkHuman.Name = "chkHuman";
-            this.chkHuman.Size = new System.Drawing.Size(60, 17);
-            this.chkHuman.TabIndex = 4;
-            this.chkHuman.Text = "Human";
-            this.chkHuman.UseVisualStyleBackColor = true;
-            // 
             // chkReducedReducingEnd
             // 
             this.chkReducedReducingEnd.AutoSize = true;
-            this.chkReducedReducingEnd.Location = new System.Drawing.Point(490, 398);
+            this.chkReducedReducingEnd.Location = new System.Drawing.Point(430, 367);
             this.chkReducedReducingEnd.Name = "chkReducedReducingEnd";
             this.chkReducedReducingEnd.Size = new System.Drawing.Size(141, 17);
             this.chkReducedReducingEnd.TabIndex = 3;
@@ -634,7 +700,7 @@
             // chkPerm
             // 
             this.chkPerm.AutoSize = true;
-            this.chkPerm.Location = new System.Drawing.Point(499, 375);
+            this.chkPerm.Location = new System.Drawing.Point(439, 344);
             this.chkPerm.Name = "chkPerm";
             this.chkPerm.Size = new System.Drawing.Size(93, 17);
             this.chkPerm.TabIndex = 2;
@@ -653,74 +719,43 @@
             this.chkGlycanList.UseVisualStyleBackColor = true;
             this.chkGlycanList.CheckedChanged += new System.EventHandler(this.chkGlycanList_CheckedChanged);
             // 
-            // chkAvgMass
+            // groupBox7
             // 
-            this.chkAvgMass.AutoSize = true;
-            this.chkAvgMass.Checked = true;
-            this.chkAvgMass.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAvgMass.Location = new System.Drawing.Point(430, 142);
-            this.chkAvgMass.Name = "chkAvgMass";
-            this.chkAvgMass.Size = new System.Drawing.Size(94, 17);
-            this.chkAvgMass.TabIndex = 32;
-            this.chkAvgMass.Text = "Average Mass";
-            this.chkAvgMass.UseVisualStyleBackColor = true;
+            this.groupBox7.Controls.Add(this.label10);
+            this.groupBox7.Controls.Add(this.cboThreading);
+            this.groupBox7.Location = new System.Drawing.Point(426, 13);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(183, 51);
+            this.groupBox7.TabIndex = 32;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Threading";
             // 
-            // chkEnzy_None
+            // cboThreading
             // 
-            this.chkEnzy_None.AutoSize = true;
-            this.chkEnzy_None.Checked = true;
-            this.chkEnzy_None.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkEnzy_None.Location = new System.Drawing.Point(13, 62);
-            this.chkEnzy_None.Name = "chkEnzy_None";
-            this.chkEnzy_None.Size = new System.Drawing.Size(52, 17);
-            this.chkEnzy_None.TabIndex = 26;
-            this.chkEnzy_None.Text = "None";
-            this.chkEnzy_None.UseVisualStyleBackColor = true;
-            this.chkEnzy_None.CheckedChanged += new System.EventHandler(this.chkEnzy_None_CheckedChanged);
+            this.cboThreading.FormattingEnabled = true;
+            this.cboThreading.Location = new System.Drawing.Point(97, 18);
+            this.cboThreading.Name = "cboThreading";
+            this.cboThreading.Size = new System.Drawing.Size(75, 21);
+            this.cboThreading.TabIndex = 0;
             // 
-            // chkEnzy_GlucED
+            // label10
             // 
-            this.chkEnzy_GlucED.AutoSize = true;
-            this.chkEnzy_GlucED.Location = new System.Drawing.Point(99, 82);
-            this.chkEnzy_GlucED.Name = "chkEnzy_GlucED";
-            this.chkEnzy_GlucED.Size = new System.Drawing.Size(73, 17);
-            this.chkEnzy_GlucED.TabIndex = 27;
-            this.chkEnzy_GlucED.Text = "GluC (ED)";
-            this.chkEnzy_GlucED.UseVisualStyleBackColor = true;
-            this.chkEnzy_GlucED.CheckedChanged += new System.EventHandler(this.chkEnzy_GlucED_CheckedChanged);
-            // 
-            // chkEnzy_Trypsin
-            // 
-            this.chkEnzy_Trypsin.AutoSize = true;
-            this.chkEnzy_Trypsin.Location = new System.Drawing.Point(13, 82);
-            this.chkEnzy_Trypsin.Name = "chkEnzy_Trypsin";
-            this.chkEnzy_Trypsin.Size = new System.Drawing.Size(60, 17);
-            this.chkEnzy_Trypsin.TabIndex = 28;
-            this.chkEnzy_Trypsin.Text = "Trypsin";
-            this.chkEnzy_Trypsin.UseVisualStyleBackColor = true;
-            this.chkEnzy_Trypsin.CheckedChanged += new System.EventHandler(this.chkEnzy_Trypsin_CheckedChanged);
-            // 
-            // chkEnzy_GlucE
-            // 
-            this.chkEnzy_GlucE.AutoSize = true;
-            this.chkEnzy_GlucE.Location = new System.Drawing.Point(99, 62);
-            this.chkEnzy_GlucE.Name = "chkEnzy_GlucE";
-            this.chkEnzy_GlucE.Size = new System.Drawing.Size(65, 17);
-            this.chkEnzy_GlucE.TabIndex = 29;
-            this.chkEnzy_GlucE.Text = "GluC (E)";
-            this.chkEnzy_GlucE.UseVisualStyleBackColor = true;
-            this.chkEnzy_GlucE.CheckedChanged += new System.EventHandler(this.chkEnzy_GlucE_CheckedChanged);
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(10, 21);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(84, 13);
+            this.label10.TabIndex = 1;
+            this.label10.Text = "Thread Number:";
             // 
             // frmBatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.ClientSize = new System.Drawing.Size(620, 421);
+            this.ClientSize = new System.Drawing.Size(619, 438);
+            this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.chkReducedReducingEnd);
-            this.Controls.Add(this.chkHuman);
             this.Controls.Add(this.chkPerm);
-            this.Controls.Add(this.chkAvgMass);
             this.Controls.Add(this.chkGlycanList);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.grpGlycan);
@@ -730,7 +765,6 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.chkNLinked);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "frmBatch";
             this.Text = "Glycoseq (Batch Mode)";
@@ -749,6 +783,8 @@
             this.grpGlycan.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -815,5 +851,9 @@
         private System.Windows.Forms.CheckBox chkEnzy_Trypsin;
         private System.Windows.Forms.CheckBox chkEnzy_GlucED;
         private System.Windows.Forms.CheckBox chkEnzy_None;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ComboBox cboThreading;
     }
 }

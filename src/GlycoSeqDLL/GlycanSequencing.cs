@@ -1214,6 +1214,11 @@ namespace COL.GlycoSequence
                                     {
                                         iterGT.Root.SortSubTree();
                                         iterGT.Charge = CurrentCharge;
+                                        if(iterGT.IUPACString.Contains("-NAc-"))
+                                        {
+                                            string a = iterGT.Root.GetIUPACString();
+                                            
+                                        }
                                         if (!_SequencedGlycanStructure.Contains(iterGT))
                                         {
                                             _SequencedGlycanStructure.Add(iterGT);
@@ -2330,7 +2335,7 @@ namespace COL.GlycoSequence
         
         public void ExporToFolder(string argFolder)
         {
-            //GenerateHtmlReport.ExporToFolder(argFolder, this);
+            GenerateHtmlReport.ExporToFolder(argFolder, this);
         }
        
     }

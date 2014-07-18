@@ -67,10 +67,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EPPlus">
-      <HintPath>..\..\..\!IncludeFiles\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="GlycoLib, Version=1.0.0.7, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GlycoLib, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\GlycoLib.dll</HintPath>
     </Reference>
@@ -90,11 +87,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TheoreticalDistribution">
-      <HintPath>..\..\..\!IncludeFiles\TheoreticalDistribution.dll</HintPath>
-    </Reference>
     <Reference Include="ZedGraph">
-      <HintPath>..\..\..\!IncludeFiles\ZedGraph.dll</HintPath>
+      <HintPath>..\..\lib\ZedGraph.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
