@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GlycanSeq_Form</RootNamespace>
     <AssemblyName>GlycanSeq_Form</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -92,6 +92,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmInvokeProcesses.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmInvokeProcesses.Designer.cs">
+      <DependentUpon>frmInvokeProcesses.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmBatch.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -119,6 +125,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeStructure2TreeView.cs" />
+    <EmbeddedResource Include="frmInvokeProcesses.resx">
+      <DependentUpon>frmInvokeProcesses.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmBatch.resx">
       <DependentUpon>frmBatch.cs</DependentUpon>
     </EmbeddedResource>

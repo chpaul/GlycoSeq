@@ -132,10 +132,19 @@ namespace COL.GlycoSequence
                     }
 
                     Image AnnotatedSpectrum = GlycanImage.GetAnnotatedImage(GS.ScanInfo.ScanNo.ToString(), GS.AllPeaks, Gt);
-                    AnnotatedSpectrum.Save(argFolder + "\\Pics\\AnnotatedSpectrum_" + (i + 1).ToString("000") + ".png");
+                    System.IO.MemoryStream mss = new System.IO.MemoryStream();
+                    System.IO.FileStream fs = new System.IO.FileStream(argFolder + "\\Pics\\AnnotatedSpectrum_" + argGS.ScanInfo.ScanNo+"_"+ (i + 1).ToString("000") + ".png", System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite);
+
+                    //AnnotatedSpectrum.Save(argFolder + "\\Pics\\AnnotatedSpectrum_" + argGS.ScanInfo.ScanNo + "_" + (i + 1).ToString("000") + ".png");
+                    AnnotatedSpectrum.Save(mss, System.Drawing.Imaging.ImageFormat.Png);
+                    byte[] matriz = mss.ToArray();
+                    fs.Write(matriz, 0, matriz.Length);
+                    
+                    mss.Close();
+                    fs.Close();
                     AnnotatedSpectrum.Dispose();
                     AnnotatedSpectrum = null;
-                    sb.AppendLine("<a href=\".\\Pics\\AnnotatedSpectrum_" + (i + 1).ToString("000") + ".png\" target=\"_blank\"><img src=\".\\Pics\\AnnotatedSpectrum_" + (i + 1).ToString("000") + ".png\" height=\"450\" width=\"600\"/></a>");
+                    sb.AppendLine("<a href=\".\\Pics\\AnnotatedSpectrum_" + argGS.ScanInfo.ScanNo + "_" + (i + 1).ToString("000") + ".png\" target=\"_blank\"><img src=\".\\Pics\\AnnotatedSpectrum_" + argGS.ScanInfo.ScanNo + "_" + (i + 1).ToString("000") + ".png\" height=\"450\" width=\"600\"/></a>");
                     //Fragement table
                     sb.AppendLine("<table  border=\"1\">");
                     sb.AppendLine("<tr><td colspan=\"2\">Fragement</td><td colspan=\"2\">Identified Peak</td></tr>");

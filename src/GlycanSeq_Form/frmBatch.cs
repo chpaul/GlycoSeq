@@ -23,7 +23,7 @@ namespace GlycanSeq_Form
         RawReader Raw;
         Dictionary<double, GlycanCompound> _MassGlycanMapping;
         List<float> GlycanCompoundMassList;
-        int _ThreadNumber = Environment.ProcessorCount /2;
+
         public frmBatch()
         {
             InitializeComponent();
@@ -68,25 +68,24 @@ namespace GlycanSeq_Form
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(txtRaw.Text);
-            //saveFileDialog1.InitialDirectory = Path.GetDirectoryName(txtRaw.Text);
-            //string FileName = Path.GetDirectoryName(txtRaw.Text) + "\\" + Path.GetFileNameWithoutExtension(txtRaw.Text) + "-" + DateTime.Now.ToString("yyMMdd HHmm");
-            //if (chkHCD.Checked)
-            //{
-            //    FileName = FileName + "_HCD";
-            //}
-            //if (chkSeqHCD.Checked)
-            //{
-            //    FileName = FileName + "_SeqHCD";
-            //}
-            //if (chkGlycanList.Checked)
-            //{
-            //    FileName = FileName + "_GlycanList";
-            //}
-            //saveFileDialog1.FileName = FileName + ".xlsx";
-            //saveFileDialog1.Filter = "Result file (*.xlsx)|*.xlsx";
-            //if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            if(folderBrowserDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            //folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(txtRaw.Text);
+            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(txtRaw.Text);
+            string FileName = Path.GetDirectoryName(txtRaw.Text) + "\\" + Path.GetFileNameWithoutExtension(txtRaw.Text) +"_" +txtStart.Text+"~"+txtEnd.Text+ "-" + DateTime.Now.ToString("yyMMdd-HHmm");
+            if (chkHCD.Checked)
+            {
+                FileName = FileName + "_HCD";
+            }
+            if (chkSeqHCD.Checked)
+            {
+                FileName = FileName + "_SeqHCD";
+            }
+            if (chkGlycanList.Checked)
+            {
+                FileName = FileName + "_GlycanList";
+            }
+            saveFileDialog1.FileName = FileName + ".htm";
+            saveFileDialog1.Filter = "HTML file (*.htm)|*.htm";
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)            
             {
 
                 if (txtFasta.Text != "" && txtRaw.Text != "" && txtStart.Text != "" && txtEnd.Text != "")
@@ -119,13 +118,18 @@ namespace GlycanSeq_Form
                     {
                         txtCompReward.Text = "1.0";
                     }
-                    _ThreadNumber = Convert.ToInt32(cboThreading.SelectedItem);
-                    frmProcessing frmProcess;
+                   
+
+                    if (!Directory.Exists(Path.GetDirectoryName(saveFileDialog1.FileName) + "\\Pics"))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(saveFileDialog1.FileName) + "\\Pics");
+                    }
+                    frmInvokeProcesses frmProcess;
                     if (chkGlycanList.Checked)
                     {
                         GenerateGlycanList();
 
-                        frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
+                        frmProcess = new frmInvokeProcesses(Convert.ToInt32(txtStart.Text),
                                                                                                Convert.ToInt32(txtEnd.Text),
                                                                                                Convert.ToSingle(txtPeaKTol.Text),
                                                                                                Convert.ToSingle(txtPrecusorTol.Text),
@@ -134,6 +138,7 @@ namespace GlycanSeq_Form
                                                                                                _glycanCompounds,
                                                                                                _MassGlycanMapping,
                                                                                                GlycanCompoundMassList,
+                                                                                               txtGlycanList.Text,
                                                                                                txtRaw.Text,
                                                                                                txtFasta.Text,
                                                                                                ProteaseType,
@@ -141,16 +146,15 @@ namespace GlycanSeq_Form
                                                                                                chkAvgMass.Checked,
                                                                                                chkHCD.Checked,
                                                                                                chkSeqHCD.Checked,
-                                                                                               folderBrowserDialog1.SelectedPath,
+                                                                                               saveFileDialog1.FileName,
                                                                                                Convert.ToInt32(cboTopRank.Text),
                                                                                                chkCompletedOnly.Checked,
-                                                                                               Convert.ToSingle(txtCompReward.Text),
-                                                                                               _ThreadNumber
+                                                                                               Convert.ToSingle(txtCompReward.Text)                                                                                               
                                                                                                );
                     }
                     else
                     {
-                        frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
+                        frmProcess = new frmInvokeProcesses(Convert.ToInt32(txtStart.Text),
                                                                                             Convert.ToInt32(txtEnd.Text),
                                                                                             Convert.ToSingle(txtPeaKTol.Text),
                                                                                             Convert.ToSingle(txtPrecusorTol.Text),
@@ -167,11 +171,11 @@ namespace GlycanSeq_Form
                                                                                             chkAvgMass.Checked,
                                                                                             chkHCD.Checked,
                                                                                             chkSeqHCD.Checked,
-                                                                                            folderBrowserDialog1.SelectedPath,
+                                                                                            saveFileDialog1.FileName,
                                                                                             Convert.ToInt32(cboTopRank.Text),
                                                                                             chkCompletedOnly.Checked,
-                                                                                            Convert.ToSingle(txtCompReward.Text),
-                                                                                            _ThreadNumber);
+                                                                                            Convert.ToSingle(txtCompReward.Text)
+                                                                                            );
 
                     }
                     frmProcess.ShowDialog();
@@ -618,11 +622,6 @@ namespace GlycanSeq_Form
         private void frmBatch_Load(object sender, EventArgs e)
         {
             cboTopRank.SelectedIndex = 2;
-            for (int i = 1; i <= Environment.ProcessorCount; i++)
-            {
-                cboThreading.Items.Add(i);
-            }
-            cboThreading.SelectedIndex = Environment.ProcessorCount / 2-1;
         }
         private void rdoNeuAc_CheckedChanged(object sender, EventArgs e)
         {
@@ -661,12 +660,6 @@ namespace GlycanSeq_Form
             System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(myResponse.GetResponseStream());
             myResponse.Close();
             return bmp;
-        }
-
-        private void chkCompletedOnly_CheckedChanged(object sender, EventArgs e)
-        {
-            txtCompReward.Enabled = !chkCompletedOnly.Checked;
-            lblCompReward.Enabled = !chkCompletedOnly.Checked;
         }
 
         private void chkHCD_CheckedChanged(object sender, EventArgs e)

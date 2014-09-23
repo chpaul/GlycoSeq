@@ -64,7 +64,6 @@ namespace COL.GlycoSequence
             //_peptideMonoMass = (float)(_y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, _y1charge)) * _y1charge - MassLib.Atoms.ProtonMass;
             //_glycanMonoMass = (float)(_scan.ParentAVGMonoMW - _peptideMonoMass);
             //_peptideMz = _y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, argY1Charge);
-            GetAllPeaks();
             _structureRules = ReadFilterRules.ReadFilterRule();
         }
         public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
@@ -82,7 +81,6 @@ namespace COL.GlycoSequence
             _MS2torelance = argPeakTol;
             _precursorTorelance = argPrecursorTol;
             _NumCompostionSet = true;
-            GetAllPeaks();
             _structureRules = ReadFilterRules.ReadFilterRule();
         }
         /// <summary>
@@ -127,7 +125,6 @@ namespace COL.GlycoSequence
             _MS2torelance = argPeakTol;
             _precursorTorelance = argPrecursorTol;
             _NumCompostionSet = true;
-            GetAllPeaks();
             _structureRules = ReadFilterRules.ReadFilterRule();
         }
         /*public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
@@ -422,53 +419,68 @@ namespace COL.GlycoSequence
         /// </returns>
         public int StartSequencing()
         {
-            GetCandidatePeaks(_NumbersOfPeaksForSeq);
-            if (_potentialPeaks.Count <= 20)
+            try
             {
-                return -2;
+                GetAllPeaks();
+                GetCandidatePeaks(_NumbersOfPeaksForSeq);
+                if (_potentialPeaks.Count <= 20)
+                {
+                    return -2;
+                }
+                if (_y1mass > 2000.0f)
+                {
+                    return -1;
+                }
+                //if (_potentialPeaks.Count < _NumbersOfPeaksForSeq)
+                //{
+                //    return -2;
+                //}
+                if (_NGlycanData)
+                {
+                    FindNLinkedStructure();
+                }
+                else
+                {
+                    FindOLinkedStructure();
+                }
+                _SequencedGlycanStructure.Sort();
+                if (_FullSequencedGlycanStructure.Count != 0)
+                {
+                    return 2;
+                }
+                else if (_SequencedGlycanStructure.Count != 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
             }
-            if (_y1mass > 2000.0f )
+            catch (Exception e)
             {
-                return -1;
-            }
-            //if (_potentialPeaks.Count < _NumbersOfPeaksForSeq)
-            //{
-            //    return -2;
-            //}
-            if (_NGlycanData)
-            {
-                FindNLinkedStructure();
-            }
-            else
-            {
-                FindOLinkedStructure();
-            }
-            _SequencedGlycanStructure.Sort();
-            if (_FullSequencedGlycanStructure.Count != 0)
-            {
-                return 2;
-            }
-            else if (_SequencedGlycanStructure.Count != 0)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
+                throw new Exception(e.ToString());
             }
         }
 
         private void GetAllPeaks()
         {
-            _allPeaks = new List<MSPoint>();
-            for (int i = 0; i < _scan.MSPeaks.Count; i++)
+            try
             {
+                _allPeaks = new List<MSPoint>();
+                for (int i = 0; i < _scan.MSPeaks.Count; i++)
+                {
 
                     _allPeaks.Add(new MSPoint(_scan.MSPeaks[i].MonoMass, _scan.MSPeaks[i].MonoIntensity));
                     if (_scan.MSPeaks[i].MonoIntensity > MaxIntensityInScan)
                     {
                         MaxIntensityInScan = (float)_scan.MSPeaks[i].MonoIntensity;
-                    } 
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.ToString());
             }
         }
 
@@ -1214,11 +1226,6 @@ namespace COL.GlycoSequence
                                     {
                                         iterGT.Root.SortSubTree();
                                         iterGT.Charge = CurrentCharge;
-                                        if(iterGT.IUPACString.Contains("-NAc-"))
-                                        {
-                                            string a = iterGT.Root.GetIUPACString();
-                                            
-                                        }
                                         if (!_SequencedGlycanStructure.Contains(iterGT))
                                         {
                                             _SequencedGlycanStructure.Add(iterGT);

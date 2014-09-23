@@ -88,9 +88,6 @@
             this.chkPerm = new System.Windows.Forms.CheckBox();
             this.chkGlycanList = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.cboThreading = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -98,7 +95,6 @@
             this.groupBox6.SuspendLayout();
             this.grpGlycan.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnRawBrowse
@@ -127,7 +123,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(485, 299);
+            this.btnStart.Location = new System.Drawing.Point(161, 546);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 25;
@@ -352,9 +348,9 @@
             this.groupBox3.Controls.Add(this.chkCompletedOnly);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.cboTopRank);
-            this.groupBox3.Location = new System.Drawing.Point(426, 70);
+            this.groupBox3.Location = new System.Drawing.Point(196, 445);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(183, 95);
+            this.groupBox3.Size = new System.Drawing.Size(224, 95);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Export";
@@ -389,7 +385,6 @@
             this.chkCompletedOnly.TabIndex = 33;
             this.chkCompletedOnly.Text = "Only complete structure";
             this.chkCompletedOnly.UseVisualStyleBackColor = true;
-            this.chkCompletedOnly.CheckedChanged += new System.EventHandler(this.chkCompletedOnly_CheckedChanged);
             // 
             // label4
             // 
@@ -432,7 +427,7 @@
             this.groupBox4.Controls.Add(this.txtPeaKTol);
             this.groupBox4.Controls.Add(this.label5);
             this.groupBox4.Controls.Add(this.txtPrecusorTol);
-            this.groupBox4.Location = new System.Drawing.Point(426, 172);
+            this.groupBox4.Location = new System.Drawing.Point(7, 440);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(183, 100);
             this.groupBox4.TabIndex = 3;
@@ -689,7 +684,7 @@
             // chkReducedReducingEnd
             // 
             this.chkReducedReducingEnd.AutoSize = true;
-            this.chkReducedReducingEnd.Location = new System.Drawing.Point(430, 367);
+            this.chkReducedReducingEnd.Location = new System.Drawing.Point(242, 565);
             this.chkReducedReducingEnd.Name = "chkReducedReducingEnd";
             this.chkReducedReducingEnd.Size = new System.Drawing.Size(141, 17);
             this.chkReducedReducingEnd.TabIndex = 3;
@@ -700,7 +695,7 @@
             // chkPerm
             // 
             this.chkPerm.AutoSize = true;
-            this.chkPerm.Location = new System.Drawing.Point(439, 344);
+            this.chkPerm.Location = new System.Drawing.Point(251, 542);
             this.chkPerm.Name = "chkPerm";
             this.chkPerm.Size = new System.Drawing.Size(93, 17);
             this.chkPerm.TabIndex = 2;
@@ -719,41 +714,12 @@
             this.chkGlycanList.UseVisualStyleBackColor = true;
             this.chkGlycanList.CheckedChanged += new System.EventHandler(this.chkGlycanList_CheckedChanged);
             // 
-            // groupBox7
-            // 
-            this.groupBox7.Controls.Add(this.label10);
-            this.groupBox7.Controls.Add(this.cboThreading);
-            this.groupBox7.Location = new System.Drawing.Point(426, 13);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(183, 51);
-            this.groupBox7.TabIndex = 32;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Threading";
-            // 
-            // cboThreading
-            // 
-            this.cboThreading.FormattingEnabled = true;
-            this.cboThreading.Location = new System.Drawing.Point(97, 18);
-            this.cboThreading.Name = "cboThreading";
-            this.cboThreading.Size = new System.Drawing.Size(75, 21);
-            this.cboThreading.TabIndex = 0;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(10, 21);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(84, 13);
-            this.label10.TabIndex = 1;
-            this.label10.Text = "Thread Number:";
-            // 
             // frmBatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.ClientSize = new System.Drawing.Size(619, 438);
-            this.Controls.Add(this.groupBox7);
+            this.ClientSize = new System.Drawing.Size(423, 594);
             this.Controls.Add(this.chkReducedReducingEnd);
             this.Controls.Add(this.chkPerm);
             this.Controls.Add(this.chkGlycanList);
@@ -783,8 +749,6 @@
             this.grpGlycan.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -852,8 +816,5 @@
         private System.Windows.Forms.CheckBox chkEnzy_GlucED;
         private System.Windows.Forms.CheckBox chkEnzy_None;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox cboThreading;
     }
 }
