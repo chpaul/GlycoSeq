@@ -43,22 +43,22 @@
             this.rdoScanRange = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.txtTolTime = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.txtShiftTime = new System.Windows.Forms.TextBox();
-            this.cboShiftSign = new System.Windows.Forms.ComboBox();
             this.rdoPeptideWithTime = new System.Windows.Forms.RadioButton();
             this.rdoFastaOnly = new System.Windows.Forms.RadioButton();
+            this.txtTolTime = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.cboPepMutation = new System.Windows.Forms.ComboBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.chkEnzy_GlucE = new System.Windows.Forms.CheckBox();
             this.chkEnzy_Trypsin = new System.Windows.Forms.CheckBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.chkEnzy_GlucED = new System.Windows.Forms.CheckBox();
             this.chkEnzy_None = new System.Windows.Forms.CheckBox();
+            this.txtShiftTime = new System.Windows.Forms.TextBox();
             this.cboMissCleavage = new System.Windows.Forms.ComboBox();
             this.lstModification = new System.Windows.Forms.ListBox();
+            this.cboShiftSign = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -101,6 +101,17 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.singleScanModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -109,6 +120,7 @@
             this.grpGlycan.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnRawBrowse
@@ -271,60 +283,6 @@
             this.label14.TabIndex = 40;
             this.label14.Text = "mins";
             // 
-            // txtTolTime
-            // 
-            this.txtTolTime.Location = new System.Drawing.Point(272, 66);
-            this.txtTolTime.Name = "txtTolTime";
-            this.txtTolTime.Size = new System.Drawing.Size(29, 20);
-            this.txtTolTime.TabIndex = 39;
-            this.txtTolTime.Text = "2";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(211, 70);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(55, 13);
-            this.label13.TabIndex = 38;
-            this.label13.Text = "Tolerance";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 70);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(52, 13);
-            this.label12.TabIndex = 37;
-            this.label12.Text = "Time shift";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(141, 70);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(28, 13);
-            this.label11.TabIndex = 36;
-            this.label11.Text = "mins";
-            // 
-            // txtShiftTime
-            // 
-            this.txtShiftTime.Location = new System.Drawing.Point(92, 66);
-            this.txtShiftTime.Name = "txtShiftTime";
-            this.txtShiftTime.Size = new System.Drawing.Size(43, 20);
-            this.txtShiftTime.TabIndex = 35;
-            this.txtShiftTime.Text = "10";
-            // 
-            // cboShiftSign
-            // 
-            this.cboShiftSign.FormattingEnabled = true;
-            this.cboShiftSign.Items.AddRange(new object[] {
-            "+",
-            "-"});
-            this.cboShiftSign.Location = new System.Drawing.Point(59, 66);
-            this.cboShiftSign.Name = "cboShiftSign";
-            this.cboShiftSign.Size = new System.Drawing.Size(30, 21);
-            this.cboShiftSign.TabIndex = 34;
-            // 
             // rdoPeptideWithTime
             // 
             this.rdoPeptideWithTime.AutoSize = true;
@@ -348,6 +306,14 @@
             this.rdoFastaOnly.UseVisualStyleBackColor = true;
             this.rdoFastaOnly.CheckedChanged += new System.EventHandler(this.rdoFastaOnly_CheckedChanged);
             // 
+            // txtTolTime
+            // 
+            this.txtTolTime.Location = new System.Drawing.Point(272, 66);
+            this.txtTolTime.Name = "txtTolTime";
+            this.txtTolTime.Size = new System.Drawing.Size(29, 20);
+            this.txtTolTime.TabIndex = 39;
+            this.txtTolTime.Text = "2";
+            // 
             // label10
             // 
             this.label10.AutoSize = true;
@@ -368,6 +334,24 @@
             this.cboPepMutation.Name = "cboPepMutation";
             this.cboPepMutation.Size = new System.Drawing.Size(222, 21);
             this.cboPepMutation.TabIndex = 30;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(211, 70);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(55, 13);
+            this.label13.TabIndex = 38;
+            this.label13.Text = "Tolerance";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 70);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(52, 13);
+            this.label12.TabIndex = 37;
+            this.label12.Text = "Time shift";
             // 
             // chkEnzy_GlucE
             // 
@@ -392,6 +376,15 @@
             this.chkEnzy_Trypsin.Text = "Trypsin";
             this.chkEnzy_Trypsin.UseVisualStyleBackColor = true;
             this.chkEnzy_Trypsin.CheckedChanged += new System.EventHandler(this.chkEnzy_Trypsin_CheckedChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(141, 70);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(28, 13);
+            this.label11.TabIndex = 36;
+            this.label11.Text = "mins";
             // 
             // chkEnzy_GlucED
             // 
@@ -418,6 +411,14 @@
             this.chkEnzy_None.Text = "None";
             this.chkEnzy_None.UseVisualStyleBackColor = true;
             this.chkEnzy_None.CheckedChanged += new System.EventHandler(this.chkEnzy_None_CheckedChanged);
+            // 
+            // txtShiftTime
+            // 
+            this.txtShiftTime.Location = new System.Drawing.Point(92, 66);
+            this.txtShiftTime.Name = "txtShiftTime";
+            this.txtShiftTime.Size = new System.Drawing.Size(43, 20);
+            this.txtShiftTime.TabIndex = 35;
+            this.txtShiftTime.Text = "10";
             // 
             // cboMissCleavage
             // 
@@ -450,6 +451,17 @@
             this.lstModification.Name = "lstModification";
             this.lstModification.Size = new System.Drawing.Size(54, 17);
             this.lstModification.TabIndex = 20;
+            // 
+            // cboShiftSign
+            // 
+            this.cboShiftSign.FormattingEnabled = true;
+            this.cboShiftSign.Items.AddRange(new object[] {
+            "+",
+            "-"});
+            this.cboShiftSign.Location = new System.Drawing.Point(59, 66);
+            this.cboShiftSign.Name = "cboShiftSign";
+            this.cboShiftSign.Size = new System.Drawing.Size(30, 21);
+            this.cboShiftSign.TabIndex = 34;
             // 
             // label3
             // 
@@ -560,7 +572,7 @@
             this.txtPrecusorTol.Name = "txtPrecusorTol";
             this.txtPrecusorTol.Size = new System.Drawing.Size(36, 20);
             this.txtPrecusorTol.TabIndex = 24;
-            this.txtPrecusorTol.Text = "100";
+            this.txtPrecusorTol.Text = "10";
             // 
             // txtPeaKTol
             // 
@@ -848,7 +860,7 @@
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(423, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(976, 24);
             this.menuStrip1.TabIndex = 33;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -867,12 +879,112 @@
             this.singleScanModeToolStripMenuItem.Text = "Single Scan Mode";
             this.singleScanModeToolStripMenuItem.Click += new System.EventHandler(this.singleScanModeToolStripMenuItem_Click);
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.textBox5);
+            this.groupBox7.Controls.Add(this.textBox4);
+            this.groupBox7.Controls.Add(this.textBox3);
+            this.groupBox7.Controls.Add(this.textBox2);
+            this.groupBox7.Controls.Add(this.textBox1);
+            this.groupBox7.Controls.Add(this.label19);
+            this.groupBox7.Controls.Add(this.label18);
+            this.groupBox7.Controls.Add(this.label17);
+            this.groupBox7.Controls.Add(this.label16);
+            this.groupBox7.Controls.Add(this.label15);
+            this.groupBox7.Location = new System.Drawing.Point(426, 27);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(550, 220);
+            this.groupBox7.TabIndex = 39;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Sequencing Parameters";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(19, 16);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(41, 13);
+            this.label15.TabIndex = 0;
+            this.label15.Text = "label15";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(19, 48);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(41, 13);
+            this.label16.TabIndex = 1;
+            this.label16.Text = "label16";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(19, 77);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(41, 13);
+            this.label17.TabIndex = 2;
+            this.label17.Text = "label17";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(19, 115);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(41, 13);
+            this.label18.TabIndex = 3;
+            this.label18.Text = "label18";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(19, 157);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(41, 13);
+            this.label19.TabIndex = 4;
+            this.label19.Text = "label19";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(287, 9);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 5;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(287, 41);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.TabIndex = 6;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(287, 79);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(100, 20);
+            this.textBox3.TabIndex = 7;
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(287, 108);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(100, 20);
+            this.textBox4.TabIndex = 8;
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(287, 153);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(100, 20);
+            this.textBox5.TabIndex = 9;
+            // 
             // frmBatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.ClientSize = new System.Drawing.Size(423, 659);
+            this.ClientSize = new System.Drawing.Size(976, 659);
+            this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.chkGlycanList);
             this.Controls.Add(this.chkHuman);
             this.Controls.Add(this.groupBox5);
@@ -906,6 +1018,8 @@
             this.groupBox5.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -986,5 +1100,16 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox txtTolTime;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
     }
 }

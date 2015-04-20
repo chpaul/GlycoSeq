@@ -59,5 +59,15 @@ namespace GlycanSeq_Form.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap New_Scoring {
+            get {
+                object obj = ResourceManager.GetObject("New_Scoring", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
