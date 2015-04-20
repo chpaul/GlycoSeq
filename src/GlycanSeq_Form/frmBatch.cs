@@ -12,6 +12,7 @@ using COL.GlycoSequence;
 using COL.GlycoLib;
 using COL.MassLib;
 using COL.ProtLib;
+using System.Text.RegularExpressions;
 namespace GlycanSeq_Form
 {
     public partial class frmBatch : Form
@@ -20,15 +21,17 @@ namespace GlycanSeq_Form
         //List<string> _peptideSeq ;
         //List<float>_peptideMass ;
         List<GlycanCompound> _glycanCompounds;
-        RawReader Raw;
+        ThermoRawReader Raw;
         Dictionary<double, GlycanCompound> _MassGlycanMapping;
         List<float> GlycanCompoundMassList;
-
+        GlycanSeqParameters sequencingParameters = new GlycanSeqParameters();
         public frmBatch()
         {
             InitializeComponent();
             cboMissCleavage.SelectedItem = "0";
             ScanNum = new List<int>();
+            cboPepMutation.SelectedItem = "No Mutation";
+            cboShiftSign.SelectedItem = "-";
         }
         private void btnRawBrowse_Click(object sender, EventArgs e)
         {
@@ -40,7 +43,7 @@ namespace GlycanSeq_Form
             {
                 txtRaw.Text = openFileDialog1.FileName;
 
-                Raw = new RawReader(openFileDialog1.FileName, enumRawDataType.raw);
+                Raw = new ThermoRawReader(openFileDialog1.FileName);
                 txtStart.Text = "1";
                 txtEnd.Text = Raw.NumberOfScans.ToString();
             }
@@ -48,7 +51,14 @@ namespace GlycanSeq_Form
         private void btnPeptideBrowse_Click(object sender, EventArgs e)
         {
             openFileDialog1.FileName = "";
-            openFileDialog1.Filter = "fasta file (*.fasta)|*.fasta";
+            if (rdoFastaOnly.Checked)
+            {
+                openFileDialog1.Filter = "fasta file (*.fasta)|*.fasta";
+            }
+            else
+            {
+                openFileDialog1.Filter = "glycan file (*.csv)|*.csv";
+            }
             openFileDialog1.RestoreDirectory = true;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -68,9 +78,16 @@ namespace GlycanSeq_Form
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            //folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(txtRaw.Text);
-            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(txtRaw.Text);
-            string FileName = Path.GetDirectoryName(txtRaw.Text) + "\\" + Path.GetFileNameWithoutExtension(txtRaw.Text) +"_" +txtStart.Text+"~"+txtEnd.Text+ "-" + DateTime.Now.ToString("yyMMdd-HHmm");
+            string defaultOutputFolder = Path.GetDirectoryName(txtRaw.Text) + "\\" +
+                                         Path.GetFileNameWithoutExtension(txtRaw.Text) + "_" +
+                                         DateTime.Now.ToString("yyMMdd-HHmm");
+            if (!Directory.Exists(defaultOutputFolder))
+            {
+                Directory.CreateDirectory(defaultOutputFolder);
+            }
+            folderBrowserDialog1.SelectedPath = defaultOutputFolder;
+            //saveFileDialog1.InitialDirectory = Path.GetDirectoryName(txtRaw.Text);
+            string FileName = Path.GetDirectoryName(txtRaw.Text) + "\\" + Path.GetFileNameWithoutExtension(txtRaw.Text) + "_" + txtStart.Text + "~" + txtEnd.Text + "-" + DateTime.Now.ToString("yyMMdd-HHmm");
             if (chkHCD.Checked)
             {
                 FileName = FileName + "_HCD";
@@ -83,53 +100,197 @@ namespace GlycanSeq_Form
             {
                 FileName = FileName + "_GlycanList";
             }
-            saveFileDialog1.FileName = FileName + ".htm";
-            saveFileDialog1.Filter = "HTML file (*.htm)|*.htm";
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)            
+            //saveFileDialog1.FileName = FileName + ".htm";
+            //saveFileDialog1.Filter = "HTML file (*.htm)|*.htm";
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
 
                 if (txtFasta.Text != "" && txtRaw.Text != "" && txtStart.Text != "" && txtEnd.Text != "")
                 {
-                    List<Protease.Type> ProteaseType = new List<Protease.Type>();
+                    //List<Protease.Type> ProteaseType = new List<Protease.Type>();
 
-                    if (chkEnzy_Trypsin.Checked)//Trypsin
-                    {
-                        ProteaseType.Add(Protease.Type.Trypsin);
-                    }
-                    if (chkEnzy_GlucE.Checked)//GlucE
-                    {
-                        ProteaseType.Add(Protease.Type.GlucE);
-                    }
-                    if(chkEnzy_GlucED.Checked) //GlucED
-                    {
-                        ProteaseType.Add( Protease.Type.GlucED);
-                    }
-                    if (chkEnzy_None.Checked || ProteaseType.Count==0)
-                    {
-                        ProteaseType.Add(Protease.Type.None);
-                    }
+                    //if (chkEnzy_Trypsin.Checked)//Trypsin
+                    //{
+                    //    ProteaseType.Add(Protease.Type.Trypsin);
+                    //}
+                    //if (chkEnzy_GlucE.Checked)//GlucE
+                    //{
+                    //    ProteaseType.Add(Protease.Type.GlucE);
+                    //}
+                    //if(chkEnzy_GlucED.Checked) //GlucED
+                    //{
+                    //    ProteaseType.Add( Protease.Type.GlucED);
+                    //}
+                    //if (chkEnzy_None.Checked || ProteaseType.Count==0)
+                    //{
+                    //    ProteaseType.Add(Protease.Type.None);
+                    //}
 
-
-                    if (cboMissCleavage.SelectedItem.ToString() == "")
-                    {
-                        cboMissCleavage.SelectedItem = "0";
-                    }
+                    //if (cboMissCleavage.SelectedItem.ToString() == "")
+                    //{
+                    //    cboMissCleavage.SelectedItem = "0";
+                    //}
                     if (txtCompReward.Text == "")
                     {
                         txtCompReward.Text = "1.0";
                     }
-                   
-
-                    if (!Directory.Exists(Path.GetDirectoryName(saveFileDialog1.FileName) + "\\Pics"))
+                    if (defaultOutputFolder != folderBrowserDialog1.SelectedPath)
                     {
-                        Directory.CreateDirectory(Path.GetDirectoryName(saveFileDialog1.FileName) + "\\Pics");
+                        Directory.Delete(defaultOutputFolder);
                     }
-                    frmInvokeProcesses frmProcess;
+
+                    if (!Directory.Exists(folderBrowserDialog1.SelectedPath + "\\Pics"))
+                    {
+                        Directory.CreateDirectory(folderBrowserDialog1.SelectedPath + "\\Pics");
+                    }
+                    //frmInvokeProcesses frmProcess;
+                    frmProcessing frmProcess;
+     
+                    List<TargetPeptide> lstTargetPeptides = new List<TargetPeptide>();
+
+                    
+
+                    //Default
+                    sequencingParameters.AverageMass = chkAvgMass.Checked;
+                    sequencingParameters.IsHuman = chkHuman.Checked;
+
+                    //Raw File
+                    sequencingParameters.RawFilePath = txtRaw.Text;
+                    sequencingParameters.StartScan = Convert.ToInt32(txtStart.Text);
+                    sequencingParameters.EndScan = Convert.ToInt32(txtEnd.Text);
+                    sequencingParameters.SeqHCD = chkSeqHCD.Checked;
+                    sequencingParameters.UseHCD = chkHCD.Checked;
+
+                    //Peptide
+                    sequencingParameters.FastaFile = txtFasta.Text;
+                    enumPeptideMutation PepMuta = enumPeptideMutation.NoMutation;
+                    if (cboPepMutation.SelectedIndex == 1)
+                    {
+                        PepMuta = enumPeptideMutation.DtoN;
+                    }
+                    else if (cboPepMutation.SelectedIndex == 2)
+                    {
+                        PepMuta = enumPeptideMutation.AnyToN;
+                    }
+
+                    if (rdoFastaOnly.Checked)
+                    {
+                        lstTargetPeptides = GeneratePeptideCandidatie(txtFasta.Text);
+                        if (cboMissCleavage.SelectedItem.ToString() == "")
+                        {
+                            cboMissCleavage.SelectedItem = "0";
+                        }
+                        List<Protease.Type> ProteaseType = new List<Protease.Type>();
+                        if (chkEnzy_Trypsin.Checked) //Trypsin
+                        {
+                            ProteaseType.Add(Protease.Type.Trypsin);
+                        }
+                        if (chkEnzy_GlucE.Checked) //GlucE
+                        {
+                            ProteaseType.Add(Protease.Type.GlucE);
+                        }
+                        if (chkEnzy_GlucED.Checked) //GlucED
+                        {
+                            ProteaseType.Add(Protease.Type.GlucED);
+                        }
+                        if (chkEnzy_None.Checked || ProteaseType.Count == 0)
+                        {
+                            ProteaseType.Add(Protease.Type.None);
+                        }
+                        sequencingParameters.ProteaseType = ProteaseType;
+                        sequencingParameters.MissCLeavage = Convert.ToInt32(cboMissCleavage.SelectedItem.ToString());
+                    }
+                    else
+                    {
+                        StreamReader sr = new StreamReader(txtFasta.Text);
+                        string[] tmpAry = sr.ReadLine().Split(','); //Title
+                        Dictionary<string, int> dictTitleIdx = new Dictionary<string, int>();
+                        //Title
+                        for (int i = 0; i < tmpAry.Length; i++)
+                        {
+                           dictTitleIdx.Add(tmpAry[i],i);
+                        }
+                        while (!sr.EndOfStream)
+                        {
+                            tmpAry = sr.ReadLine().Split(',');
+                            //Check Glycosylation Site
+                            if (IsGlycopeptide(tmpAry[dictTitleIdx["Peptide_Sequence"]], PepMuta))
+                            {
+                                TargetPeptide tPeptide = new TargetPeptide(tmpAry[dictTitleIdx["Peptide_Sequence"]]);
+                                tPeptide.ProteinName = tmpAry[dictTitleIdx["Protein_Name"]];
+                                float startTime = Convert.ToSingle(tmpAry[dictTitleIdx["Start_Search_Time_(Mins)"]]);
+                                float endTime = Convert.ToSingle(tmpAry[dictTitleIdx["End_Search_Time_(Mins)"]]);
+                                float shiftTime = Convert.ToSingle(txtShiftTime.Text);
+                                float tolTime = Convert.ToSingle(txtTolTime.Text);
+                                if (cboShiftSign.SelectedItem.ToString() == "-")
+                                {
+                                    shiftTime = 0 - shiftTime;
+                                }
+                                if (startTime == 0 && endTime == 9999)
+                                {
+                                    startTime = 0;
+                                    endTime = 9999;
+                                }
+                                else if (startTime == 0 && endTime != 0)
+                                {
+                                    endTime = endTime + shiftTime + tolTime;
+                                    startTime = endTime - 5 - tolTime;
+                                }
+                                else if (startTime != 0 && endTime == 0)
+                                {
+                                    startTime = startTime + shiftTime - tolTime;
+                                    endTime = startTime + 5 + tolTime;
+                                }
+                                else if (startTime == 0 && endTime == 0)
+                                {
+                                    startTime = 0;
+                                    endTime = 9999;
+                                }
+                                else
+                                {
+                                    startTime = startTime + shiftTime - tolTime;
+                                    endTime = endTime + shiftTime + tolTime;
+                                }
+                                tPeptide.StartTime = startTime;
+                                tPeptide.EndTime = endTime;
+                                lstTargetPeptides.Add(tPeptide);
+                            }
+                        }
+                        sr.Close();
+                    }
+                    sequencingParameters.TargetPeptides = lstTargetPeptides;
+                    sequencingParameters.PeptideMutation = PepMuta;
+                    
+                    //Glycan
+                    sequencingParameters.IsNGlycan = chkNLinked.Checked;
                     if (chkGlycanList.Checked)
                     {
-                        GenerateGlycanList();
+                        sequencingParameters.UseGlycanList = chkGlycanList.Checked;
+                        sequencingParameters.GlycanFile = txtGlycanList.Text;
+                    }
+                    else
+                    {
+                        sequencingParameters.NoHexNAc = Convert.ToInt32(txtHexNAc.Text);
+                        sequencingParameters.NoHex = Convert.ToInt32(txtHex.Text);
+                        sequencingParameters.NoDeHex = Convert.ToInt32(txtdeHex.Text);
+                        sequencingParameters.NoSia = Convert.ToInt32(txtSia.Text);
+                    }
 
-                        frmProcess = new frmInvokeProcesses(Convert.ToInt32(txtStart.Text),
+                    //Torelance
+                    sequencingParameters.PrecursorTol = Convert.ToSingle(txtPrecusorTol.Text);
+                    sequencingParameters.MSMSTol = Convert.ToSingle(txtPeaKTol.Text);
+
+                    //Export
+                    sequencingParameters.GetTopRank = Convert.ToInt32(cboTopRank.Text);
+                    sequencingParameters.CompletedOnly = chkCompletedOnly.Checked;
+                    sequencingParameters.CompletedReward = Convert.ToSingle(txtCompReward.Text);
+                    sequencingParameters.ExportFolder = folderBrowserDialog1.SelectedPath;
+                    sequencingParameters.ExportIndividualSpectrum = chkIndividualReport.Checked;
+
+                    if (chkGlycanList.Checked) // Use Glycan List
+                    {
+                        GenerateGlycanList();
+                        frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
                                                                                                Convert.ToInt32(txtEnd.Text),
                                                                                                Convert.ToSingle(txtPeaKTol.Text),
                                                                                                Convert.ToSingle(txtPrecusorTol.Text),
@@ -140,44 +301,42 @@ namespace GlycanSeq_Form
                                                                                                GlycanCompoundMassList,
                                                                                                txtGlycanList.Text,
                                                                                                txtRaw.Text,
-                                                                                               txtFasta.Text,
-                                                                                               ProteaseType,
-                                                                                               Convert.ToInt32(cboMissCleavage.SelectedItem.ToString()),
+                                                                                               lstTargetPeptides,
                                                                                                chkAvgMass.Checked,
                                                                                                chkHCD.Checked,
                                                                                                chkSeqHCD.Checked,
-                                                                                               saveFileDialog1.FileName,
+                                                                                               folderBrowserDialog1.SelectedPath,
                                                                                                Convert.ToInt32(cboTopRank.Text),
                                                                                                chkCompletedOnly.Checked,
-                                                                                               Convert.ToSingle(txtCompReward.Text)                                                                                               
+                                                                                               Convert.ToSingle(txtCompReward.Text),
+                                                                                               chkIndividualReport.Checked
                                                                                                );
                     }
                     else
                     {
-                        frmProcess = new frmInvokeProcesses(Convert.ToInt32(txtStart.Text),
-                                                                                            Convert.ToInt32(txtEnd.Text),
-                                                                                            Convert.ToSingle(txtPeaKTol.Text),
-                                                                                            Convert.ToSingle(txtPrecusorTol.Text),
-                                                                                            chkNLinked.Checked,
-                                                                                            rdoNeuAc.Checked,
-                                                                                            Convert.ToInt32(txtHexNAc.Text),
-                                                                                            Convert.ToInt32(txtHex.Text),
-                                                                                            Convert.ToInt32(txtdeHex.Text),
-                                                                                            Convert.ToInt32(txtSia.Text),
-                                                                                            txtRaw.Text,
-                                                                                            txtFasta.Text,
-                                                                                            ProteaseType,
-                                                                                            Convert.ToInt32(cboMissCleavage.SelectedItem.ToString()),
-                                                                                            chkAvgMass.Checked,
-                                                                                            chkHCD.Checked,
-                                                                                            chkSeqHCD.Checked,
-                                                                                            saveFileDialog1.FileName,
-                                                                                            Convert.ToInt32(cboTopRank.Text),
-                                                                                            chkCompletedOnly.Checked,
-                                                                                            Convert.ToSingle(txtCompReward.Text)
-                                                                                            );
-
+                        frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
+                                                                                               Convert.ToInt32(txtEnd.Text),
+                                                                                               Convert.ToSingle(txtPeaKTol.Text),
+                                                                                               Convert.ToSingle(txtPrecusorTol.Text),
+                                                                                               chkNLinked.Checked,
+                                                                                               rdoNeuAc.Checked,
+                                                                                               Convert.ToInt32(txtHexNAc.Text),
+                                                                                               Convert.ToInt32(txtHex.Text),
+                                                                                               Convert.ToInt32(txtdeHex.Text),
+                                                                                               Convert.ToInt32(txtSia.Text),
+                                                                                               txtRaw.Text,
+                                                                                               lstTargetPeptides,
+                                                                                               chkAvgMass.Checked,
+                                                                                               chkHCD.Checked,
+                                                                                               chkSeqHCD.Checked,
+                                                                                               folderBrowserDialog1.SelectedPath,
+                                                                                               Convert.ToInt32(cboTopRank.Text),
+                                                                                               chkCompletedOnly.Checked,
+                                                                                               Convert.ToSingle(txtCompReward.Text),
+                                                                                               chkIndividualReport.Checked
+                                                                                               );
                     }
+                    frmProcess.GlycanSequencingParemetets = sequencingParameters;
                     frmProcess.ShowDialog();
                 }
 
@@ -527,20 +686,114 @@ namespace GlycanSeq_Form
 
             }
         }
+
+        private bool IsGlycopeptide(string argPeptideStr, enumPeptideMutation argMutation)
+        {
+                Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase); //NXS NXT  X!=P
+                Match Sequon = sequon.Match(argPeptideStr);
+                if (Sequon.Length != 0)
+                {
+                    return true;
+                }
+            
+            if (argMutation == enumPeptideMutation.DtoN)
+            {
+                Regex sequonDtoN = new Regex("D[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase); //DXS DXT  X!=P
+                Match SequonDtoN = sequonDtoN.Match(argPeptideStr);
+                if (SequonDtoN.Length != 0)
+                {
+                    return true;
+                }
+            }
+            else if (argMutation == enumPeptideMutation.AnyToN)// DtoAny
+            {
+                Regex sequonDtoAny = new Regex("[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase); //XS XT  X!=P
+                Match SequonDtoAny = sequonDtoAny.Match(argPeptideStr);
+                if (SequonDtoAny.Length != 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
         private void GenerateGlycanList()
         {
-            _glycanCompounds = ReadGlycanListFromFile.ReadGlycanList(txtGlycanList.Text, chkPerm.Checked, chkHuman.Checked, chkReducedReducingEnd.Checked);
+            _glycanCompounds = ReadGlycanListFromFile.ReadGlycanList(txtGlycanList.Text, false, chkHuman.Checked, false);
             _MassGlycanMapping = new Dictionary<double, GlycanCompound>();
             GlycanCompoundMassList = new List<float>();
             foreach (GlycanCompound G in _glycanCompounds)
             {
-                if (!_MassGlycanMapping.ContainsKey(G.AVGMass))
+                double ModifiedMass = G.AVGMass - Atoms.HydrogenAVGMass - Atoms.OxygenAVGMass;
+                if (!_MassGlycanMapping.ContainsKey(ModifiedMass))
                 {
-                    _MassGlycanMapping.Add(G.AVGMass, G);
-                    GlycanCompoundMassList.Add((float)G.AVGMass);
+                    _MassGlycanMapping.Add(ModifiedMass, G);
+                    GlycanCompoundMassList.Add((float)ModifiedMass);
                 }
 
             }
+        }
+        /// <summary>
+        /// Title in Glycopeptide file
+        /// Protein_Name,	Peptide_Sequence,	Start_Search_Time_(Mins),	End_Search_Time_(Mins),	Peptide_Mass
+        /// 
+        /// </summary>
+        /// <param name="argFile"></param>
+        /// <returns></returns>
+        private List<TargetPeptide> GeneratePeptideCandidatie(string argFile)
+        {
+            List<TargetPeptide> lstTargetPeptides ;
+            if (rdoPeptideWithTime.Checked)
+            {
+                lstTargetPeptides =  PeptideReader.GetCandidatePeptides(argFile);
+            }
+            else
+            {
+                lstTargetPeptides = new List<TargetPeptide>();
+                List<ProteinInfo> PInfos = FastaReader.ReadFasta(txtFasta.Text);
+                List<string> GlycoPeptide = new List<string>();
+                List<Protease.Type> ProteaseType = new List<Protease.Type>();
+
+                if (chkEnzy_Trypsin.Checked)//Trypsin
+                {
+                    ProteaseType.Add(Protease.Type.Trypsin);
+                }
+                if (chkEnzy_GlucE.Checked)//GlucE
+                {
+                    ProteaseType.Add(Protease.Type.GlucE);
+                }
+                if (chkEnzy_GlucED.Checked) //GlucED
+                {
+                    ProteaseType.Add(Protease.Type.GlucED);
+                }
+                if (chkEnzy_None.Checked || ProteaseType.Count == 0)
+                {
+                    ProteaseType.Add(Protease.Type.None);
+                }
+
+                if (cboMissCleavage.SelectedItem.ToString() == "")
+                {
+                    cboMissCleavage.SelectedItem = "0";
+                }
+                enumPeptideMutation PepMuta = enumPeptideMutation.NoMutation;
+                if (cboPepMutation.SelectedIndex == 1)
+                {
+                    PepMuta = enumPeptideMutation.DtoN;
+                }
+                else if (cboPepMutation.SelectedIndex == 2)
+                {
+                    PepMuta = enumPeptideMutation.AnyToN;
+                }
+                foreach (ProteinInfo pinfo in PInfos)
+                {
+                    GlycoPeptide.AddRange(pinfo.NGlycopeptide(Convert.ToInt32(cboMissCleavage.SelectedItem.ToString()), ProteaseType, PepMuta));
+                }
+                foreach (string gpeptide in GlycoPeptide)
+                {
+                    lstTargetPeptides.Add(new TargetPeptide(gpeptide));
+                }
+            }
+            return lstTargetPeptides;
         }
         private string GetPreviousCompositionAndMass(GlycanStructure argStr, int argNodeID)
         {
@@ -649,6 +902,7 @@ namespace GlycanSeq_Form
         {
             groupBox5.Enabled = chkGlycanList.Checked;
             grpGlycan.Enabled = !chkGlycanList.Checked;
+            chkCompletedOnly.Checked = chkGlycanList.Checked;
         }
 
         private Bitmap GetImageFromURL(string argGlycan)
@@ -664,7 +918,7 @@ namespace GlycanSeq_Form
 
         private void chkHCD_CheckedChanged(object sender, EventArgs e)
         {
-            chkSeqHCD.Enabled = chkHCD.Checked;            
+            chkSeqHCD.Enabled = chkHCD.Checked;
         }
 
         private void chkEnzy_None_CheckedChanged(object sender, EventArgs e)
@@ -703,7 +957,42 @@ namespace GlycanSeq_Form
             }
         }
 
-     
+        private void rdoFastaOnly_CheckedChanged(object sender, EventArgs e)
+        {
+            chkEnzy_GlucE.Enabled = rdoFastaOnly.Checked;
+            chkEnzy_GlucED.Enabled = rdoFastaOnly.Checked;
+            chkEnzy_None.Enabled = rdoFastaOnly.Checked;
+            chkEnzy_Trypsin.Enabled = rdoFastaOnly.Checked;
+            label1.Enabled = rdoFastaOnly.Checked;
+            label2.Enabled = rdoFastaOnly.Checked;
+            cboMissCleavage.Enabled = rdoFastaOnly.Checked;
+            cboShiftSign.Enabled = !rdoFastaOnly.Checked;
+            txtShiftTime.Enabled = !rdoFastaOnly.Checked;
+            label11.Enabled = !rdoFastaOnly.Checked;
+            label12.Enabled = !rdoFastaOnly.Checked;
+            label13.Enabled = !rdoFastaOnly.Checked;
+            label14.Enabled = !rdoFastaOnly.Checked;
+            txtTolTime.Enabled = !rdoFastaOnly.Checked;
+        }
+
+        private void chkIndividualReport_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkIndividualReport.Checked)
+            {
+                MessageBox.Show("Produce lots of files.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void singleScanModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            frmSingle frmSingleMode = new frmSingle();
+            frmSingleMode.ShowDialog();
+            this.Show();
+        }
+
+
+
 
 
     }

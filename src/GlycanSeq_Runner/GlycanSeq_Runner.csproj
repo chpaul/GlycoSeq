@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GlycanSeq_Runner</RootNamespace>
     <AssemblyName>GlycanSeq_Runner</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -22,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -31,16 +33,23 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CSMSL">
+      <HintPath>..\..\lib\CSMSL.dll</HintPath>
+    </Reference>
+    <Reference Include="CSMSL.Thermo">
+      <HintPath>..\..\lib\CSMSL.Thermo.dll</HintPath>
+    </Reference>
     <Reference Include="GlycoLib">
       <HintPath>..\..\lib\GlycoLib.dll</HintPath>
     </Reference>
     <Reference Include="GlypIDEngine">
       <HintPath>..\..\lib\GlypIDEngine.dll</HintPath>
     </Reference>
-    <Reference Include="MassLibx32">
-      <HintPath>..\..\lib\MassLibx32.dll</HintPath>
+    <Reference Include="MassLib">
+      <HintPath>..\..\lib\MassLib.dll</HintPath>
     </Reference>
     <Reference Include="ProtLib">
       <HintPath>..\..\lib\ProtLib.dll</HintPath>
@@ -75,7 +84,9 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -88,7 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GlycoSeqDLL\GlycoSeqDLL.csproj">
-      <Project>{4A55B578-C7E9-49BF-84BD-4C2D9E2032B3}</Project>
+      <Project>{4a55b578-c7e9-49bf-84bd-4c2d9e2032b3}</Project>
       <Name>GlycoSeqDLL</Name>
     </ProjectReference>
   </ItemGroup>

@@ -51,6 +51,7 @@ namespace GlycanSeq_Form
         float _CompletedReward;
         int DividePartNum = 0;
         bool _IsFinishWorker = false;
+        private enumPeptideMutation _peptideMutation;
          /// <summary>
         /// Input GlycanCompostion (From Glycan list)
         /// </summary>
@@ -250,7 +251,7 @@ namespace GlycanSeq_Form
             List<string> GlycoPeptide = new List<string>();
             foreach (ProteinInfo Prot in PInfos)
             {
-                GlycoPeptide.AddRange(Prot.NGlycopeptide(_MissCLeavage, _ProteaseType));
+                GlycoPeptide.AddRange(Prot.NGlycopeptide(_MissCLeavage, _ProteaseType, _peptideMutation));
             }
             return GlycoPeptide;
         }

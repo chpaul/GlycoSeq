@@ -14,7 +14,7 @@ namespace GlycanSeq_Form
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmStart());
+            Application.Run(new frmBatch());
             //Application.Run(new frmBatch());
         }
     }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -78,12 +79,15 @@
             this.dgView = new System.Windows.Forms.DataGridView();
             this.dgIDPeak = new System.Windows.Forms.DataGridView();
             this.zedSequence = new ZedGraph.ZedGraphControl();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -98,11 +102,11 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(357, 88);
+            this.btnLoad.Location = new System.Drawing.Point(357, 66);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(69, 25);
+            this.btnLoad.Size = new System.Drawing.Size(69, 47);
             this.btnLoad.TabIndex = 8;
-            this.btnLoad.Text = "Load";
+            this.btnLoad.Text = "Load Raw and Start";
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
             // 
@@ -116,7 +120,6 @@
             this.txtScanNo.Name = "txtScanNo";
             this.txtScanNo.Size = new System.Drawing.Size(73, 20);
             this.txtScanNo.TabIndex = 0;
-            this.txtScanNo.Text = "1232";
             // 
             // splitContainer1
             // 
@@ -379,7 +382,6 @@
             this.txtPeptideSeq.Name = "txtPeptideSeq";
             this.txtPeptideSeq.Size = new System.Drawing.Size(274, 20);
             this.txtPeptideSeq.TabIndex = 3;
-            this.txtPeptideSeq.Text = "NAGSGIIISDTPVHDCNTTCQTPK\t";
             this.txtPeptideSeq.TextChanged += new System.EventHandler(this.txtPeptideSeq_TextChanged);
             // 
             // rdoPeptide
@@ -464,7 +466,6 @@
             this.txtY1ChargeStatus.Name = "txtY1ChargeStatus";
             this.txtY1ChargeStatus.Size = new System.Drawing.Size(73, 20);
             this.txtY1ChargeStatus.TabIndex = 1;
-            this.txtY1ChargeStatus.Text = "2";
             this.txtY1ChargeStatus.TextChanged += new System.EventHandler(this.txtPeptideSeq_TextChanged);
             // 
             // lblScan
@@ -623,17 +624,20 @@
             this.ClientSize = new System.Drawing.Size(1016, 803);
             this.Controls.Add(this.splitContainer1);
             this.Name = "frmSingle";
-            this.Text = "Glycan Sequencing (v0.8)";
+            this.Text = "GlycoSeq";
             this.Load += new System.EventHandler(this.frmSingle_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer5.Panel1.ResumeLayout(false);
             this.splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

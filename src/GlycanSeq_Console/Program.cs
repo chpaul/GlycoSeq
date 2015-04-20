@@ -21,7 +21,7 @@ namespace GlycanSeq_Console
         
         static int _StartScan, _EndScan, completedScan=0;
         static bool _UseHCD, _NGlycan, _Human, _CompletedOnly, _SeqHCD, _AverageMass,_UseGlycanList;
-        static RawReader Raw;
+        static ThermoRawReader Raw;
         static string _rawFile;
         static string _exportFile;      
         static string _glycanFile;
@@ -210,7 +210,7 @@ namespace GlycanSeq_Console
         private static void PrepareSequencing()
         {
             Console.Write("Init Raw");
-            Raw = new RawReader(_rawFile, enumRawDataType.raw);
+            Raw = new ThermoRawReader(_rawFile);
             Console.WriteLine(".....Completed\n");
             //sw = new StreamWriter(_exportFile);         
             //ReadGlycanFile

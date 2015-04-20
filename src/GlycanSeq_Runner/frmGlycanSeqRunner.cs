@@ -24,7 +24,7 @@ namespace GlycanSeq_Runner
         List<string> _Peptides;
         List<int> lstScans;
         string _rawFile, _glycanFile, _exportFile;
-        RawReader Raw = null;
+        ThermoRawReader Raw = null;
 
         int CurrentScan = 0;
         string CurrentPeptide = "";
@@ -76,7 +76,7 @@ namespace GlycanSeq_Runner
         {
             AAMW = new AminoAcidMass();
             this.lblStatus.SafeBeginInvoke(new Action(() => lblStatus.Text = "Begin initial raw file"));
-            Raw = new RawReader(_rawFile, enumRawDataType.raw);
+            Raw = new ThermoRawReader(_rawFile);
             this.lblStatus.SafeBeginInvoke(new Action(() => lblStatus.Text = "Initial raw file completed"));
             List<GlycanSequencing> lstGS = new List<GlycanSequencing>();
             if (_UseGlycanList)

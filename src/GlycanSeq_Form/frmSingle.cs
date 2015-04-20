@@ -96,11 +96,11 @@ namespace GlycanSeq_Form
                 if (Path.GetExtension(openFileDialog1.FileName).ToLower() == ".raw")
                 {
 
-                    RawReader RawReader = new COL.MassLib.RawReader(openFileDialog1.FileName, enumRawDataType.raw);
+                    ThermoRawReader RawReader = new COL.MassLib.ThermoRawReader(openFileDialog1.FileName);
                     /*GlypID.Peaks.clsPeakProcessorParameters clsParameters = new GlypID.Peaks.clsPeakProcessorParameters();
                     clsParameters.SignalToNoiseThreshold = 0.0f;
                     clsParameters.PeakBackgroundRatio = 0.01f;*/
-                    RawReader.SetPeakProcessorParameter(2, 2);
+                    //RawReader.SetPeakProcessorParameter(2, 2);
                     scan = RawReader.ReadScan(ScanNo);
                 }
                 else
@@ -126,46 +126,36 @@ namespace GlycanSeq_Form
                 }
 
                 int PredictedY1CS = Convert.ToInt32(txtY1ChargeStatus.Text);
-                if (rdoY1.Checked)
+                float PredictedY1 = 0.0f;
+               
+                if (rdoPeptide.Checked)
                 {
-                    
-                    PredictedY1 = 0.0f;
-                    int Y1ChargeSt = Convert.ToInt32(txtY1ChargeStatus.Text);
-                    PredictedY1 = Convert.ToSingle(scan.MSPeaks[MassUtility.GetClosestMassIdx(scan.MSPeaks, Convert.ToSingle(txtY1.Text))].MonoMass);
 
-                    GS = new COL.GlycoSequence.GlycanSequencing(scan, PredictedY1, PredictedY1CS,
-                                                                                                          Convert.ToInt32(txtHex.Text),
-                                                                                                          Convert.ToInt32(txtHexNAc.Text),
-                                                                                                          Convert.ToInt32(txtdeHex.Text),
-                                                                                                          NoNeuAc, NoNeuGc, Path.GetDirectoryName(openFileDialog1.FileName).ToString(),
-                                                                                                          chkNLinked.Checked, Convert.ToSingle(txtPeaKTol.Text),
-                                                                                                          Convert.ToSingle(txtPrecusorTol.Text));
+                    GS = new COL.GlycoSequence.GlycanSequencing(scan, txtPeptideSeq.Text,true, PredictedY1CS,
+                                                                                            Convert.ToInt32(txtHex.Text),
+                                                                                            Convert.ToInt32(txtHexNAc.Text),
+                                                                                            Convert.ToInt32(txtdeHex.Text),
+                                                                                            NoNeuAc, NoNeuGc, Path.GetDirectoryName(openFileDialog1.FileName).ToString(),
+                                                                                            chkNLinked.Checked, Convert.ToSingle(txtPeaKTol.Text),
+                                                                                            Convert.ToSingle(txtPrecusorTol.Text));
                 }
                 else
                 {
                     AminoAcidMass AAMW = new AminoAcidMass();
-                    GS = new GlycanSequencing(scan, txtPeptideSeq.Text, true, PredictedY1CS,
-                                                                                                          Convert.ToInt32(txtHex.Text),
-                                                                                                          Convert.ToInt32(txtHexNAc.Text),
-                                                                                                          Convert.ToInt32(txtdeHex.Text),
-                                                                                                          NoNeuAc, NoNeuGc, Path.GetDirectoryName(openFileDialog1.FileName).ToString(),
-                                                                                                          chkNLinked.Checked, Convert.ToSingle(txtPeaKTol.Text),
-                                                                                                          Convert.ToSingle(txtPrecusorTol.Text));
-
-
-                    //double PeptideMass;
-                    //if (chkAVGMass.Checked)
-                    //{
-                    //    PeptideMass = AAMW.GetAVGMonoMW(txtPeptideSeq.Text, true);
-                    //    PredictedY1 = (float)(PeptideMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + COL.MassLib.Atoms.ProtonMass * PredictedY1CS) / PredictedY1CS;
-                    //}
-                    //else
-                    //{
-                    //    PeptideMass = AAMW.GetMonoMW(txtPeptideSeq.Text, true);
-                    //    PredictedY1 = (float)(PeptideMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + COL.MassLib.Atoms.ProtonMass * PredictedY1CS) / PredictedY1CS;
-
-                    //}
+                    PredictedY1 = (AAMW.GetAVGMonoMW(txtPeptideSeq.Text, true) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * PredictedY1CS) /
+                                 (float)PredictedY1CS;
+                    PredictedY1 = Convert.ToSingle(scan.MSPeaks[MassUtility.GetClosestMassIdx(scan.MSPeaks, Convert.ToSingle(txtY1.Text))].MonoMass);
+                    GS = new COL.GlycoSequence.GlycanSequencing(scan, PredictedY1, PredictedY1CS,
+                                                                                            Convert.ToInt32(txtHex.Text),
+                                                                                            Convert.ToInt32(txtHexNAc.Text),
+                                                                                            Convert.ToInt32(txtdeHex.Text),
+                                                                                            NoNeuAc, NoNeuGc, Path.GetDirectoryName(openFileDialog1.FileName).ToString(),
+                                                                                            chkNLinked.Checked, Convert.ToSingle(txtPeaKTol.Text),
+                                                                                            Convert.ToSingle(txtPrecusorTol.Text));
                 }
+
+
+      
                 GS.NumbersOfPeaksForSequencing = 140;
                 GS.UseAVGMass = chkAVGMass.Checked;
                 //GS.DebugMode(@"E:\temp\SeqTmp\");

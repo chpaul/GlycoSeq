@@ -66,7 +66,7 @@
             // lblCurrentScan
             // 
             this.lblCurrentScan.AutoSize = true;
-            this.lblCurrentScan.Location = new System.Drawing.Point(147, 8);
+            this.lblCurrentScan.Location = new System.Drawing.Point(94, 9);
             this.lblCurrentScan.Name = "lblCurrentScan";
             this.lblCurrentScan.Size = new System.Drawing.Size(30, 13);
             this.lblCurrentScan.TabIndex = 4;
@@ -82,7 +82,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(327, 9);
+            this.label1.Location = new System.Drawing.Point(362, 57);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(99, 13);
             this.label1.TabIndex = 8;
@@ -91,7 +91,7 @@
             // lblRunningTime
             // 
             this.lblRunningTime.AutoSize = true;
-            this.lblRunningTime.Location = new System.Drawing.Point(433, 8);
+            this.lblRunningTime.Location = new System.Drawing.Point(467, 57);
             this.lblRunningTime.Name = "lblRunningTime";
             this.lblRunningTime.Size = new System.Drawing.Size(28, 13);
             this.lblRunningTime.TabIndex = 9;
@@ -105,6 +105,7 @@
             this.lblStatus.Size = new System.Drawing.Size(40, 13);
             this.lblStatus.TabIndex = 10;
             this.lblStatus.Text = "Status:";
+            this.lblStatus.Visible = false;
             // 
             // frmProcessing
             // 
@@ -122,7 +123,6 @@
             this.Name = "frmProcessing";
             this.Text = "Processing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmProcessing_FormClosing);
-            this.Load += new System.EventHandler(this.frmProcessing_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

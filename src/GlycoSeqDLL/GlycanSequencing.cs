@@ -7,6 +7,8 @@ using System.Drawing;
 using COL.GlycoLib;
 using COL.MassLib;
 using COL.ProtLib;
+using CSMSL.Chemistry;
+
 namespace COL.GlycoSequence
 {
     public class GlycanSequencing
@@ -22,7 +24,7 @@ namespace COL.GlycoSequence
         float _MS2torelance = 0.8f; //dalton
         //float _torelance = 500.0f; // old one
         float _precursorTorelance = 50.0f;
-        private float _y1mass = 0.0f;
+        private float _y1MZ = 0.0f;
         private int _y1charge = 0;
         private MSScan _scan;
         private List<MSPoint> _potentialPeaks; // mass greater than Y1        
@@ -39,7 +41,7 @@ namespace COL.GlycoSequence
         private int _NoNeuGc = 99;
         private float MaxIntensityInScan = 0.0f;
         private float _glycanMonoMass = 0.0f;// Precusor -Y1 + GalNAc;
-        private float _peptideMonoMass = 0.0f;
+        private float _peptideMass = 0.0f;
         //private float _peptideMz = 0.0f;
         private List<GlycanStructure> _SequencedGlycanStructure = new List<GlycanStructure>();
         private List<GlycanStructure> _FullSequencedGlycanStructure = new List<GlycanStructure>();
@@ -55,21 +57,12 @@ namespace COL.GlycoSequence
         private bool _isCYS_CAM=true;
         private string _status = "";
         private enumGlycanType _glycanType;
-        public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge)
-        {
-            _y1mass = argY1;
-            _y1charge = argY1Charge;
-            _scan = argScan;
-            //_PrecusorMono = _scan.ParentAVGMonoMW;            
-            //_peptideMonoMass = (float)(_y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, _y1charge)) * _y1charge - MassLib.Atoms.ProtonMass;
-            //_glycanMonoMass = (float)(_scan.ParentAVGMonoMW - _peptideMonoMass);
-            //_peptideMz = _y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, argY1Charge);
-            _structureRules = ReadFilterRules.ReadFilterRule();
-        }
-        public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
+        private TargetPeptide _TargetPeptide;
+
+        public GlycanSequencing(MSScan argScan, float argY1MZ, int argY1Charge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
         {
             _NGlycanData = argNGlycanData;
-            _y1mass = argY1;
+            _y1MZ = argY1MZ;
             _y1charge = argY1Charge;
             _scan = argScan;
             _NoDeHex = argNoDeHex;
@@ -81,6 +74,7 @@ namespace COL.GlycoSequence
             _MS2torelance = argPeakTol;
             _precursorTorelance = argPrecursorTol;
             _NumCompostionSet = true;
+            _peptideMass = (float)(_y1MZ - MassLib.Atoms.ProtonMass) * _y1charge -GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc);
             _structureRules = ReadFilterRules.ReadFilterRule();
         }
         /// <summary>
@@ -100,20 +94,15 @@ namespace COL.GlycoSequence
         /// <param name="argPeakTol"></param>
         /// <param name="argPrecursorTol"></param>
         /// <param name="argAVGMass"></param>
-        public GlycanSequencing(MSScan argScan, string  argPeptideSequence, bool argIsCYS_CAM, int argY1Charge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
+        public GlycanSequencing(MSScan argScan, string argPeptideSequence, bool argIsCYS_CAM, int argY1Charge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
         {
             _NGlycanData = argNGlycanData;
             _peptideStr = argPeptideSequence;
             _isCYS_CAM = argIsCYS_CAM;
             AminoAcidMass MW = new AminoAcidMass();
-            //if (argAVGMass)
-            //{
-                _y1mass = (MW.GetAVGMonoMW(argPeptideSequence, argIsCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * argY1Charge) / argY1Charge;
-            //}
-            //else
-            //{
-            //    _y1mass = (MW.GetMonoMW(argPeptideSequence, argIsCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * argY1Charge) / argY1Charge;
-            //}            
+
+            _y1MZ = (MW.GetAVGMonoMW(argPeptideSequence, argIsCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * argY1Charge) / argY1Charge;
+           
             _y1charge = argY1Charge;
             _scan = argScan;
             _NoDeHex = argNoDeHex;
@@ -125,116 +114,14 @@ namespace COL.GlycoSequence
             _MS2torelance = argPeakTol;
             _precursorTorelance = argPrecursorTol;
             _NumCompostionSet = true;
+            _peptideMass = MW.GetMonoMW(argPeptideSequence, argIsCYS_CAM);//(float)(_y1MZ - MassLib.Atoms.ProtonMass) * _y1charge -GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc);
             _structureRules = ReadFilterRules.ReadFilterRule();
         }
-        /*public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
+        public TargetPeptide Peptide
         {
-            _NGlycanData = argNGlycanData;
-            _y1mass = argY1;
-            _y1charge = argY1Charge;
-            _scan = argScan;
-            _torelance = argPeakTol;
-            _precursorTorelance = argPrecursorTol;
-            _OutputLocation = argOutput;
-            _PrecusorMono = _scan.ParentMonoMW;
-            _peptideMonoMass = (float)((_y1mass - 1.0073) * argY1Charge - GlycanMass.GetGlycanMass(Glycan.Type.HexNAc));
-            _glycanMonoMass = (float)(_scan.ParentMonoMW - _peptideMonoMass);
-            _peptideMz = _y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, argY1Charge);
-            GetAllPeaks();
-            //GenerateGlycanMass(_y1charge, out _glycanBuildingblock);
-            ReadFilterRules();
-        }*/
-        /*public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge, string argOutput, float argPeakTol, float argPrecursorTol)
-        {
-            _y1mass = argY1;
-            _y1charge = argY1Charge;
-            _scan = argScan;
-            _torelance = argPeakTol;
-            _precursorTorelance = argPrecursorTol;
-            _OutputLocation = argOutput;
-            _PrecusorMono = _scan.ParentMonoMW;
-            _peptideMonoMass = (float)((_y1mass - 1.0073) * argY1Charge - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, 1));
-            _glycanMonoMass = (float)(_scan.ParentMonoMW - _peptideMonoMass);
-            _peptideMz = _y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, argY1Charge);
-            GetAllPeaks();
-            //GenerateGlycanMass(_y1charge, out _glycanBuildingblock); 
-            ReadFilterRules();
-        }*/
-        /*public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge, bool argIsHex, bool argIsHexNAc, bool argIsDeHex, bool argIsNeuAc, bool argIsNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
-        {
-            _NGlycanData = argNGlycanData;
-            _y1mass = argY1;
-            _y1charge = argY1Charge;
-            _scan = argScan;
-            if (argIsHex == false)
-            {
-                _NoHex = 0;
-            }
-            if (argIsDeHex == false)
-            {
-                _NoDeHex = 0;
-            }
-            if (argIsHexNAc == false)
-            {
-                _NoHexNac = 0;
-            }
-            if (argIsNeuAc == false)
-            {
-                _NoNeuAc = 0;
-            }
-            if (argIsNeuGc == false)
-            {
-                _NoNeuGc = 0;
-            }
-            
-            _OutputLocation = argOutput;
-            _PrecusorMono = _scan.ParentMonoMW;
-            _peptideMonoMass = (float)((_y1mass - 1.0073) * argY1Charge - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, 1));
-            _glycanMonoMass = (float)(_scan.ParentMonoMW - _peptideMonoMass);
-            _peptideMz = _y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, argY1Charge);
-            _torelance = argPeakTol;
-            _precursorTorelance = argPrecursorTol;
-            GetAllPeaks();
-            //GenerateGlycanMass(_y1charge, out _glycanBuildingblock);
-            ReadFilterRules();
-        }*/
-    
-        /*public GlycanSequencing(MSScan argScan, float argY1, int argY1Charge, bool argIsHex, bool argIsHexNAc, bool argIsDeHex, bool argIsNeuAc, bool argIsNeuGc, string argOutput)
-        {
-            _y1mass = argY1;
-            _y1charge = argY1Charge;
-            _scan = argScan;
-            if (argIsHex == false)
-            {
-                _NoHex = 0;
-            }
-            if (argIsDeHex == false)
-            {
-                _NoDeHex = 0;
-            }
-            if (argIsHexNAc == false)
-            {
-                _NoHexNac = 0;
-            }
-            if (argIsNeuAc == false)
-            {
-                _NoNeuAc = 0;
-            }
-            if (argIsNeuGc == false)
-            {
-                _NoNeuGc = 0;
-            }
-            _OutputLocation = argOutput;
-            _PrecusorMono = _scan.ParentMonoMW;
-            _peptideMonoMass = (float)((_y1mass - 1.0073) * argY1Charge - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, 1));
-            _glycanMonoMass = (float)(_scan.ParentMonoMW - _peptideMonoMass);
-
-            GetAllPeaks();
-            //GenerateGlycanMass(_y1charge, out _glycanBuildingblock);
-            ReadFilterRules();
-
-
-        }*/
+            get { return _TargetPeptide; }
+            set { _TargetPeptide = value; }
+        }
         public enumGlycanType GlycanType
         {
             get { return _glycanType; }
@@ -250,10 +137,10 @@ namespace COL.GlycoSequence
             set { _scan = value; }
             get { return _scan; }
         }
-        public float Y1
+        public float Y1MZ
         {
-            set { _y1mass = value; }
-            get { return  _y1mass; }
+            set { _y1MZ = value; }
+            get { return _y1MZ; }
         }
         public float PrecursorTorelance
         {
@@ -271,7 +158,7 @@ namespace COL.GlycoSequence
                     if(_UseAVGMass ==false)
                     {
                         AminoAcidMass MW = new AminoAcidMass();
-                        _y1mass = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
+                        _y1MZ = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
                     }            
                 }
             get { return _UseAVGMass; }
@@ -297,7 +184,7 @@ namespace COL.GlycoSequence
         }
         public float PeptideMonoMass
         {
-            get { return _peptideMonoMass; }
+            get { return _peptideMass; }
         }
         public float GlycanMonoMass
         {
@@ -427,7 +314,7 @@ namespace COL.GlycoSequence
                 {
                     return -2;
                 }
-                if (_y1mass > 2000.0f)
+                if (_y1MZ > 2000.0f)
                 {
                     return -1;
                 }
@@ -468,13 +355,13 @@ namespace COL.GlycoSequence
             try
             {
                 _allPeaks = new List<MSPoint>();
-                for (int i = 0; i < _scan.MSPeaks.Count; i++)
+                for (int i = 0; i < _scan.MZs.Length; i++)
                 {
 
-                    _allPeaks.Add(new MSPoint(_scan.MSPeaks[i].MonoMass, _scan.MSPeaks[i].MonoIntensity));
-                    if (_scan.MSPeaks[i].MonoIntensity > MaxIntensityInScan)
+                    _allPeaks.Add(new MSPoint(_scan.MZs[i], _scan.Intensities[i]));
+                    if (_scan.Intensities[i] > MaxIntensityInScan)
                     {
-                        MaxIntensityInScan = (float)_scan.MSPeaks[i].MonoIntensity;
+                        MaxIntensityInScan = (float)_scan.Intensities[i];
                     }
                 }
             }
@@ -520,7 +407,7 @@ namespace COL.GlycoSequence
             
             for (int i = 0; i < _allPeaks.Count; i++)
             {
-                if (_allPeaks[i].Mass >= _y1mass - 2.0f)
+                if (_allPeaks[i].Mass >= _y1MZ - 2.0f)
                 {
                     _potentialPeaks.Add(new MSPoint(_allPeaks[i].Mass, _allPeaks[i].Intensity / MaxIntensityInScan));
                     if (_potentialPeaks.Count >= argNoOfPeaks)
@@ -608,7 +495,7 @@ namespace COL.GlycoSequence
                                                          GlycanMass.GetGlycanAVGMass(Glycan.Type.DeHex) * _NoDeHex +
                                                          GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuAc) * _NoNeuAc +
                                                          GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuGc) * _NoNeuGc;
-                        _y1mass = (MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
+                        _y1MZ = (MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
                     }
                     else if (_scan.ParentMonoMW != 0.0)
                     {
@@ -623,13 +510,13 @@ namespace COL.GlycoSequence
                 } //End  of Recovery Precursor mono
 
 
-                if (_y1mass == 0.0f)
+                if (_y1MZ == 0.0f)
                 {
                     AminoAcidMass MW = new AminoAcidMass();
-                    _y1mass = (MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
+                    _y1MZ = (MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
                 }
-                _peptideMonoMass = (float)(_y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, _y1charge)) * _y1charge - MassLib.Atoms.ProtonMass;
-                _glycanMonoMass = (float)(_PrecusorMono - _peptideMonoMass);
+                _peptideMass = (float)(_y1MZ - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, _y1charge)) * _y1charge - MassLib.Atoms.ProtonMass;
+                _glycanMonoMass = (float)(_PrecusorMono - _peptideMass);
                 //_peptideMz = _y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, _y1charge);
 
             }
@@ -653,37 +540,37 @@ namespace COL.GlycoSequence
                                                          GlycanMass.GetGlycanMass(Glycan.Type.DeHex) * _NoDeHex +
                                                          GlycanMass.GetGlycanMass(Glycan.Type.NeuAc) * _NoNeuAc +
                                                          GlycanMass.GetGlycanMass(Glycan.Type.NeuGc) * _NoNeuGc;
-                        _y1mass = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
+                        _y1MZ = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
                     }
                     else
                     {
                         _PrecusorMono = (_scan.ParentMZ - Atoms.ProtonMass) * _scan.ParentMZ;
                     }
                 }
-                if (_y1mass == 0.0f)
+                if (_y1MZ == 0.0f)
                 {
                     AminoAcidMass MW = new AminoAcidMass();
-                    _y1mass = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
+                    _y1MZ = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
                 }
-                _peptideMonoMass = (float)(_y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, _y1charge)) * _y1charge - MassLib.Atoms.ProtonMass;
-                _glycanMonoMass = (float)(_PrecusorMono - _peptideMonoMass);
+                _peptideMass = (float)(_y1MZ - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, _y1charge)) * _y1charge - MassLib.Atoms.ProtonMass;
+                _glycanMonoMass = (float)(_PrecusorMono - _peptideMass);
                // _peptideMz = _y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, _y1charge);
             }
             #endregion
 
             //-------Hard code part--------
             //_PrecusorMono = 5407.23229f;
-            //_peptideMonoMass = 2399.187f;
-            //_glycanMonoMass = (float)(_PrecusorMono - _peptideMonoMass);
-            //_y1mass = (float)(_peptideMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + COL.MassLib.Atoms.ProtonMass * 3) / 3;
+            //_peptideMass = 2399.187f;
+            //_glycanMonoMass = (float)(_PrecusorMono - _peptideMass);
+            //_y1mass = (float)(_peptideMass + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + COL.MassLib.Atoms.ProtonMass * 3) / 3;
             //_peptideMz = _y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, _y1charge);
             //---------------
 
-            _SequencedGlycanStructure.Add(new GlycanStructure(new Glycan(Glycan.Type.HexNAc, _y1charge), _y1mass)); //Add Y1 into Candidate;
-            UpdateStatus("Y1=" + _y1mass.ToString("0.0000") + "  Y1z=" + _y1charge.ToString());
+            _SequencedGlycanStructure.Add(new GlycanStructure(new Glycan(Glycan.Type.HexNAc, _y1charge), _y1MZ)); //Add Y1 into Candidate;
+            UpdateStatus("Y1=" + _y1MZ.ToString("0.0000") + "  Y1z=" + _y1charge.ToString());
             //Find Y1
-            int CloseY1Idx = MassUtility.GetClosestMassIdx(_potentialPeaks, _y1mass);
-            if (Math.Abs(_y1mass - _potentialPeaks[CloseY1Idx].Mass) <= _MS2torelance)
+            int CloseY1Idx = MassUtility.GetClosestMassIdx(_potentialPeaks, _y1MZ);
+            if (Math.Abs(_y1MZ - _potentialPeaks[CloseY1Idx].Mass) <= _MS2torelance)
             {
                 _SequencedGlycanStructure[0].Root.IDPeak(_potentialPeaks[CloseY1Idx].Mass, _potentialPeaks[CloseY1Idx].Intensity);
             }
@@ -696,7 +583,7 @@ namespace COL.GlycoSequence
             for (int chargePlus = 0; chargePlus <= 1; chargePlus++)
             {
                 int CurrentCharge = _y1charge + chargePlus;
-                float CurrentY1Mz = Convert.ToSingle((_y1mass * _y1charge + 1.0079 * chargePlus) / CurrentCharge);
+                float CurrentY1Mz = Convert.ToSingle((_y1MZ * _y1charge + 1.0079 * chargePlus) / CurrentCharge);
                 GenerateGlycanMass(CurrentCharge, out _glycanBuildingblock);
                 float PeptideMone = 0.0f;
                 if (_UseAVGMass)
@@ -1018,100 +905,16 @@ namespace COL.GlycoSequence
             }
         }
         private void FindNLinkedStructure()
-        {           
+        {
+            bool isBiscectingSignal = false;
+            bool isCoreFucsse = false;
             AminoAcidMass MW = new AminoAcidMass();
-            //if (_UseAVGMass)
-            //{
-            //    if(_scan.ParentAVGMonoMW != 0.0f)
-            //    {
-            //        UpdateStatus("Parent avg mono found");
-            //        //_PrecusorMono = _scan.ParentAVGMonoMW;
-            //        _PrecusorMono = _scan.ParentMonoMW;
-            //    }
-            //    else
-            //    {                   
-            //            // try to recover PrecusorMono
-            //           if(_peptideStr!="")
-            //            {
-            //                UpdateStatus("Parent avg mono not found use peptide and composition");                           
-            //               _PrecusorMono = MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM)+
-            //                                                GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) * _NoHexNac +
-            //                                                GlycanMass.GetGlycanAVGMass(Glycan.Type.Hex) * _NoHex +
-            //                                                GlycanMass.GetGlycanAVGMass(Glycan.Type.DeHex) * _NoDeHex +
-            //                                                GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuAc) * _NoNeuAc +
-            //                                                GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuGc) *_NoNeuGc ;                           
-            //               _y1mass = (MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM) +  GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc)  + Atoms.ProtonMass * _y1charge) / _y1charge;
-            //            }
-            //           else if ( _scan.ParentMonoMW!=0.0)
-            //           {
-            //               UpdateStatus("Parent avg mono not found use parent mono");
-            //               _PrecusorMono = _scan.ParentMonoMW;
-            //           }
-            //           else 
-            //            {
-            //                UpdateStatus("Parent avg mono not found use header mz");
-            //                _PrecusorMono = (_scan.ParentMZ  - Atoms.ProtonMass)* _scan.ParentMZ;
-            //            }                    
-            //    }
-            //    if (_y1mass == 0.0f)
-            //    {                  
-            //        _y1mass = (MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
-            //    }
-            //    _peptideMonoMass = (float)(_y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, _y1charge)) * _y1charge - MassLib.Atoms.ProtonMass;                
-            //    _glycanMonoMass = (float)(_PrecusorMono - _peptideMonoMass);
-            //    //_peptideMz = _y1mass - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, _y1charge);         
-
-            //}
-            //else //Not average mass
-            //{
-            //    if(_scan.ParentMonoMW != 0.0f)
-            //    {
-            //        _PrecusorMono = _scan.ParentMonoMW;
-            //    }
-            //    else
-            //    {
-            //            // try to recover PrecusorMono
-            //           if(_peptideStr!="")
-            //            {                            
-            //               _PrecusorMono = MW.GetMonoMW(_peptideStr, _isCYS_CAM)+
-            //                                                GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) * _NoHexNac +
-            //                                                GlycanMass.GetGlycanMass(Glycan.Type.Hex) * _NoHex +
-            //                                                GlycanMass.GetGlycanMass(Glycan.Type.DeHex) * _NoDeHex +
-            //                                                GlycanMass.GetGlycanMass(Glycan.Type.NeuAc) * _NoNeuAc +
-            //                                                GlycanMass.GetGlycanMass(Glycan.Type.NeuGc) *_NoNeuGc ;                           
-            //               _y1mass = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) +  GlycanMass.GetGlycanMass(Glycan.Type.HexNAc)  + Atoms.ProtonMass * _y1charge) / _y1charge;
-            //            }
-            //           else 
-            //            {
-            //                _PrecusorMono = (_scan.ParentMZ  - Atoms.ProtonMass)* _scan.ParentMZ;
-            //            }                    
-            //    }
-            //    if (_y1mass == 0.0f)
-            //    {
-                    
-            //        _y1mass = (MW.GetMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * _y1charge) / _y1charge;
-            //    }
-            //    _peptideMonoMass = (float)MW.GetMonoMW(_peptideStr, _isCYS_CAM) ;
-            //    _glycanMonoMass = (float)(_PrecusorMono - _peptideMonoMass);
-            //    //_peptideMz = _y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, _y1charge);
-            //}
-
-
-            //-------Hard code part--------
-            //_PrecusorMono = 5407.23229f;
-            //_peptideMonoMass = 2399.187f;
-            //_glycanMonoMass = (float)(_PrecusorMono - _peptideMonoMass);
-            //_y1mass = (float)(_peptideMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + COL.MassLib.Atoms.ProtonMass * 3) / 3;
-            //_peptideMz = _y1mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, _y1charge);
-            //---------------
-
-            //_y1mass = (MW.GetAVGMonoMW(_peptideStr, _isCYS_CAM) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc)) / _y1charge + Atoms.ProtonMass;
-
-            _SequencedGlycanStructure.Add(new GlycanStructure(new Glycan(Glycan.Type.HexNAc, _y1charge), _y1mass)); //Add Y1 into Candidate;
-            UpdateStatus("Y1="+ _y1mass.ToString("0.0000")+"  Y1z=" + _y1charge.ToString());
+      
+            _SequencedGlycanStructure.Add(new GlycanStructure(new Glycan(Glycan.Type.HexNAc, _y1charge), _y1MZ)); //Add Y1 into Candidate;
+            UpdateStatus("Y1=" + _y1MZ.ToString("0.0000") + "  Y1z=" + _y1charge.ToString());
             //Find Y1
-            int CloseY1Idx =   MassUtility.GetClosestMassIdx( _potentialPeaks,_y1mass);
-            if (Math.Abs(_y1mass - _potentialPeaks[CloseY1Idx].Mass) <= _MS2torelance)
+            int CloseY1Idx = MassUtility.GetClosestMassIdx(_potentialPeaks, _y1MZ);
+            if (Math.Abs(_y1MZ - _potentialPeaks[CloseY1Idx].Mass) <= _MS2torelance)
             {
                 _SequencedGlycanStructure[0].Root.IDPeak(_potentialPeaks[CloseY1Idx].Mass, _potentialPeaks[CloseY1Idx].Intensity);
             }
@@ -1124,26 +927,26 @@ namespace COL.GlycoSequence
             for (int chargePlus = 0; chargePlus <=1; chargePlus++)
             {
                 int CurrentCharge = _y1charge + chargePlus;
-                float CurrentY1Mz = Convert.ToSingle((_y1mass *_y1charge + 1.0079 * chargePlus) / CurrentCharge);
+                float CurrentY1Mz = Convert.ToSingle((_y1MZ * _y1charge + 1.0079 * chargePlus) / CurrentCharge);
                 GenerateGlycanMass(CurrentCharge, out _glycanBuildingblock);
                 float PeptideMono = 0.0f;
                 if (_UseAVGMass)
                 {
-                    PeptideMono = (CurrentY1Mz - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, CurrentCharge)) * CurrentCharge - MassLib.Atoms.ProtonMass;
+                    PeptideMono = (CurrentY1Mz - MassLib.Atoms.ProtonMass) * CurrentCharge - GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc);
                 }
                 else
                 {
-                    PeptideMono = (CurrentY1Mz - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, CurrentCharge)) * CurrentCharge - MassLib.Atoms.ProtonMass;
+                    PeptideMono = (CurrentY1Mz - MassLib.Atoms.ProtonMass) * CurrentCharge - GlycanMass.GetGlycanMass(Glycan.Type.HexNAc);
                 }
                 foreach (MSPoint pk in _potentialPeaks)
                 {
                     for (int i = 0; i < _SequencedGlycanStructure.Count; i++)
                     {
                         GlycanStructure CandidateTree =(GlycanStructure) _SequencedGlycanStructure[i];
-                        foreach (GlycanTreeNode Node in CandidateTree.Root.TravelGlycanTreeBFS()) //Convert All Internal node to current charge
-                        {
-                            Node.Charge = CurrentCharge;
-                        }
+                        //foreach (GlycanTreeNode Node in CandidateTree.Root.TravelGlycanTreeBFS()) //Convert All Internal node to current charge
+                        //{
+                        //    Node.Charge = CurrentCharge;
+                        //}
 
                         for (int GlycanIdx = 0; GlycanIdx < _glycanBuildingblock.Count; GlycanIdx++)
                         {
@@ -1199,10 +1002,33 @@ namespace COL.GlycoSequence
                                     {
                                         continue;
                                     }
+                                    if ((CandidateTree.IUPACString.ToLower() == "hex-hexnac-hexnac" &&
+                                        ExtraGlycan.GlycanType == Glycan.Type.HexNAc)  ||
+                                        (CandidateTree.IUPACString.ToLower() == "hex-hexnac-(dehex-)hexnac" &&
+                                        ExtraGlycan.GlycanType == Glycan.Type.HexNAc)
+                                        )
+                                    {
+                                        isBiscectingSignal = true;
+                                    }
+                                    if ((CandidateTree.IUPACString.ToLower() == "hexnac" &&
+                                        ExtraGlycan.GlycanType == Glycan.Type.DeHex) ||
+                                        (CandidateTree.IUPACString.ToLower() == "hexnac-hexnac" &&
+                                        ExtraGlycan.GlycanType == Glycan.Type.DeHex) ||
+                                        (CandidateTree.IUPACString.ToLower() == "hex-hexnac-hexnac" &&
+                                        ExtraGlycan.GlycanType == Glycan.Type.DeHex) ||
+                                        (CandidateTree.IUPACString.ToLower() == "hex-hex-hexnac-hexnac" &&
+                                        ExtraGlycan.GlycanType == Glycan.Type.DeHex) ||
+                                        (CandidateTree.IUPACString.ToLower() == "hex-(hex-)hex-hexnac-hexnac" &&
+                                        ExtraGlycan.GlycanType == Glycan.Type.DeHex) )
+                                    {
+                                        isCoreFucsse = true;
+                                    }
+
+
                                     GlycanStructure CloneTree = (GlycanStructure)CandidateTree.Clone();
 
 
-                                    List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(CloneTree, ExtraGlycan, pk.Mass, pk.Intensity);
+                                    List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(CloneTree, ExtraGlycan, pk.Mass, pk.Intensity, isBiscectingSignal, isCoreFucsse);
 
                                     if (_isDebug)
                                     {
@@ -1234,233 +1060,56 @@ namespace COL.GlycoSequence
                                 }
                             }
                             //else
-                            //{
-                            //    if (Math.Abs(((CandidateTree.GlycanMonoMass + PeptideMono + ExtraGlycan.Mass + MassLib.Atoms.ProtonMass * CurrentCharge) / CurrentCharge) - pk.Mass) > _MS2torelance)
-                            //   // if (Math.Abs((CandidateTree.GlycanMZ + _y1mass + ExtraGlycan.Mz - GlycanMass.GetGlycanAVGMasswithCharge(Glycan.Type.HexNAc, CurrentCharge)) - pk.Mass) > _MS2torelance)
-                            //    {
-                            //        continue;
-                            //    }
-                            //    else //Add One monosaccharide to Tree
-                            //    {
-                            //        if (ExtraGlycan.GlycanType == Glycan.Type.DeHex && CandidateTree.Root.GlycanType != Glycan.Type.HexNAc) // DeHex only connect to HexNac
-                            //        {
-                            //            continue;
-                            //        }
-                            //        GlycanStructure CloneTree = (GlycanStructure)CandidateTree.Clone();
-
-                            //        List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(CloneTree, ExtraGlycan, pk.Mass, pk.Intensity);
-
-                            //        if (_isDebug)
-                            //        {
-                            //            string tmp = CloneTree.IUPACString + "," + ExtraGlycan.GlycanType.ToString() + ",";
-                            //            List<string> Structure = new List<string>();
-                            //            foreach (GlycanStructure T in AddedTrees)
-                            //            {
-                            //                if (!Structure.Contains(T.IUPACString))
-                            //                {
-                            //                    Structure.Add(T.IUPACString);
-                            //                }
-                            //            }
-                            //            foreach (string str in Structure)
-                            //            {
-                            //                tmp = tmp + str + ",";
-                            //            }
-                            //            DebugSW.WriteLine(tmp.Substring(0, tmp.Length - 1));
-                            //        }
-
-                            //        foreach (GlycanStructure iterGT in AddedTrees)
-                            //        {
-                            //            iterGT.Root.SortSubTree();
-                            //            iterGT.Charge = CurrentCharge;
-                            //            if (!_SequencedGlycanStructure.Contains(iterGT))
-                            //            {
-                            //                _SequencedGlycanStructure.Add(iterGT);
-                            //            }
-                            //        }
-                            //    }
-                            //}
+       
 
 
                         }//iterate Glycan
                     } //iterate CandidateGlycan
                 }//iterate Peaks
 
-
-                //Extra structure check
-                //List<GlycanStructure> NewlyAdded = new List<GlycanStructure>();
-                //float ParentMonoMW = _scan.ParentMonoMW;
- 
-                //foreach (GlycanStructure t in NewlyAdded)
-                //{
-                //    t.Root.SortSubTree();
-                //    _SequencedGlycanStructure.Add(t);
-                //}
-
-                //NewlyAdded.Clear();      
-
-                //foreach (GlycanStructure t in NewlyAdded)
-                //{
-                //    t.Root.SortSubTree();
-                //    _SequencedGlycanStructure.Add(t);
-                //}                
+          
             }
             _SequencedGlycanStructure = CleanNLinkedStructure(_SequencedGlycanStructure);        
 
             //Complete the structure (add last glycan) using percursor average or first mono mass            
-         
+            
             foreach (GlycanStructure t in _SequencedGlycanStructure)
             {
                 for (int i = 0; i < _glycanBuildingblock.Count; i++)
                 {
                     Glycan NextGlycan = new Glycan(_glycanBuildingblock[i].GlycanType, 1);
-                    if(MassUtility.GetMassPPM( (t.GlycanMonoMass+NextGlycan.Mass + MW.GetMonoMW(_peptideStr, _isCYS_CAM) )/ _scan.ParentCharge + Atoms.ProtonMass ,_scan.ParentMZ)<_precursorTorelance)
+
+
+                    if (MassUtility.GetMassPPM((GetGlycanMass(t) + NextGlycan.Mass + _peptideMass) , _scan.ParentMonoMW) <= _precursorTorelance)
                     {
                         List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _scan.ParentMonoMW, 0.0f);
-                        _FullSequencedGlycanStructure.AddRange(AddedTrees);
-                    }
-                    //if (_UseAVGMass)
-                    //{
-                    //    if (PrecusorAVGMonoMass != 0.0f)
-                    //    {
-                    //        if (MassUtility.GetMassPPM(t.GlycanAVGMonoMass + PeptideMonoMass + NextGlycan.AVGMass, PrecusorAVGMonoMass) < _precursorTorelance)
-                    //        {
-                    //            List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _PrecusorMono, 0.0f);
-                    //            _FullSequencedGlycanStructure.AddRange(AddedTrees);
-                    //            continue;
-                    //        }
-                    //        if (_createPrecursor)
-                    //        {
-                    //            //Create Precursor m/z
-                    //            for (int j = t.Charge; j <= _scan.ParentCharge; j++)
-                    //            {
-                    //                float  PrecusorMZ= (_PrecusorMono + Atoms.ProtonMass * j ) / (float)j;
-                    //                float GlycoPeptidMZ = (t.GlycanAVGMonoMass + PeptideMonoMass + NextGlycan.AVGMass + Atoms.ProtonMass * j) / (float)j;
-
-                    //                if (Math.Abs(PrecusorMZ-GlycoPeptidMZ) <= _MS2torelance)
-                    //                {
-                    //                    List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _PrecusorMono, 0.0f);
-                    //                    _FullSequencedGlycanStructure.AddRange(AddedTrees);
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //    else //Precursor AVG Mono not found
-                    //    {
-                    //        if (MassUtility.GetMassPPM(t.GlycanAVGMonoMass + PeptideMonoMass + NextGlycan.AVGMass, PrecusorMonoMass) < _precursorTorelance*3)
-                    //        {
-                    //            List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _PrecusorMono, 0.0f);
-                    //            _FullSequencedGlycanStructure.AddRange(AddedTrees);
-                    //            continue;
-                    //        }
-                    //        if (_createPrecursor)
-                    //        {
-                    //            //Create Precursor m/z
-                    //            for (int j = t.Charge-1; j <= _scan.ParentCharge; j++)
-                    //            {
-                    //                float PrecusorMZ = (_PrecusorMono + Atoms.ProtonMass * j) / (float)j;
-                    //                float GlycoPeptidMZ = (t.GlycanAVGMonoMass + PeptideMonoMass + NextGlycan.AVGMass + Atoms.ProtonMass * j) / (float)j;
-
-                    //                if (Math.Abs(PrecusorMZ - GlycoPeptidMZ) <= _MS2torelance)
-                    //                {
-                    //                    List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _PrecusorMono, 0.0f);
-                    //                    _FullSequencedGlycanStructure.AddRange(AddedTrees);
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
-                    //else //non-AVG Mass
-                    //{
-                    //    if (MassUtility.GetMassPPM(t.GlycanMonoMass + PeptideMonoMass + NextGlycan.Mass, PrecusorMonoMass) < _precursorTorelance)
-                    //    {
-                    //        List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _PrecusorMono, 0.0f);
-                    //        _FullSequencedGlycanStructure.AddRange(AddedTrees);
-                    //        continue;
-                    //    }
-                    //    if (_createPrecursor)
-                    //    {
-                    //        //Create Precursor m/z
-                    //        for (int j = t.Charge; j <= _scan.ParentCharge; j++)
-                    //        {
-                    //            float PrecusorMZ = (_PrecusorMono + Atoms.ProtonMass * j) / (float)j;
-                    //            float GlycoPeptidMZ = (t.GlycanMonoMass + PeptideMonoMass + NextGlycan.Mass + Atoms.ProtonMass * j) / (float)j;
-
-                    //            if (Math.Abs(PrecusorMZ - GlycoPeptidMZ) <= _MS2torelance)
-                    //            {
-                    //                List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _PrecusorMono, 0.0f);
-                    //                _FullSequencedGlycanStructure.AddRange(AddedTrees);
-                    //            }
-                    //        }
-                    //    }
-                    //}
-                }
-            }
-
-            //TO:Do
-            //Use number of compostion to complete structure
-            //if (_FullSequencedGlycanStructure.Count == 0 && _NumCompostionSet == true)
-            //{               
-            //    foreach (GlycanStructure GS in _SequencedGlycanStructure)
-            //    {
-            //        int LeftGlycan = 0;
-            //        LeftGlycan = _NoHex - GS.NoOfHex;
-            //        LeftGlycan = LeftGlycan + (_NoHexNac - GS.NoOfHexNac);
-            //        LeftGlycan = LeftGlycan + (_NoDeHex - GS.NoOfDeHex);
-            //        LeftGlycan = LeftGlycan + (_NoNeuAc - GS.NoOfNeuAc);
-            //        LeftGlycan = LeftGlycan + (_NoNeuGc - GS.NoOfNeuGc);
-
-            //        List<Glycan> ExtraGlycan = new List<Glycan>();
-            //        if (LeftGlycan <= 2)
-            //        {
-            //            for (int i = 0; i < _NoHex - GS.NoOfHex; i++)
-            //            {
-            //                ExtraGlycan.Add(new Glycan(Glycan.Type.Hex,GS.Charge));
-            //            }
-            //            for (int i = 0; i <(_NoHexNac - GS.NoOfHexNac); i++)
-            //            {
-            //                ExtraGlycan.Add(new Glycan(Glycan.Type.HexNAc,GS.Charge));
-            //            }
-            //            for (int i = 0; i < (_NoDeHex - GS.NoOfDeHex); i++)
-            //            {
-            //                ExtraGlycan.Add(new Glycan(Glycan.Type.DeHex,GS.Charge));
-            //            }
-            //            for (int i = 0; i <(_NoNeuAc - GS.NoOfNeuAc); i++)
-            //            {
-            //                ExtraGlycan.Add(new Glycan(Glycan.Type.NeuAc,GS.Charge));
-            //            }
-            //            for (int i = 0; i <(_NoNeuGc - GS.NoOfNeuGc); i++)
-            //            {
-            //                ExtraGlycan.Add(new Glycan(Glycan.Type.NeuGc,GS.Charge));
-            //            }
-            //        }
-            //    }
-            //}
-
-            if (_FullSequencedGlycanStructure.Count != 0)
-            {
-                List<GlycanStructure> tmpStructures = new List<GlycanStructure>();
-                _FullSequencedGlycanStructure = CleanNLinkedStructure(_FullSequencedGlycanStructure);                               
-
-                //Filter with mono mass
-                foreach (GlycanStructure g in _FullSequencedGlycanStructure)
-                {
-                    if (MassUtility.GetMassPPM(g.GlycanMonoMass + MW.GetMonoMW(_peptideStr, true), _scan.ParentMonoMW) < _precursorTorelance)
-                    {
-                        tmpStructures.Add((GlycanStructure)g.Clone());
-                        //Reware for complete structure;
-                        if (_rewardForCompleteStructure != 0.0f)
+                        foreach (GlycanStructure GS in AddedTrees)
                         {
-                            tmpStructures[tmpStructures.Count - 1].Score = tmpStructures[tmpStructures.Count - 1].Score + _rewardForCompleteStructure;                   
+                            GS.IsCompleteSequenced = true;
+                            GS.Root.IDIntensity = GS.Root.IDIntensity + _rewardForCompleteStructure;
+                            //if (MassLib.MassUtility.GetMassPPM(_scan.ParentMonoMW, _peptideMass+GS.GlycanAVGMonoMass  ) < _precursorTorelance)
+                            //{
+                                _FullSequencedGlycanStructure.Add(GS);
+                            //}
                         }
                     }
                 }
-                _FullSequencedGlycanStructure = tmpStructures;
-
             }
+ 
             if (_isDebug)
             {
                 DebugSW.Close();
             }
+        }
+        private float GetGlycanMass(GlycanStructure argGlycan)
+        {
+            float GlycanMass = 0.0f;
+            GlycanMass = GlycanMass + argGlycan.NoOfHex * GlycoLib.GlycanMass.GetGlycanMass(Glycan.Type.Hex);
+            GlycanMass = GlycanMass + argGlycan.NoOfHexNac * GlycoLib.GlycanMass.GetGlycanMass(Glycan.Type.HexNAc);
+            GlycanMass = GlycanMass + argGlycan.NoOfDeHex * GlycoLib.GlycanMass.GetGlycanMass(Glycan.Type.DeHex);
+            GlycanMass = GlycanMass + argGlycan.NoOfNeuAc * GlycoLib.GlycanMass.GetGlycanMass(Glycan.Type.NeuAc);
+            GlycanMass = GlycanMass + argGlycan.NoOfNeuGc * GlycoLib.GlycanMass.GetGlycanMass(Glycan.Type.NeuGc);
+            return GlycanMass;
         }
         private List<GlycanStructure> CleanNLinkedStructure(List<GlycanStructure> argStructures)
         {
@@ -1469,7 +1118,7 @@ namespace COL.GlycoSequence
             List<GlycanStructure> UniqueTrees = new List<GlycanStructure>();
             foreach (GlycanStructure t in argStructures)
             {
-                if (!_UniqueStructureIUPAC.Contains(t.IUPACString) && t.GlycanAVGMonoMass + _peptideMonoMass<= PrecusorMonoMass+10.0f)
+                if (!_UniqueStructureIUPAC.Contains(t.IUPACString) && t.GlycanAVGMonoMass + _peptideMass<= PrecusorMonoMass+10.0f)
                 {
                     _UniqueStructureIUPAC.Add(t.IUPACString);
                     // t.UpdateDistance(-1);
@@ -1520,7 +1169,7 @@ namespace COL.GlycoSequence
             List<GlycanStructure> UniqueTrees = new List<GlycanStructure>();
             foreach (GlycanStructure t in argStructures)
             {
-                if (!_UniqueStructureIUPAC.Contains(t.IUPACString) && t.GlycanAVGMonoMass + _peptideMonoMass <= PrecusorMonoMass + 10.0f)
+                if (!_UniqueStructureIUPAC.Contains(t.IUPACString) && t.GlycanAVGMonoMass + _peptideMass <= PrecusorMonoMass + 10.0f)
                 {
                     _UniqueStructureIUPAC.Add(t.IUPACString);
                     // t.UpdateDistance(-1);
@@ -1717,7 +1366,7 @@ namespace COL.GlycoSequence
                     //NewTree.Root.SubTree1.SubTree1.SubTree2 = (GlycanTree)BrancePoint.SubTree1.Clone();
                     NewTree.AddGlycanToStructure((GlycanTreeNode)BrancePoint.SubTree1.Clone(), NewTree.Root.SubTree1.SubTree1.NodeID);
 
-                    if (NewTree.GlycanMonoMass + _peptideMonoMass < ParentMonoMW)
+                    if (NewTree.GlycanMonoMass + _peptideMass < ParentMonoMW)
                     {
                         if (_NGlycanData && !NewTree.isObyeNLinkedCore())
                         {
@@ -1731,7 +1380,7 @@ namespace COL.GlycoSequence
                     GlycanStructure NewTree = (GlycanStructure)gt.Clone();
                    // NewTree.Root.SubTree1.SubTree1.SubTree2 = (GlycanTree)gt.Root.SubTree1.SubTree1.SubTree1.Clone();
                     NewTree.AddGlycanToStructure((GlycanTreeNode)gt.Root.SubTree1.SubTree1.SubTree1.Clone(), NewTree.Root.SubTree1.SubTree1.NodeID);
-                    if (NewTree.GlycanMonoMass + _peptideMonoMass < ParentMonoMW)
+                    if (NewTree.GlycanMonoMass + _peptideMass < ParentMonoMW)
                     {
                         if (_NGlycanData && !NewTree.isObyeNLinkedCore())
                         {
@@ -1758,7 +1407,7 @@ namespace COL.GlycoSequence
                     if (MassUtility.GetMassPPM(gt.GlycanMonoMass + GlycanMass.GetGlycanMasswithCharge(NextGlycan.GlycanType, 1), _glycanMonoMass) <= _torelance)
                     {
                         //Find Peaks
-                        float TargetMz = ((gt.GlycanMonoMass + _peptideMonoMass + GlycanMass.GetGlycanMasswithCharge(NextGlycan.GlycanType, 1)) + _y1charge * Atoms.ProtonMass) / (float)_y1charge;
+                        float TargetMz = ((gt.GlycanMonoMass + _peptideMass + GlycanMass.GetGlycanMasswithCharge(NextGlycan.GlycanType, 1)) + _y1charge * Atoms.ProtonMass) / (float)_y1charge;
                         int PeakIdx = MassUtility.GetClosestMassIdx( _scan.MSPeaks,TargetMz);
                         float ParentMz = (ParentMonoMW + _y1charge * Atoms.ProtonMass) / (float)_y1charge;
                         float TargetIntensity = 0.0f;
@@ -2023,25 +1672,41 @@ namespace COL.GlycoSequence
             }
             return addedGT;
         }
-        private List<GlycanStructure> AddGlycanToNGlycanTree(GlycanStructure argParentTree, Glycan argGlycan, float argMZ, float argIntensity)
+        private List<GlycanStructure> AddGlycanToNGlycanTree(GlycanStructure argParentTree, Glycan argGlycan, float argMZ, float argIntensity, bool argIsBisecting = false, bool argIsCoreFucose = false)
         {
             List<GlycanStructure> addedGT = new List<GlycanStructure>();
             List<GlycanTreeNode> AllGlycanNodeInParent = argParentTree.Root.FetchAllGlycanNode();
             List<int> AddPosition = new List<int>(); //AddPosition using GlycanNodeID start with 1;
 
-            if (argParentTree.IUPACString == "NeuAc-Hex-HexNAc-Hex-(Hex-Hex-)Hex-HexNAc-HexNAc" && argGlycan.GlycanType == Glycan.Type.HexNAc)
-            {
-            }
             #region DeHex
             if (argGlycan.GlycanType == Glycan.Type.DeHex) // DeHex can place at the 1st core HexNac, and Non-reducing end HexNac  [RULE 8]
             {
-                foreach (GlycanTreeNode T in AllGlycanNodeInParent)
+                if (argParentTree.Root.NoOfDeHex == 0 && argIsCoreFucose) //Fill out the core fucose
                 {
-                    if (T.GlycanType == Glycan.Type.HexNAc && T.DistanceRoot != 3 && (T.Subtrees == null || T.Subtrees.Count < 4) &&T.DistanceRoot!=1 && T.NoOfDeHex == 0)
+                    AddPosition.Add(argParentTree.Root.NodeID);
+                }
+                else
+                {
+                    foreach (GlycanTreeNode T in AllGlycanNodeInParent)
                     {
-                        AddPosition.Add(T.NodeID);                        
+                        //if (argIsCoreFucose)
+                        //{
+
+                        //    if (T.GlycanType == Glycan.Type.HexNAc && T.DistanceRoot != 3 && (T.Subtrees == null || T.Subtrees.Count < 4) && T.DistanceRoot != 1 && T.NoOfDeHex == 0)
+                        //    {
+                        //        AddPosition.Add(T.NodeID);
+                        //    }
+                        //}
+                        
+                        
+                            if (T.GlycanType == Glycan.Type.HexNAc && T.DistanceRoot > 3 && (T.Subtrees == null || T.Subtrees.Count < 4) && T.NoOfDeHexInChild == 0)
+                            {
+                                AddPosition.Add(T.NodeID);
+                            }
+                        
                     }
                 }
+                
             }
             #endregion
             #region HexNAc
@@ -2056,9 +1721,19 @@ namespace COL.GlycoSequence
                     {
                         foreach (GlycanTreeNode T in AllGlycanNodeInParent)
                         {
-                            if ((T.DistanceRoot == 2 || T.DistanceRoot == 3) && T.GlycanType == Glycan.Type.Hex)
+                            if (argIsBisecting)
                             {
-                                AddPosition.Add(T.NodeID);
+                                if ((T.DistanceRoot == 2 || T.DistanceRoot == 3) && T.GlycanType == Glycan.Type.Hex)
+                                {
+                                    AddPosition.Add(T.NodeID);
+                                }
+                            }
+                            else
+                            {   //No Bisecting
+                                if ((T.DistanceRoot == 3) && T.GlycanType == Glycan.Type.Hex)
+                                {
+                                    AddPosition.Add(T.NodeID);
+                                }
                             }
                         }
                     }
@@ -2066,7 +1741,7 @@ namespace COL.GlycoSequence
                     {
                         foreach (GlycanTreeNode T in AllGlycanNodeInParent)
                         {                            
-                            if (T.DistanceRoot == 2 && T.NoOfHexNacInChild == 0) 
+                            if (T.DistanceRoot == 2 && T.NoOfHexNacInChild == 0 && argIsBisecting) 
                             {
                                 AddPosition.Add(T.NodeID); //bisecting
                             }
@@ -2108,7 +1783,7 @@ namespace COL.GlycoSequence
         
                                 }
                             }
-                            if (T.DistanceRoot == 2 && T.NoOfHexNacInChild == 0)
+                            if (T.DistanceRoot == 2 && T.NoOfHexNacInChild == 0 && argIsBisecting)
                             {
                                 AddPosition.Add(T.NodeID); //Add Bisecting GlcNAc ;
                             }
@@ -2134,7 +1809,7 @@ namespace COL.GlycoSequence
                                 }
                             }
                         }
-                        if (T.DistanceRoot == 2 && T.NoOfHexNacInChild == 0) //Bisecting 
+                        if (T.DistanceRoot == 2 && T.NoOfHexNacInChild == 0 && argIsBisecting) //Bisecting 
                         {
                             AddPosition.Add(T.NodeID);
                         }
@@ -2339,11 +2014,5 @@ namespace COL.GlycoSequence
             }
             return addedGT;
         }
-        
-        public void ExporToFolder(string argFolder)
-        {
-            GenerateHtmlReport.ExporToFolder(argFolder, this);
-        }
-       
     }
 }
