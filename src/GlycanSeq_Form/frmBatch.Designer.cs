@@ -102,16 +102,16 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.singleScanModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
+            this.txtMaxGlycansToCompleteStruct_m = new System.Windows.Forms.TextBox();
+            this.txtTopBrancingPeaks_l = new System.Windows.Forms.TextBox();
+            this.txtTopCorePeaks_k = new System.Windows.Forms.TextBox();
+            this.txtTopDiagPeaks_j = new System.Windows.Forms.TextBox();
+            this.txtTopPeaks_i = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -137,7 +137,7 @@
             // 
             this.txtFasta.Location = new System.Drawing.Point(6, 42);
             this.txtFasta.Name = "txtFasta";
-            this.txtFasta.Size = new System.Drawing.Size(367, 20);
+            this.txtFasta.Size = new System.Drawing.Size(301, 20);
             this.txtFasta.TabIndex = 5;
             // 
             // txtRaw
@@ -149,7 +149,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(178, 627);
+            this.btnStart.Location = new System.Drawing.Point(551, 419);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 25;
@@ -159,7 +159,7 @@
             // 
             // btnPeptideBrowse
             // 
-            this.btnPeptideBrowse.Location = new System.Drawing.Point(379, 39);
+            this.btnPeptideBrowse.Location = new System.Drawing.Point(310, 40);
             this.btnPeptideBrowse.Name = "btnPeptideBrowse";
             this.btnPeptideBrowse.Size = new System.Drawing.Size(23, 23);
             this.btnPeptideBrowse.TabIndex = 6;
@@ -267,9 +267,9 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.txtFasta);
             this.groupBox2.Controls.Add(this.btnPeptideBrowse);
-            this.groupBox2.Location = new System.Drawing.Point(6, 161);
+            this.groupBox2.Location = new System.Drawing.Point(426, 232);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(414, 177);
+            this.groupBox2.Size = new System.Drawing.Size(342, 177);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Peptide";
@@ -332,7 +332,7 @@
             "Any -> Asparagine (N)"});
             this.cboPepMutation.Location = new System.Drawing.Point(128, 151);
             this.cboPepMutation.Name = "cboPepMutation";
-            this.cboPepMutation.Size = new System.Drawing.Size(222, 21);
+            this.cboPepMutation.Size = new System.Drawing.Size(202, 21);
             this.cboPepMutation.TabIndex = 30;
             // 
             // label13
@@ -500,9 +500,9 @@
             this.groupBox3.Controls.Add(this.chkCompletedOnly);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.cboTopRank);
-            this.groupBox3.Location = new System.Drawing.Point(196, 497);
+            this.groupBox3.Location = new System.Drawing.Point(213, 324);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(224, 112);
+            this.groupBox3.Size = new System.Drawing.Size(207, 117);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Export";
@@ -589,9 +589,9 @@
             this.groupBox4.Controls.Add(this.txtPeaKTol);
             this.groupBox4.Controls.Add(this.label5);
             this.groupBox4.Controls.Add(this.txtPrecusorTol);
-            this.groupBox4.Location = new System.Drawing.Point(6, 492);
+            this.groupBox4.Location = new System.Drawing.Point(6, 324);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(183, 117);
+            this.groupBox4.Size = new System.Drawing.Size(201, 117);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Torelance";
@@ -688,7 +688,7 @@
             this.grpGlycan.Controls.Add(this.label8);
             this.grpGlycan.Controls.Add(this.label9);
             this.grpGlycan.Controls.Add(this.chkNLinked);
-            this.grpGlycan.Location = new System.Drawing.Point(7, 344);
+            this.grpGlycan.Location = new System.Drawing.Point(7, 163);
             this.grpGlycan.Name = "grpGlycan";
             this.grpGlycan.Size = new System.Drawing.Size(413, 60);
             this.grpGlycan.TabIndex = 31;
@@ -793,7 +793,7 @@
             this.chkHuman.AutoSize = true;
             this.chkHuman.Checked = true;
             this.chkHuman.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkHuman.Location = new System.Drawing.Point(293, 638);
+            this.chkHuman.Location = new System.Drawing.Point(432, 433);
             this.chkHuman.Name = "chkHuman";
             this.chkHuman.Size = new System.Drawing.Size(60, 17);
             this.chkHuman.TabIndex = 4;
@@ -806,7 +806,7 @@
             this.chkAvgMass.AutoSize = true;
             this.chkAvgMass.Checked = true;
             this.chkAvgMass.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAvgMass.Location = new System.Drawing.Point(293, 615);
+            this.chkAvgMass.Location = new System.Drawing.Point(432, 410);
             this.chkAvgMass.Name = "chkAvgMass";
             this.chkAvgMass.Size = new System.Drawing.Size(94, 17);
             this.chkAvgMass.TabIndex = 32;
@@ -819,7 +819,7 @@
             this.groupBox5.Controls.Add(this.btnGlycanList);
             this.groupBox5.Controls.Add(this.txtGlycanList);
             this.groupBox5.Enabled = false;
-            this.groupBox5.Location = new System.Drawing.Point(6, 433);
+            this.groupBox5.Location = new System.Drawing.Point(6, 256);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(414, 53);
             this.groupBox5.TabIndex = 29;
@@ -828,6 +828,7 @@
             // 
             // btnGlycanList
             // 
+            this.btnGlycanList.Enabled = false;
             this.btnGlycanList.Location = new System.Drawing.Point(379, 14);
             this.btnGlycanList.Name = "btnGlycanList";
             this.btnGlycanList.Size = new System.Drawing.Size(23, 23);
@@ -838,6 +839,7 @@
             // 
             // txtGlycanList
             // 
+            this.txtGlycanList.Enabled = false;
             this.txtGlycanList.Location = new System.Drawing.Point(3, 16);
             this.txtGlycanList.Name = "txtGlycanList";
             this.txtGlycanList.Size = new System.Drawing.Size(370, 20);
@@ -846,7 +848,8 @@
             // chkGlycanList
             // 
             this.chkGlycanList.AutoSize = true;
-            this.chkGlycanList.Location = new System.Drawing.Point(9, 410);
+            this.chkGlycanList.Enabled = false;
+            this.chkGlycanList.Location = new System.Drawing.Point(6, 236);
             this.chkGlycanList.Name = "chkGlycanList";
             this.chkGlycanList.Size = new System.Drawing.Size(94, 17);
             this.chkGlycanList.TabIndex = 5;
@@ -860,7 +863,7 @@
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(976, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(773, 24);
             this.menuStrip1.TabIndex = 33;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -881,11 +884,11 @@
             // 
             // groupBox7
             // 
-            this.groupBox7.Controls.Add(this.textBox5);
-            this.groupBox7.Controls.Add(this.textBox4);
-            this.groupBox7.Controls.Add(this.textBox3);
-            this.groupBox7.Controls.Add(this.textBox2);
-            this.groupBox7.Controls.Add(this.textBox1);
+            this.groupBox7.Controls.Add(this.txtMaxGlycansToCompleteStruct_m);
+            this.groupBox7.Controls.Add(this.txtTopBrancingPeaks_l);
+            this.groupBox7.Controls.Add(this.txtTopCorePeaks_k);
+            this.groupBox7.Controls.Add(this.txtTopDiagPeaks_j);
+            this.groupBox7.Controls.Add(this.txtTopPeaks_i);
             this.groupBox7.Controls.Add(this.label19);
             this.groupBox7.Controls.Add(this.label18);
             this.groupBox7.Controls.Add(this.label17);
@@ -893,97 +896,102 @@
             this.groupBox7.Controls.Add(this.label15);
             this.groupBox7.Location = new System.Drawing.Point(426, 27);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(550, 220);
+            this.groupBox7.Size = new System.Drawing.Size(342, 199);
             this.groupBox7.TabIndex = 39;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Sequencing Parameters";
             // 
-            // label15
+            // txtMaxGlycansToCompleteStruct_m
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(19, 16);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(41, 13);
-            this.label15.TabIndex = 0;
-            this.label15.Text = "label15";
+            this.txtMaxGlycansToCompleteStruct_m.Location = new System.Drawing.Point(287, 150);
+            this.txtMaxGlycansToCompleteStruct_m.Name = "txtMaxGlycansToCompleteStruct_m";
+            this.txtMaxGlycansToCompleteStruct_m.Size = new System.Drawing.Size(41, 20);
+            this.txtMaxGlycansToCompleteStruct_m.TabIndex = 9;
+            this.txtMaxGlycansToCompleteStruct_m.Text = "3";
             // 
-            // label16
+            // txtTopBrancingPeaks_l
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(19, 48);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(41, 13);
-            this.label16.TabIndex = 1;
-            this.label16.Text = "label16";
+            this.txtTopBrancingPeaks_l.Location = new System.Drawing.Point(287, 118);
+            this.txtTopBrancingPeaks_l.Name = "txtTopBrancingPeaks_l";
+            this.txtTopBrancingPeaks_l.Size = new System.Drawing.Size(41, 20);
+            this.txtTopBrancingPeaks_l.TabIndex = 8;
+            this.txtTopBrancingPeaks_l.Text = "100";
             // 
-            // label17
+            // txtTopCorePeaks_k
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(19, 77);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(41, 13);
-            this.label17.TabIndex = 2;
-            this.label17.Text = "label17";
+            this.txtTopCorePeaks_k.Location = new System.Drawing.Point(287, 86);
+            this.txtTopCorePeaks_k.Name = "txtTopCorePeaks_k";
+            this.txtTopCorePeaks_k.Size = new System.Drawing.Size(41, 20);
+            this.txtTopCorePeaks_k.TabIndex = 7;
+            this.txtTopCorePeaks_k.Text = "30";
             // 
-            // label18
+            // txtTopDiagPeaks_j
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(19, 115);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(41, 13);
-            this.label18.TabIndex = 3;
-            this.label18.Text = "label18";
+            this.txtTopDiagPeaks_j.Location = new System.Drawing.Point(287, 54);
+            this.txtTopDiagPeaks_j.Name = "txtTopDiagPeaks_j";
+            this.txtTopDiagPeaks_j.Size = new System.Drawing.Size(41, 20);
+            this.txtTopDiagPeaks_j.TabIndex = 6;
+            this.txtTopDiagPeaks_j.Text = "30";
+            // 
+            // txtTopPeaks_i
+            // 
+            this.txtTopPeaks_i.Location = new System.Drawing.Point(287, 22);
+            this.txtTopPeaks_i.Name = "txtTopPeaks_i";
+            this.txtTopPeaks_i.Size = new System.Drawing.Size(41, 20);
+            this.txtTopPeaks_i.TabIndex = 5;
+            this.txtTopPeaks_i.Text = "30";
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(19, 157);
+            this.label19.Location = new System.Drawing.Point(19, 154);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(41, 13);
+            this.label19.Size = new System.Drawing.Size(265, 13);
             this.label19.TabIndex = 4;
-            this.label19.Text = "label19";
+            this.label19.Text = "Add Max monosaccharides for incompleteing structure:";
             // 
-            // textBox1
+            // label18
             // 
-            this.textBox1.Location = new System.Drawing.Point(287, 9);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 5;
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(33, 122);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(251, 13);
+            this.label18.TabIndex = 3;
+            this.label18.Text = "Get top l peaks as sequencing \"Branch\" candidate:";
             // 
-            // textBox2
+            // label17
             // 
-            this.textBox2.Location = new System.Drawing.Point(287, 41);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 6;
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(41, 90);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(243, 13);
+            this.label17.TabIndex = 2;
+            this.label17.Text = "Get top k peaks as sequencing \"Core\" candidate:";
             // 
-            // textBox3
+            // label16
             // 
-            this.textBox3.Location = new System.Drawing.Point(287, 79);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 20);
-            this.textBox3.TabIndex = 7;
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(90, 58);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(194, 13);
+            this.label16.TabIndex = 1;
+            this.label16.Text = "Get top j peaks as peptide + core peak:";
             // 
-            // textBox4
+            // label15
             // 
-            this.textBox4.Location = new System.Drawing.Point(287, 108);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 20);
-            this.textBox4.TabIndex = 8;
-            // 
-            // textBox5
-            // 
-            this.textBox5.Location = new System.Drawing.Point(287, 153);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(100, 20);
-            this.textBox5.TabIndex = 9;
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(172, 26);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(112, 13);
+            this.label15.TabIndex = 0;
+            this.label15.Text = "Get top i peaks as Y1:";
             // 
             // frmBatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.ClientSize = new System.Drawing.Size(976, 659);
+            this.ClientSize = new System.Drawing.Size(773, 454);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.chkGlycanList);
             this.Controls.Add(this.chkHuman);
@@ -1101,11 +1109,11 @@
         private System.Windows.Forms.TextBox txtTolTime;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.TextBox textBox5;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtMaxGlycansToCompleteStruct_m;
+        private System.Windows.Forms.TextBox txtTopBrancingPeaks_l;
+        private System.Windows.Forms.TextBox txtTopCorePeaks_k;
+        private System.Windows.Forms.TextBox txtTopDiagPeaks_j;
+        private System.Windows.Forms.TextBox txtTopPeaks_i;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label17;

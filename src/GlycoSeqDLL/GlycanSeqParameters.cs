@@ -41,7 +41,7 @@ namespace COL.GlycoSequence
         private int DividePartNum = 0;
         private enumPeptideMutation _PeptideMutation;
         private bool _ExportIndividualSpectrum = false;
-
+        private List<int> _PeakParameters = new List<int>(); 
 
         public string RawFilePath
         {
@@ -72,6 +72,12 @@ namespace COL.GlycoSequence
         {
             get { return _PrecursorTol; }
             set { _PrecursorTol = value; }
+        }
+
+        public List<int> PeaksParameters
+        {
+            get { return _PeakParameters; }
+            set { _PeakParameters = value;} 
         }
         public bool IsNGlycan
         {

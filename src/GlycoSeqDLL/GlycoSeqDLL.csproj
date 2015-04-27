@@ -128,9 +128,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlycanCombination.cs" />
     <Compile Include="GlycanSeqParameters.cs" />
     <Compile Include="GlycanSequencing.cs" />
+    <Compile Include="GlycanSequencing_MultipleScoring.cs" />
     <Compile Include="PeptideReader.cs" />
+    <Compile Include="Peptides.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadFilterRules.cs" />
     <Compile Include="ReportGenerator.cs" />

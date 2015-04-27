@@ -107,29 +107,6 @@ namespace GlycanSeq_Form
 
                 if (txtFasta.Text != "" && txtRaw.Text != "" && txtStart.Text != "" && txtEnd.Text != "")
                 {
-                    //List<Protease.Type> ProteaseType = new List<Protease.Type>();
-
-                    //if (chkEnzy_Trypsin.Checked)//Trypsin
-                    //{
-                    //    ProteaseType.Add(Protease.Type.Trypsin);
-                    //}
-                    //if (chkEnzy_GlucE.Checked)//GlucE
-                    //{
-                    //    ProteaseType.Add(Protease.Type.GlucE);
-                    //}
-                    //if(chkEnzy_GlucED.Checked) //GlucED
-                    //{
-                    //    ProteaseType.Add( Protease.Type.GlucED);
-                    //}
-                    //if (chkEnzy_None.Checked || ProteaseType.Count==0)
-                    //{
-                    //    ProteaseType.Add(Protease.Type.None);
-                    //}
-
-                    //if (cboMissCleavage.SelectedItem.ToString() == "")
-                    //{
-                    //    cboMissCleavage.SelectedItem = "0";
-                    //}
                     if (txtCompReward.Text == "")
                     {
                         txtCompReward.Text = "1.0";
@@ -147,8 +124,13 @@ namespace GlycanSeq_Form
                     frmProcessing frmProcess;
      
                     List<TargetPeptide> lstTargetPeptides = new List<TargetPeptide>();
-
-                    
+                    List<int> lstPeaksParas = new List<int>();
+                    lstPeaksParas.Add(Convert.ToInt32(txtTopPeaks_i.Text));
+                    lstPeaksParas.Add(Convert.ToInt32(txtTopDiagPeaks_j.Text));
+                    lstPeaksParas.Add(Convert.ToInt32(txtTopCorePeaks_k.Text));
+                    lstPeaksParas.Add(Convert.ToInt32(txtTopBrancingPeaks_l.Text));
+                    lstPeaksParas.Add(Convert.ToInt32(txtMaxGlycansToCompleteStruct_m.Text));
+                    sequencingParameters.PeaksParameters = lstPeaksParas;
 
                     //Default
                     sequencingParameters.AverageMass = chkAvgMass.Checked;
@@ -287,32 +269,32 @@ namespace GlycanSeq_Form
                     sequencingParameters.ExportFolder = folderBrowserDialog1.SelectedPath;
                     sequencingParameters.ExportIndividualSpectrum = chkIndividualReport.Checked;
 
-                    if (chkGlycanList.Checked) // Use Glycan List
-                    {
-                        GenerateGlycanList();
-                        frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
-                                                                                               Convert.ToInt32(txtEnd.Text),
-                                                                                               Convert.ToSingle(txtPeaKTol.Text),
-                                                                                               Convert.ToSingle(txtPrecusorTol.Text),
-                                                                                               chkNLinked.Checked,
-                                                                                               rdoNeuAc.Checked,
-                                                                                               _glycanCompounds,
-                                                                                               _MassGlycanMapping,
-                                                                                               GlycanCompoundMassList,
-                                                                                               txtGlycanList.Text,
-                                                                                               txtRaw.Text,
-                                                                                               lstTargetPeptides,
-                                                                                               chkAvgMass.Checked,
-                                                                                               chkHCD.Checked,
-                                                                                               chkSeqHCD.Checked,
-                                                                                               folderBrowserDialog1.SelectedPath,
-                                                                                               Convert.ToInt32(cboTopRank.Text),
-                                                                                               chkCompletedOnly.Checked,
-                                                                                               Convert.ToSingle(txtCompReward.Text),
-                                                                                               chkIndividualReport.Checked
-                                                                                               );
-                    }
-                    else
+                    //if (chkGlycanList.Checked) // Use Glycan List
+                    //{
+                    //    GenerateGlycanList();
+                    //    frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
+                    //                                                                           Convert.ToInt32(txtEnd.Text),
+                    //                                                                           Convert.ToSingle(txtPeaKTol.Text),
+                    //                                                                           Convert.ToSingle(txtPrecusorTol.Text),
+                    //                                                                           chkNLinked.Checked,
+                    //                                                                           rdoNeuAc.Checked,
+                    //                                                                           _glycanCompounds,
+                    //                                                                           _MassGlycanMapping,
+                    //                                                                           GlycanCompoundMassList,
+                    //                                                                           txtGlycanList.Text,
+                    //                                                                           txtRaw.Text,
+                    //                                                                           lstTargetPeptides,
+                    //                                                                           chkAvgMass.Checked,
+                    //                                                                           chkHCD.Checked,
+                    //                                                                           chkSeqHCD.Checked,
+                    //                                                                           folderBrowserDialog1.SelectedPath,
+                    //                                                                           Convert.ToInt32(cboTopRank.Text),
+                    //                                                                           chkCompletedOnly.Checked,
+                    //                                                                           Convert.ToSingle(txtCompReward.Text),
+                    //                                                                           chkIndividualReport.Checked
+                    //                                                                           );
+                    //}
+                    //else
                     {
                         frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
                                                                                                Convert.ToInt32(txtEnd.Text),
