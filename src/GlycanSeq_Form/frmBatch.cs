@@ -63,6 +63,8 @@ namespace GlycanSeq_Form
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 txtFasta.Text = openFileDialog1.FileName;
+                ReadPeptideCandidates();
+                btnChkPeptideCandidate.Enabled = true;
             }
         }
         private void btnScanList_Click(object sender, EventArgs e)
@@ -104,7 +106,6 @@ namespace GlycanSeq_Form
             //saveFileDialog1.Filter = "HTML file (*.htm)|*.htm";
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-
                 if (txtFasta.Text != "" && txtRaw.Text != "" && txtStart.Text != "" && txtEnd.Text != "")
                 {
                     if (txtCompReward.Text == "")
@@ -669,6 +670,10 @@ namespace GlycanSeq_Form
             }
         }
 
+        private void ReadPeptideCandidates()
+        {
+            
+        }
         private bool IsGlycopeptide(string argPeptideStr, enumPeptideMutation argMutation)
         {
                 Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase); //NXS NXT  X!=P
@@ -971,6 +976,12 @@ namespace GlycanSeq_Form
             frmSingle frmSingleMode = new frmSingle();
             frmSingleMode.ShowDialog();
             this.Show();
+        }
+
+        private void btnChkPeptideCandidate_Click(object sender, EventArgs e)
+        {
+            frmPeptideCandidate frmPepCand = new frmPeptideCandidate();
+            frmPepCand.ShowDialog();
         }
 
 

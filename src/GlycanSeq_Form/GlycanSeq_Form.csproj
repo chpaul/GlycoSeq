@@ -107,6 +107,12 @@
     <Compile Include="frmBatch.designer.cs">
       <DependentUpon>frmBatch.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmPeptideCandidate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPeptideCandidate.Designer.cs">
+      <DependentUpon>frmPeptideCandidate.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmProcessing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmBatch.resx">
       <DependentUpon>frmBatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPeptideCandidate.resx">
+      <DependentUpon>frmPeptideCandidate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmProcessing.resx">
       <DependentUpon>frmProcessing.cs</DependentUpon>

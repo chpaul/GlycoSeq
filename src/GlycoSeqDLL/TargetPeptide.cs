@@ -15,12 +15,23 @@ namespace COL.GlycoSequence
         private float _EndTime = 9999; //in Mins
         private string _ProteinName;
         private float _PeptideMass;
+        private string _AminoAcidAfter;
+        private string _AminoAcidBefore;
         public string PeptideSequence
         {
             get { return _PeptideSeq; }
             set { _PeptideSeq = value; }
         }
-
+        public string AminoAcidAfter
+        {
+            get { return _AminoAcidAfter; }
+            set { _AminoAcidAfter = value; }
+        }
+        public string AminoAcidBefore
+        {
+            get { return _AminoAcidBefore; }
+            set { _AminoAcidBefore = value; }
+        }
         public float StartTime
         {
             get { return _StartTime; }
