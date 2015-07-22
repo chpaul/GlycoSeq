@@ -6,9 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using COL.MassLib;
 using COL.ProtLib;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 namespace COL.GlycoSequence
 {
-    public class TargetPeptide
+    [Serializable]
+    public class TargetPeptide : ICloneable
     {
         private string _PeptideSeq;
         private float _StartTime = -1; //in Mins 
@@ -17,6 +20,7 @@ namespace COL.GlycoSequence
         private float _PeptideMass;
         private string _AminoAcidAfter;
         private string _AminoAcidBefore;
+        private Dictionary<string,int>  _Modifications = new Dictionary<string,int>() ;
         public string PeptideSequence
         {
             get { return _PeptideSeq; }
@@ -38,6 +42,11 @@ namespace COL.GlycoSequence
             set { _StartTime = value; }
         }
 
+        public Dictionary<string,int>  Modifications
+        {
+            get { return _Modifications; }
+            set { _Modifications = value; }
+        }
         public float EndTime
         {
             get { return _EndTime; }
@@ -81,6 +90,20 @@ namespace COL.GlycoSequence
             }
             _StartTime = argStartTime;
             _EndTime = argEndTime;
+        }
+        public object Clone()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                if (this.GetType().IsSerializable)
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, this);
+                    stream.Position = 0;
+                    return formatter.Deserialize(stream);
+                }
+                return null;
+            }
         }
     }
 }

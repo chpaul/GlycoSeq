@@ -42,6 +42,8 @@
             this.rdoScanList = new System.Windows.Forms.RadioButton();
             this.rdoScanRange = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rdoMascotExtractor = new System.Windows.Forms.RadioButton();
+            this.btnChkPeptideCandidate = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.rdoPeptideWithTime = new System.Windows.Forms.RadioButton();
             this.rdoFastaOnly = new System.Windows.Forms.RadioButton();
@@ -112,8 +114,6 @@
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.btnChkPeptideCandidate = new System.Windows.Forms.Button();
-            this.rdoMascotExtractor = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -137,7 +137,7 @@
             // 
             // txtFasta
             // 
-            this.txtFasta.Location = new System.Drawing.Point(6, 61);
+            this.txtFasta.Location = new System.Drawing.Point(9, 175);
             this.txtFasta.Name = "txtFasta";
             this.txtFasta.Size = new System.Drawing.Size(301, 20);
             this.txtFasta.TabIndex = 5;
@@ -151,7 +151,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(551, 419);
+            this.btnStart.Location = new System.Drawing.Point(552, 427);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 25;
@@ -161,7 +161,7 @@
             // 
             // btnPeptideBrowse
             // 
-            this.btnPeptideBrowse.Location = new System.Drawing.Point(310, 59);
+            this.btnPeptideBrowse.Location = new System.Drawing.Point(313, 173);
             this.btnPeptideBrowse.Name = "btnPeptideBrowse";
             this.btnPeptideBrowse.Size = new System.Drawing.Size(23, 23);
             this.btnPeptideBrowse.TabIndex = 6;
@@ -260,6 +260,8 @@
             this.groupBox2.Controls.Add(this.chkEnzy_GlucE);
             this.groupBox2.Controls.Add(this.chkEnzy_Trypsin);
             this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Controls.Add(this.txtFasta);
+            this.groupBox2.Controls.Add(this.btnPeptideBrowse);
             this.groupBox2.Controls.Add(this.chkEnzy_GlucED);
             this.groupBox2.Controls.Add(this.chkEnzy_None);
             this.groupBox2.Controls.Add(this.txtShiftTime);
@@ -269,19 +271,39 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.txtFasta);
-            this.groupBox2.Controls.Add(this.btnPeptideBrowse);
             this.groupBox2.Location = new System.Drawing.Point(426, 211);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(342, 198);
+            this.groupBox2.Size = new System.Drawing.Size(342, 211);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Peptide";
             // 
+            // rdoMascotExtractor
+            // 
+            this.rdoMascotExtractor.AutoSize = true;
+            this.rdoMascotExtractor.Location = new System.Drawing.Point(6, 38);
+            this.rdoMascotExtractor.Name = "rdoMascotExtractor";
+            this.rdoMascotExtractor.Size = new System.Drawing.Size(161, 17);
+            this.rdoMascotExtractor.TabIndex = 41;
+            this.rdoMascotExtractor.TabStop = true;
+            this.rdoMascotExtractor.Text = "Mascot Protein ID Ext Result";
+            this.rdoMascotExtractor.UseVisualStyleBackColor = true;
+            // 
+            // btnChkPeptideCandidate
+            // 
+            this.btnChkPeptideCandidate.Enabled = false;
+            this.btnChkPeptideCandidate.Location = new System.Drawing.Point(253, 13);
+            this.btnChkPeptideCandidate.Name = "btnChkPeptideCandidate";
+            this.btnChkPeptideCandidate.Size = new System.Drawing.Size(80, 23);
+            this.btnChkPeptideCandidate.TabIndex = 40;
+            this.btnChkPeptideCandidate.Text = "Candidates";
+            this.btnChkPeptideCandidate.UseVisualStyleBackColor = true;
+            this.btnChkPeptideCandidate.Click += new System.EventHandler(this.btnChkPeptideCandidate_Click);
+            // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(304, 89);
+            this.label14.Location = new System.Drawing.Point(302, 64);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(28, 13);
             this.label14.TabIndex = 40;
@@ -312,7 +334,7 @@
             // 
             // txtTolTime
             // 
-            this.txtTolTime.Location = new System.Drawing.Point(272, 85);
+            this.txtTolTime.Location = new System.Drawing.Point(270, 60);
             this.txtTolTime.Name = "txtTolTime";
             this.txtTolTime.Size = new System.Drawing.Size(29, 20);
             this.txtTolTime.TabIndex = 39;
@@ -321,7 +343,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 173);
+            this.label10.Location = new System.Drawing.Point(6, 148);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(113, 13);
             this.label10.TabIndex = 31;
@@ -334,7 +356,7 @@
             "No Mutation",
             "Aspartic Acid(D) -> Asparagine (N)",
             "Any -> Asparagine (N)"});
-            this.cboPepMutation.Location = new System.Drawing.Point(128, 170);
+            this.cboPepMutation.Location = new System.Drawing.Point(126, 145);
             this.cboPepMutation.Name = "cboPepMutation";
             this.cboPepMutation.Size = new System.Drawing.Size(202, 21);
             this.cboPepMutation.TabIndex = 30;
@@ -342,7 +364,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(211, 89);
+            this.label13.Location = new System.Drawing.Point(209, 64);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(55, 13);
             this.label13.TabIndex = 38;
@@ -351,7 +373,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 89);
+            this.label12.Location = new System.Drawing.Point(4, 64);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(52, 13);
             this.label12.TabIndex = 37;
@@ -361,7 +383,7 @@
             // 
             this.chkEnzy_GlucE.AutoSize = true;
             this.chkEnzy_GlucE.Enabled = false;
-            this.chkEnzy_GlucE.Location = new System.Drawing.Point(125, 115);
+            this.chkEnzy_GlucE.Location = new System.Drawing.Point(123, 90);
             this.chkEnzy_GlucE.Name = "chkEnzy_GlucE";
             this.chkEnzy_GlucE.Size = new System.Drawing.Size(65, 17);
             this.chkEnzy_GlucE.TabIndex = 29;
@@ -373,7 +395,7 @@
             // 
             this.chkEnzy_Trypsin.AutoSize = true;
             this.chkEnzy_Trypsin.Enabled = false;
-            this.chkEnzy_Trypsin.Location = new System.Drawing.Point(196, 115);
+            this.chkEnzy_Trypsin.Location = new System.Drawing.Point(194, 90);
             this.chkEnzy_Trypsin.Name = "chkEnzy_Trypsin";
             this.chkEnzy_Trypsin.Size = new System.Drawing.Size(60, 17);
             this.chkEnzy_Trypsin.TabIndex = 28;
@@ -384,7 +406,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(141, 89);
+            this.label11.Location = new System.Drawing.Point(139, 64);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(28, 13);
             this.label11.TabIndex = 36;
@@ -394,7 +416,7 @@
             // 
             this.chkEnzy_GlucED.AutoSize = true;
             this.chkEnzy_GlucED.Enabled = false;
-            this.chkEnzy_GlucED.Location = new System.Drawing.Point(268, 115);
+            this.chkEnzy_GlucED.Location = new System.Drawing.Point(266, 90);
             this.chkEnzy_GlucED.Name = "chkEnzy_GlucED";
             this.chkEnzy_GlucED.Size = new System.Drawing.Size(73, 17);
             this.chkEnzy_GlucED.TabIndex = 27;
@@ -408,7 +430,7 @@
             this.chkEnzy_None.Checked = true;
             this.chkEnzy_None.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnzy_None.Enabled = false;
-            this.chkEnzy_None.Location = new System.Drawing.Point(67, 115);
+            this.chkEnzy_None.Location = new System.Drawing.Point(65, 90);
             this.chkEnzy_None.Name = "chkEnzy_None";
             this.chkEnzy_None.Size = new System.Drawing.Size(52, 17);
             this.chkEnzy_None.TabIndex = 26;
@@ -418,7 +440,7 @@
             // 
             // txtShiftTime
             // 
-            this.txtShiftTime.Location = new System.Drawing.Point(92, 85);
+            this.txtShiftTime.Location = new System.Drawing.Point(90, 60);
             this.txtShiftTime.Name = "txtShiftTime";
             this.txtShiftTime.Size = new System.Drawing.Size(43, 20);
             this.txtShiftTime.TabIndex = 35;
@@ -439,7 +461,7 @@
             "7",
             "8",
             "9"});
-            this.cboMissCleavage.Location = new System.Drawing.Point(69, 125);
+            this.cboMissCleavage.Location = new System.Drawing.Point(65, 118);
             this.cboMissCleavage.Name = "cboMissCleavage";
             this.cboMissCleavage.Size = new System.Drawing.Size(31, 21);
             this.cboMissCleavage.TabIndex = 7;
@@ -451,7 +473,7 @@
             this.lstModification.FormattingEnabled = true;
             this.lstModification.Items.AddRange(new object[] {
             "Cys_CAM"});
-            this.lstModification.Location = new System.Drawing.Point(276, 145);
+            this.lstModification.Location = new System.Drawing.Point(274, 120);
             this.lstModification.Name = "lstModification";
             this.lstModification.Size = new System.Drawing.Size(54, 17);
             this.lstModification.TabIndex = 20;
@@ -462,7 +484,7 @@
             this.cboShiftSign.Items.AddRange(new object[] {
             "+",
             "-"});
-            this.cboShiftSign.Location = new System.Drawing.Point(59, 85);
+            this.cboShiftSign.Location = new System.Drawing.Point(57, 60);
             this.cboShiftSign.Name = "cboShiftSign";
             this.cboShiftSign.Size = new System.Drawing.Size(30, 21);
             this.cboShiftSign.TabIndex = 34;
@@ -470,7 +492,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(202, 147);
+            this.label3.Location = new System.Drawing.Point(200, 122);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(64, 13);
             this.label3.TabIndex = 25;
@@ -480,7 +502,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Enabled = false;
-            this.label1.Location = new System.Drawing.Point(6, 117);
+            this.label1.Location = new System.Drawing.Point(4, 92);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 23;
@@ -490,7 +512,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Enabled = false;
-            this.label2.Location = new System.Drawing.Point(6, 146);
+            this.label2.Location = new System.Drawing.Point(4, 121);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(182, 13);
             this.label2.TabIndex = 22;
@@ -811,7 +833,7 @@
             this.chkAvgMass.AutoSize = true;
             this.chkAvgMass.Checked = true;
             this.chkAvgMass.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAvgMass.Location = new System.Drawing.Point(432, 410);
+            this.chkAvgMass.Location = new System.Drawing.Point(679, 433);
             this.chkAvgMass.Name = "chkAvgMass";
             this.chkAvgMass.Size = new System.Drawing.Size(94, 17);
             this.chkAvgMass.TabIndex = 32;
@@ -988,28 +1010,6 @@
             this.label15.Size = new System.Drawing.Size(112, 13);
             this.label15.TabIndex = 0;
             this.label15.Text = "Get top i peaks as Y1:";
-            // 
-            // btnChkPeptideCandidate
-            // 
-            this.btnChkPeptideCandidate.Enabled = false;
-            this.btnChkPeptideCandidate.Location = new System.Drawing.Point(268, 13);
-            this.btnChkPeptideCandidate.Name = "btnChkPeptideCandidate";
-            this.btnChkPeptideCandidate.Size = new System.Drawing.Size(65, 23);
-            this.btnChkPeptideCandidate.TabIndex = 40;
-            this.btnChkPeptideCandidate.Text = "Candidate";
-            this.btnChkPeptideCandidate.UseVisualStyleBackColor = true;
-            this.btnChkPeptideCandidate.Click += new System.EventHandler(this.btnChkPeptideCandidate_Click);
-            // 
-            // rdoMascotExtractor
-            // 
-            this.rdoMascotExtractor.AutoSize = true;
-            this.rdoMascotExtractor.Location = new System.Drawing.Point(6, 38);
-            this.rdoMascotExtractor.Name = "rdoMascotExtractor";
-            this.rdoMascotExtractor.Size = new System.Drawing.Size(161, 17);
-            this.rdoMascotExtractor.TabIndex = 41;
-            this.rdoMascotExtractor.TabStop = true;
-            this.rdoMascotExtractor.Text = "Mascot Protein ID Ext Result";
-            this.rdoMascotExtractor.UseVisualStyleBackColor = true;
             // 
             // frmBatch
             // 

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 using System.Net;
@@ -25,6 +26,8 @@ namespace GlycanSeq_Form
         Dictionary<double, GlycanCompound> _MassGlycanMapping;
         List<float> GlycanCompoundMassList;
         GlycanSeqParameters sequencingParameters = new GlycanSeqParameters();
+        private List<TargetPeptide> lstTargetPeptides;
+        private enumPeptideMutation pepMuta;
         public frmBatch()
         {
             InitializeComponent();
@@ -63,7 +66,20 @@ namespace GlycanSeq_Form
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 txtFasta.Text = openFileDialog1.FileName;
-                ReadPeptideCandidates();
+                lstTargetPeptides =new List<TargetPeptide>();
+                //Peptide
+                sequencingParameters.FastaFile = txtFasta.Text;
+                pepMuta = enumPeptideMutation.NoMutation;
+                if (cboPepMutation.SelectedIndex == 1)
+                {
+                    pepMuta = enumPeptideMutation.DtoN;
+                }
+                else if (cboPepMutation.SelectedIndex == 2)
+                {
+                    pepMuta = enumPeptideMutation.AnyToN;
+                }
+                lstTargetPeptides = GeneratePeptideCandidates(txtFasta.Text);
+
                 btnChkPeptideCandidate.Enabled = true;
             }
         }
@@ -124,7 +140,7 @@ namespace GlycanSeq_Form
                     //frmInvokeProcesses frmProcess;
                     frmProcessing frmProcess;
      
-                    List<TargetPeptide> lstTargetPeptides = new List<TargetPeptide>();
+                    
                     List<int> lstPeaksParas = new List<int>();
                     lstPeaksParas.Add(Convert.ToInt32(txtTopPeaks_i.Text));
                     lstPeaksParas.Add(Convert.ToInt32(txtTopDiagPeaks_j.Text));
@@ -144,105 +160,34 @@ namespace GlycanSeq_Form
                     sequencingParameters.SeqHCD = chkSeqHCD.Checked;
                     sequencingParameters.UseHCD = chkHCD.Checked;
 
-                    //Peptide
-                    sequencingParameters.FastaFile = txtFasta.Text;
-                    enumPeptideMutation PepMuta = enumPeptideMutation.NoMutation;
-                    if (cboPepMutation.SelectedIndex == 1)
+                    //Peptide 
+                    if (cboMissCleavage.SelectedItem.ToString() == "")
                     {
-                        PepMuta = enumPeptideMutation.DtoN;
+                        cboMissCleavage.SelectedItem = "0";
                     }
-                    else if (cboPepMutation.SelectedIndex == 2)
+                    List<Protease.Type> ProteaseType = new List<Protease.Type>();
+                    if (chkEnzy_Trypsin.Checked) //Trypsin
                     {
-                        PepMuta = enumPeptideMutation.AnyToN;
+                        ProteaseType.Add(Protease.Type.Trypsin);
                     }
+                    if (chkEnzy_GlucE.Checked) //GlucE
+                    {
+                        ProteaseType.Add(Protease.Type.GlucE);
+                    }
+                    if (chkEnzy_GlucED.Checked) //GlucED
+                    {
+                        ProteaseType.Add(Protease.Type.GlucED);
+                    }
+                    if (chkEnzy_None.Checked || ProteaseType.Count == 0)
+                    {
+                        ProteaseType.Add(Protease.Type.None);
+                    }
+                    sequencingParameters.ProteaseType = ProteaseType;
+                    sequencingParameters.MissCLeavage = Convert.ToInt32(cboMissCleavage.SelectedItem.ToString());
 
-                    if (rdoFastaOnly.Checked)
-                    {
-                        lstTargetPeptides = GeneratePeptideCandidatie(txtFasta.Text);
-                        if (cboMissCleavage.SelectedItem.ToString() == "")
-                        {
-                            cboMissCleavage.SelectedItem = "0";
-                        }
-                        List<Protease.Type> ProteaseType = new List<Protease.Type>();
-                        if (chkEnzy_Trypsin.Checked) //Trypsin
-                        {
-                            ProteaseType.Add(Protease.Type.Trypsin);
-                        }
-                        if (chkEnzy_GlucE.Checked) //GlucE
-                        {
-                            ProteaseType.Add(Protease.Type.GlucE);
-                        }
-                        if (chkEnzy_GlucED.Checked) //GlucED
-                        {
-                            ProteaseType.Add(Protease.Type.GlucED);
-                        }
-                        if (chkEnzy_None.Checked || ProteaseType.Count == 0)
-                        {
-                            ProteaseType.Add(Protease.Type.None);
-                        }
-                        sequencingParameters.ProteaseType = ProteaseType;
-                        sequencingParameters.MissCLeavage = Convert.ToInt32(cboMissCleavage.SelectedItem.ToString());
-                    }
-                    else
-                    {
-                        StreamReader sr = new StreamReader(txtFasta.Text);
-                        string[] tmpAry = sr.ReadLine().Split(','); //Title
-                        Dictionary<string, int> dictTitleIdx = new Dictionary<string, int>();
-                        //Title
-                        for (int i = 0; i < tmpAry.Length; i++)
-                        {
-                           dictTitleIdx.Add(tmpAry[i],i);
-                        }
-                        while (!sr.EndOfStream)
-                        {
-                            tmpAry = sr.ReadLine().Split(',');
-                            //Check Glycosylation Site
-                            if (IsGlycopeptide(tmpAry[dictTitleIdx["Peptide_Sequence"]], PepMuta))
-                            {
-                                TargetPeptide tPeptide = new TargetPeptide(tmpAry[dictTitleIdx["Peptide_Sequence"]]);
-                                tPeptide.ProteinName = tmpAry[dictTitleIdx["Protein_Name"]];
-                                float startTime = Convert.ToSingle(tmpAry[dictTitleIdx["Start_Search_Time_(Mins)"]]);
-                                float endTime = Convert.ToSingle(tmpAry[dictTitleIdx["End_Search_Time_(Mins)"]]);
-                                float shiftTime = Convert.ToSingle(txtShiftTime.Text);
-                                float tolTime = Convert.ToSingle(txtTolTime.Text);
-                                if (cboShiftSign.SelectedItem.ToString() == "-")
-                                {
-                                    shiftTime = 0 - shiftTime;
-                                }
-                                if (startTime == 0 && endTime == 9999)
-                                {
-                                    startTime = 0;
-                                    endTime = 9999;
-                                }
-                                else if (startTime == 0 && endTime != 0)
-                                {
-                                    endTime = endTime + shiftTime + tolTime;
-                                    startTime = endTime - 5 - tolTime;
-                                }
-                                else if (startTime != 0 && endTime == 0)
-                                {
-                                    startTime = startTime + shiftTime - tolTime;
-                                    endTime = startTime + 5 + tolTime;
-                                }
-                                else if (startTime == 0 && endTime == 0)
-                                {
-                                    startTime = 0;
-                                    endTime = 9999;
-                                }
-                                else
-                                {
-                                    startTime = startTime + shiftTime - tolTime;
-                                    endTime = endTime + shiftTime + tolTime;
-                                }
-                                tPeptide.StartTime = startTime;
-                                tPeptide.EndTime = endTime;
-                                lstTargetPeptides.Add(tPeptide);
-                            }
-                        }
-                        sr.Close();
-                    }
+                   ///---///
                     sequencingParameters.TargetPeptides = lstTargetPeptides;
-                    sequencingParameters.PeptideMutation = PepMuta;
+                    sequencingParameters.PeptideMutation = pepMuta;
                     
                     //Glycan
                     sequencingParameters.IsNGlycan = chkNLinked.Checked;
@@ -670,19 +615,89 @@ namespace GlycanSeq_Form
             }
         }
 
-        private void ReadPeptideCandidates()
-        {
-            
-        }
+        //private List<TargetPeptide> ReadPeptideCandidates()
+        //{
+        //    List<TargetPeptide> allPeptide = new List<TargetPeptide>();
+        //    if (rdoFastaOnly.Checked)
+        //    {
+        //        allPeptide.AddRange(GeneratePeptideCandidatie(txtFasta.Text));
+        //    }
+        //    else if (rdoPeptideWithTime.Checked)
+        //    {
+        //        StreamReader sr = new StreamReader(txtFasta.Text);
+        //        string[] tmpAry = sr.ReadLine().Split(','); //Title
+        //        Dictionary<string, int> dictTitleIdx = new Dictionary<string, int>();
+        //        //Title
+        //        for (int i = 0; i < tmpAry.Length; i++)
+        //        {
+        //            dictTitleIdx.Add(tmpAry[i], i);
+        //        }
+        //        while (!sr.EndOfStream)
+        //        {
+        //            tmpAry = sr.ReadLine().Split(',');
+        //            //Check Glycosylation Site
+        //            if (IsGlycopeptide(tmpAry[dictTitleIdx["Peptide_Sequence"]], pepMuta))
+        //            {
+        //                TargetPeptide tPeptide = new TargetPeptide(tmpAry[dictTitleIdx["Peptide_Sequence"]]);
+        //                tPeptide.ProteinName = tmpAry[dictTitleIdx["Protein_Name"]];
+        //                float startTime = Convert.ToSingle(tmpAry[dictTitleIdx["Start_Search_Time_(Mins)"]]);
+        //                float endTime = Convert.ToSingle(tmpAry[dictTitleIdx["End_Search_Time_(Mins)"]]);
+        //                float shiftTime = Convert.ToSingle(txtShiftTime.Text);
+        //                float tolTime = Convert.ToSingle(txtTolTime.Text);
+        //                if (cboShiftSign.SelectedItem.ToString() == "-")
+        //                {
+        //                    shiftTime = 0 - shiftTime;
+        //                }
+        //                if (startTime == 0 && endTime == 9999)
+        //                {
+        //                    startTime = 0;
+        //                    endTime = 9999;
+        //                }
+        //                else if (startTime == 0 && endTime != 0)
+        //                {
+        //                    endTime = endTime + shiftTime + tolTime;
+        //                    startTime = endTime - 5 - tolTime;
+        //                }
+        //                else if (startTime != 0 && endTime == 0)
+        //                {
+        //                    startTime = startTime + shiftTime - tolTime;
+        //                    endTime = startTime + 5 + tolTime;
+        //                }
+        //                else if (startTime == 0 && endTime == 0)
+        //                {
+        //                    startTime = 0;
+        //                    endTime = 9999;
+        //                }
+        //                else
+        //                {
+        //                    startTime = startTime + shiftTime - tolTime;
+        //                    endTime = endTime + shiftTime + tolTime;
+        //                }
+        //                tPeptide.StartTime = startTime;
+        //                tPeptide.EndTime = endTime;
+        //                allPeptide.Add(tPeptide);
+        //            }
+        //        }
+        //        sr.Close();
+        //    }
+        //    else //Mascot Protein ID extractor
+        //    {
+                
+        //    }
+
+        //    List<TargetPeptide> Glycopeptide = new List<TargetPeptide>();
+
+        //    return Glycopeptide;
+        //}
         private bool IsGlycopeptide(string argPeptideStr, enumPeptideMutation argMutation)
         {
-                Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase); //NXS NXT  X!=P
-                Match Sequon = sequon.Match(argPeptideStr);
-                if (Sequon.Length != 0)
-                {
-                    return true;
-                }
-            
+            Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase); //NXS NXT  X!=P
+            Match Sequon = sequon.Match(argPeptideStr);
+            if (Sequon.Length != 0)
+            {
+                return true;
+            }
+
             if (argMutation == enumPeptideMutation.DtoN)
             {
                 Regex sequonDtoN = new Regex("D[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase); //DXS DXT  X!=P
@@ -717,7 +732,6 @@ namespace GlycanSeq_Form
                     _MassGlycanMapping.Add(ModifiedMass, G);
                     GlycanCompoundMassList.Add((float)ModifiedMass);
                 }
-
             }
         }
         /// <summary>
@@ -727,14 +741,14 @@ namespace GlycanSeq_Form
         /// </summary>
         /// <param name="argFile"></param>
         /// <returns></returns>
-        private List<TargetPeptide> GeneratePeptideCandidatie(string argFile)
+        private List<TargetPeptide> GeneratePeptideCandidates(string argFile)
         {
-            List<TargetPeptide> lstTargetPeptides ;
+            List<TargetPeptide> lstTargetPeptides = new List<TargetPeptide>() ;
             if (rdoPeptideWithTime.Checked)
             {
-                lstTargetPeptides =  PeptideReader.GetCandidatePeptides(argFile);
+                lstTargetPeptides.AddRange(PeptideReader.GetCandidatePeptidesFromFile(argFile));
             }
-            else
+            else if(rdoFastaOnly.Checked)
             {
                 lstTargetPeptides = new List<TargetPeptide>();
                 List<ProteinInfo> PInfos = FastaReader.ReadFasta(txtFasta.Text);
@@ -757,31 +771,88 @@ namespace GlycanSeq_Form
                 {
                     ProteaseType.Add(Protease.Type.None);
                 }
-
                 if (cboMissCleavage.SelectedItem.ToString() == "")
                 {
                     cboMissCleavage.SelectedItem = "0";
                 }
-                enumPeptideMutation PepMuta = enumPeptideMutation.NoMutation;
-                if (cboPepMutation.SelectedIndex == 1)
-                {
-                    PepMuta = enumPeptideMutation.DtoN;
-                }
-                else if (cboPepMutation.SelectedIndex == 2)
-                {
-                    PepMuta = enumPeptideMutation.AnyToN;
-                }
+                
                 foreach (ProteinInfo pinfo in PInfos)
                 {
-                    GlycoPeptide.AddRange(pinfo.NGlycopeptide(Convert.ToInt32(cboMissCleavage.SelectedItem.ToString()), ProteaseType, PepMuta));
+                    GlycoPeptide.AddRange(pinfo.NGlycopeptide(Convert.ToInt32(cboMissCleavage.SelectedItem.ToString()), ProteaseType, pepMuta));
                 }
                 foreach (string gpeptide in GlycoPeptide)
                 {
                     lstTargetPeptides.Add(new TargetPeptide(gpeptide));
                 }
             }
-            return lstTargetPeptides;
+            else //MascotPID extractor result
+            {
+                lstTargetPeptides.AddRange(PeptideReader.GetCandidatePeptidesFromMascotProteinIDExtractorResult(argFile));
+            }
+            
+            Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase);  //NXS NXT  X!=P
+            Regex sequonEnd = new Regex("N[ARNDCEQGHILKMFSTWYV]$", RegexOptions.IgnoreCase);  //NX NX  X!=P in the end
+
+            List<TargetPeptide> lstGlycoPeptides = new List<TargetPeptide>();
+            foreach (TargetPeptide tPep in lstTargetPeptides)
+            {
+                string pep = tPep.PeptideSequence + tPep.AminoAcidAfter;
+                if (IsGlycopeptide(pep, pepMuta))
+                {
+                    lstGlycoPeptides.Add(tPep);
+                }
+            }
+
+
+            //Adjust Time
+            float shiftTime = Convert.ToSingle(txtShiftTime.Text);
+            float tolTime = Convert.ToSingle(txtTolTime.Text);
+
+            if (cboShiftSign.SelectedItem.ToString() == "-")
+            {
+                shiftTime = 0 - shiftTime;
+            }
+
+            foreach (TargetPeptide tPeptide in lstGlycoPeptides)
+            {
+                float startTime = tPeptide.StartTime;
+                float endTime = tPeptide.EndTime;
+                if (startTime == 0 && endTime == 9999)
+                {
+                    startTime = 0;
+                    endTime = 9999;
+                }
+                else if (startTime == 0 && endTime != 0)
+                {
+                    endTime = endTime + shiftTime + tolTime;
+                    startTime = endTime - 5 - tolTime;
+                }
+                else if (startTime != 0 && endTime == 0)
+                {
+                    startTime = startTime + shiftTime - tolTime;
+                    endTime = startTime + 5 + tolTime;
+                }
+                else if (startTime == 0 && endTime == 0)
+                {
+                    startTime = 0;
+                    endTime = 9999;
+                }
+                else
+                {
+                    startTime = startTime + shiftTime - tolTime;
+                    endTime = endTime + shiftTime + tolTime;
+                }
+                if (startTime < 0)
+                {
+                    startTime = 0;
+                }
+                tPeptide.StartTime = startTime;
+                tPeptide.EndTime = endTime;
+            }           
+            return lstGlycoPeptides;
         }
+
+       
         private string GetPreviousCompositionAndMass(GlycanStructure argStr, int argNodeID)
         {
             int Hex = 0;
@@ -980,14 +1051,8 @@ namespace GlycanSeq_Form
 
         private void btnChkPeptideCandidate_Click(object sender, EventArgs e)
         {
-            frmPeptideCandidate frmPepCand = new frmPeptideCandidate();
+            frmPeptideCandidate frmPepCand = new frmPeptideCandidate(ref lstTargetPeptides);
             frmPepCand.ShowDialog();
         }
-
-
- 
-
-
-
     }
 }
