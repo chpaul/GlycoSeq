@@ -744,11 +744,11 @@ namespace GlycanSeq_Form
         private List<TargetPeptide> GeneratePeptideCandidates(string argFile)
         {
             List<TargetPeptide> lstTargetPeptides = new List<TargetPeptide>() ;
-            if (rdoPeptideWithTime.Checked)
+            if (rdoPeptideWithTime.Checked)  // Old format 
             {
                 lstTargetPeptides.AddRange(PeptideReader.GetCandidatePeptidesFromFile(argFile));
             }
-            else if(rdoFastaOnly.Checked)
+            else if(rdoFastaOnly.Checked) //Fasta Only
             {
                 lstTargetPeptides = new List<TargetPeptide>();
                 List<ProteinInfo> PInfos = FastaReader.ReadFasta(txtFasta.Text);
@@ -785,7 +785,7 @@ namespace GlycanSeq_Form
                     lstTargetPeptides.Add(new TargetPeptide(gpeptide));
                 }
             }
-            else //MascotPID extractor result
+            else //MascotPID extractor result  //Mascot Protein ID Extractor
             {
                 lstTargetPeptides.AddRange(PeptideReader.GetCandidatePeptidesFromMascotProteinIDExtractorResult(argFile));
             }

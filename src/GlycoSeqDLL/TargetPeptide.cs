@@ -11,7 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace COL.GlycoSequence
 {
     [Serializable]
-    public class TargetPeptide : ICloneable
+    public class TargetPeptide : ICloneable ,  IEquatable<TargetPeptide>
     {
         private string _PeptideSeq;
         private float _StartTime = -1; //in Mins 
@@ -104,6 +104,27 @@ namespace COL.GlycoSequence
                 }
                 return null;
             }
+        }
+        public bool Equals(TargetPeptide obj)
+        {
+            if (!PeptideMass.Equals(obj.PeptideMass) || !PeptideSequence.Equals(obj.PeptideSequence) || !Modifications.Count.Equals(obj.Modifications.Count))
+            {
+                return false;
+            }
+
+            foreach (string key in obj.Modifications.Keys)
+            {
+                if (obj.Modifications[key] != Modifications[key])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public override int GetHashCode()
+        {
+            int hashcode = PeptideMass.GetHashCode() * PeptideSequence.GetHashCode() ;
+            return hashcode;
         }
     }
 }

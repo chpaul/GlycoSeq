@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.IO;
 namespace COL.GlycoSequence
@@ -49,9 +50,10 @@ namespace COL.GlycoSequence
             return lstTargetPeptides;
         }
 
+
         public static List<TargetPeptide> GetCandidatePeptidesFromMascotProteinIDExtractorResult(string argFile)
         {
-            List<TargetPeptide> lstTargetPeptides = new List<TargetPeptide>();
+            HashSet<TargetPeptide> lstTargetPeptides = new HashSet<TargetPeptide>();
             StreamReader sr = new StreamReader(argFile);
             string sectionSwitch = "";
             Dictionary<string, float> dictVariableModMass = new Dictionary<string, float>();
@@ -93,6 +95,7 @@ namespace COL.GlycoSequence
                         }
                         break;
                     case "Protein":
+                        List<TargetPeptide> tmpPeptides = new List<TargetPeptide>();
                         string ProteinName = argTmp[0];
                         string PeptideSequence = argTmp[1];
                         float PeptideMass = Convert.ToSingle(argTmp[2]);
@@ -104,92 +107,170 @@ namespace COL.GlycoSequence
                         TargetPeptide tPep = new TargetPeptide(PeptideSequence, ProteinName, PeptideMass, StartTime,EndTime);
                         tPep.AminoAcidBefore = NTerm;
                         tPep.AminoAcidAfter = CTerm;
+
+
+                        Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase);  //NXS NXT  X!=P
+                        string FullSeq = tPep.AminoAcidBefore + tPep.PeptideSequence + tPep.AminoAcidAfter;
+
+                        if (sequon.Matches(FullSeq).Count ==0)
+                        {
+                            continue;
+                        }
+
+                        //Modification Result
+                        //For any peptide from the MASCOT result,
+                        //AAAAAN(1)XS/TAAAAAN(2)AMAACAAK,
+                        //For N residue,
+                        //i. If N(1) is not detected to be deamidated, then exclude this peptide from candidate list.
+                        //ii. If N(1) is deamidated, no matter the N(2) deamidated or not, then take the mass from “pep_calc_mr” column and substract 0.9840 as the peptide back bone mass.
+                        //iii. If there are multiple N(1)s (glycosylation sites) detected, x of the N(1)s are deamidated, then take the mass from “pep_calc_mr” column and substract x *0.9840 as the peptide back bone mass.
+                        //iv. For N(2) deamidation, please treat it as a variable modification. (If only deamidated N(2) is detected, then create an native one (-0.9840). If only native N(2) is detected, then create a deamidated one(+0.9840))
+                        //For M residue,
+                        //i. If M is detected as native M, then create a variable modification of O (+15.9949).
+                        //ii. If M is detected as oxidation form, then create a variable modification of native form (-15.9949).
+                        //iii. If M is detected as Carbamidomethylated M, then create the native form (-57.0215) and the oxidated form 
+                        //(-57.0215+15.9949).
+                        //For C residue,
+                        //Always keep Carbamidomethylated C as a fixed modification.
+                        //Carbamidomethyl (M)
+                        //Deamidated(N) (N)
+                        //Oxidation (M)
+
                         if (Mod != "")
                         {
                             string[] ModAry = Mod.Split(';');
-                            Dictionary<string,List<int>> dictModifications = new Dictionary<string, List<int>>();
+                            Dictionary<string,int> dictModifications = new Dictionary<string, int>();
+                            List<int> lstDeamidatedIdx= new List<int>();
                             for (int i = 0; i < ModAry.Length; i++)
                             {
                                 string modType = ModAry[i].Split(':')[1].Trim();
                                 int modLocIdx = Convert.ToInt32(ModAry[i].Split(':')[0]) -1;
                                 if (!dictModifications.ContainsKey(modType))
                                 {
-                                    dictModifications.Add(modType,new List<int>());
+                                    dictModifications.Add(modType,0);
                                 }
-                                dictModifications[modType].Add(modLocIdx);
-                            }
-                            
-                            //Add Native
-                            TargetPeptide NativePeptide = (TargetPeptide)tPep.Clone();
-                            foreach (string modKey in dictModifications.Keys)
-                            {
-                                NativePeptide.PeptideMass -= dictVariableModMass[modKey]*dictModifications[modKey].Count;
-                            }
-                            lstTargetPeptides.Add(NativePeptide);
-
-                            if (dictModifications.Keys.Count >1)
-                            {
-                                List<string> lstMod = new List<string>();
-                                List<List<int>> list = new List<List<int>>();
-                                foreach (string modKey in dictModifications.Keys)
+                                dictModifications[modType] += 1;
+                                if (modType == "Deamidated(N) (N)" )
                                 {
-                                    lstMod.Add(modKey);
-                                    list.Add(new List<int>());
-                                    for (int i = 0; i <= dictModifications[modKey].Count; i++)
+                                    foreach (Match match in sequon.Matches(tPep.PeptideSequence+tPep.AminoAcidAfter))
                                     {
-                                        list[list.Count - 1].Add(i);
+                                        if (match.Index == modLocIdx)
+                                        {
+                                            lstDeamidatedIdx.Add(modLocIdx);
+                                        }
                                     }
                                 }
-                                var combinations = GenerateCombinations(list);
-                                foreach (var combination in combinations)
-                                {
-                                    TargetPeptide ModifiedPeptide = (TargetPeptide)NativePeptide.Clone();
-                                    for (int i = 0; i < combination.Count; i++)
+                            }
+                            tPep.Modifications = dictModifications;
+                            if (lstDeamidatedIdx.Count==0) // Has Sequon but no deamidated modification 
+                            {
+                                continue;
+                            }
+
+                            #region N residue
+                            int NumOfN = tPep.PeptideSequence.Count(f => f == 'N');
+                           
+
+                 
+                            TargetPeptide NativePeptide = (TargetPeptide) tPep.Clone();
+                            foreach (string key in NativePeptide.Modifications.Keys.ToList())
+                            {
+                                NativePeptide.PeptideMass -= dictVariableModMass[key]*NativePeptide.Modifications[key];
+                                NativePeptide.Modifications[key] -= NativePeptide.Modifications[key];
+                            }
+
+
+                           for (int i = 0; i <= NumOfN - lstDeamidatedIdx.Count; i++)
+                           {
+                               TargetPeptide deAmidatedPeptide = (TargetPeptide)NativePeptide.Clone();
+                               deAmidatedPeptide.PeptideMass += dictVariableModMass["Deamidated(N) (N)"] * i;
+                               deAmidatedPeptide.Modifications["Deamidated(N) (N)"] += i;
+                               tmpPeptides.Add(deAmidatedPeptide);
+                           }
+
+                            #endregion
+                            #region M Residue
+                            int NumOfM = tPep.PeptideSequence.ToUpper().Count(f => f == 'M');
+                            if (NumOfM!=0)
+                            {
+                                    List<List<int>> list = new List<List<int>>();
+                                    list.Add(Enumerable.Range(0, NumOfM+1).ToList()); //Native
+                                    list.Add(Enumerable.Range(0, NumOfM+1).ToList()); //Oxidation
+                                    if (dictModifications.ContainsKey("Carbamidomethyl (M)"))
                                     {
-                                        if (combination[i] == 0)
+                                        list.Add(Enumerable.Range(0, NumOfM+1).ToList());
+                                    }
+                                    else
+                                    {
+                                        list.Add(Enumerable.Range(0, 1).ToList());
+                                    }
+                                    var combinations = GenerateCombinations(list);
+                                    List<TargetPeptide> ModedPeptides = new List<TargetPeptide>();
+                                    foreach (var combination in combinations)
+                                    {
+                                        if (combination[0] + combination[1] +combination[2] != NumOfM)
                                         {
                                             continue;
                                         }
-                                        ModifiedPeptide.PeptideMass += dictVariableModMass[lstMod[i]]*combination[i];
-                                        ModifiedPeptide.Modifications.Add(lstMod[i],combination[i]);
+                                        foreach (TargetPeptide ModifiedPeptide in tmpPeptides)
+                                        {
+                                            TargetPeptide newPeptide = (TargetPeptide) ModifiedPeptide.Clone();
+                                            //Combination : 0:Native, 1: Oxidation, 2: Carbamidomethyl
+                                            if (combination[1] != 0)
+                                            {
+                                                newPeptide.PeptideMass += dictVariableModMass["Oxidation (M)"] * combination[1];
+                                                if (!  newPeptide.Modifications.ContainsKey("Oxidation (M)"))
+                                                {
+                                                    newPeptide.Modifications.Add("Oxidation (M)", 0);
+                                                }
+                                                newPeptide.Modifications["Oxidation (M)"] = combination[1];
+                                            }
+                                            if (combination[2] != 0)
+                                            {
+                                                newPeptide.PeptideMass += dictVariableModMass["Carbamidomethyl (M)"] * combination[2];
+                                                if (!newPeptide.Modifications.ContainsKey("Carbamidomethyl (M)"))
+                                                {
+                                                    newPeptide.Modifications.Add("Carbamidomethyl (M)", 0);
+                                                }
+                                                newPeptide.Modifications["Carbamidomethyl (M)"] = combination[2];
+                                            }
+                                            ModedPeptides.Add(newPeptide);
+                                        }
                                     }
-                                    if (ModifiedPeptide.PeptideMass == NativePeptide.PeptideMass)
-                                    {
-                                        continue;
-                                    }
-                                    lstTargetPeptides.Add(ModifiedPeptide);
-                                }
+                                    tmpPeptides.AddRange(ModedPeptides);
                             }
-                            else  //Only one modification
-                            {
-                                string ModType = dictModifications.Keys.ToArray()[0];
-                                int ModCount = dictModifications[ModType].Count;
-
-                                for (int i = 1; i <= ModCount; i++)
-                                {
-                                    TargetPeptide ModifiedPeptide = (TargetPeptide)NativePeptide.Clone();
-                                    ModifiedPeptide.PeptideMass += dictVariableModMass[ModType] * i;
-                                    ModifiedPeptide.Modifications.Add(ModType,i);
-                                    
-                                    if (ModifiedPeptide.PeptideMass == NativePeptide.PeptideMass)
-                                    {
-                                        continue;
-                                    }
-                                    lstTargetPeptides.Add(ModifiedPeptide);
-                                }
-                            }
+                            #endregion
                         }
-                        else
+                        else // Has Sequon but no deamidated modification 
                         {
-                            lstTargetPeptides.Add(tPep);
+                            continue;
+                        }
+                        //Remove Redundent 
+                        foreach (TargetPeptide t in tmpPeptides)
+                        {
+                            List<string> RemoveKey = new List<string>();
+                            foreach (string key in t.Modifications.Keys)
+                            {
+                                if (t.Modifications[key] == 0)
+                                {
+                                    RemoveKey.Add(key);
+                                }
+                            }
+                            foreach (string key in RemoveKey)
+                            {
+                                t.Modifications.Remove(key);
+                            }
+                            lstTargetPeptides.Add(t);
                         }
                         break;
                 }
             } while (!sr.EndOfStream);
-            return lstTargetPeptides;
+            sr.Close();
+            return lstTargetPeptides.ToList();
         }
 
         //Combination
+        //http://stackoverflow.com/questions/545703/combination-of-listlistint
         private static List<List<T>> GenerateCombinations<T>(List<List<T>> collectionOfSeries)
         {
             List<List<T>> generatedCombinations =

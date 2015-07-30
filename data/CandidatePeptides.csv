@@ -1,0 +1,19 @@
+Fixed modifications,--------------------------------------------------------,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,
+Identifier,Name,Delta,Neutral loss,,,,,,,,,,,,,
+1,Carbamidomethyl (C),57.021464,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,
+Variable modifications,--------------------------------------------------------,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,
+Identifier,Name,Delta,Neutral loss(es),,,,,,,,,,,,,
+1,Carbamidomethyl (M),57.021464,0,105.024835,,,,,,,,,,,,
+2,Deamidated(N) (N),0.984016,,,,,,,,,,,,,,
+3,Oxidation (M),15.994915,0,63.998285,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,
+Protein_Name,Peptide_Sequence,Peptide_Mass,Peptide m/z,Score,Query Scan,Query Time,Ion mz,Start Scan,Start_Search_Time_(Mins),End Scan,End_Search_Time_(Mins),Apex Scan,Apex Time,N Terminal,C Terminal, Modification
+T1_NoDeamidaSequon,AVTEQNATSNEER,100,799.8759,69.9,998,17.92677,799.8759,997,17.92058,1074,18.34675,1019,18.04675,K,N,10:Deamidated(N) (N)
+T2_OneDeamidaSequon,AVTEQNATSNEER,200,980.1555,60.69,9303,67.72664,980.1555,9280,67.55784,9368,68.23241,9335,67.86092,R,-,6:Deamidated(N) (N)
+T3_TwoDeamidaN,AVTEQNATSNEER,300,1119.4885,19.27,5230,42.44165,1119.4885,5210,42.33008,5298,42.83625,5254,42.58441,R,E,6:Deamidated(N) (N);10:Deamidated(N) (N)
+T4_NativeM,AMMEQNATSNEER,400,1170.5065,75.66,8405,61.65222,1170.5065,8389,61.54874,8510,62.32958,8433,61.83241,R,-,6:Deamidated(N) (N)
+T5_CarbM,AMMEQNATSNEER,500,738.8805,57.76,10807,78.77862,738.8805,10776,78.52291,0,0,10798,78.70925,K,H,2:Carbamidomethyl (M);6:Deamidated(N) (N)
+T6_TermSequon,DGGEGNK,600,595.3362,35.26,10999,80.28119,595.3362,10974,80.08541,11029,80.52491,10996,80.25925,K,T,6:Deamidated(N) (N)

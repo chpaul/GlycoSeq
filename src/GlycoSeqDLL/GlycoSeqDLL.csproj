@@ -132,6 +132,7 @@
     <Compile Include="GlycanSeqParameters.cs" />
     <Compile Include="GlycanSequencing.cs" />
     <Compile Include="GlycanSequencing_MultipleScoring.cs" />
+    <Compile Include="enumModifications.cs" />
     <Compile Include="PeptideReader.cs" />
     <Compile Include="Peptides.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
