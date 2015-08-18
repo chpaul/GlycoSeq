@@ -8,14 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using COL.GlycoSequence;
-
 namespace GlycanSeq_Form
 {
     public partial class frmPeptideCandidate : Form
     {
-        private List<TargetPeptide> _lstPeptides;
+        private List<COL.GlycoLib.TargetPeptide> _lstPeptides;
         private DataTable dtPeptide;
-        public frmPeptideCandidate(ref List<TargetPeptide> argTargetPeptides)
+        public frmPeptideCandidate(ref List<COL.GlycoLib.TargetPeptide> argTargetPeptides)
         {
             InitializeComponent();
             _lstPeptides = argTargetPeptides;
@@ -32,7 +31,13 @@ namespace GlycanSeq_Form
             dgvPeptide.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvPeptide.Columns[6].Width = 90;
             dgvPeptide.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dgvPeptide.Columns[7].Width = 270;
+            dgvPeptide.Columns[7].Width = 120;
+            dgvPeptide.Columns[7].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvPeptide.Columns[8].Width = 130;
+            dgvPeptide.Columns[8].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvPeptide.Columns[9].Width = 80;
+            dgvPeptide.Columns[9].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvPeptide.Columns[10].Width = 60;
         }
 
         private void ShowDataGrid()
@@ -45,8 +50,11 @@ namespace GlycanSeq_Form
             dtPeptide.Columns.Add("C Term", typeof(string));
             dtPeptide.Columns.Add("Start Time", typeof(float));
             dtPeptide.Columns.Add("End Time", typeof(float));
-            dtPeptide.Columns.Add("Modification", typeof(string));
-            foreach (TargetPeptide tPeptide in _lstPeptides)
+            dtPeptide.Columns.Add("Modification\nDeamidated(N) (N)", typeof(string));
+            dtPeptide.Columns.Add("Modification\nCarbamidomethyl (M)", typeof(string));
+            dtPeptide.Columns.Add("Modification\nOxidation (M)", typeof(string));
+            dtPeptide.Columns.Add("Identifed\nPeptide", typeof(bool));
+            foreach (COL.GlycoLib.TargetPeptide tPeptide in _lstPeptides)
             {
                 DataRow row = dtPeptide.NewRow();
                 row[0] = tPeptide.PeptideSequence;
@@ -56,13 +64,22 @@ namespace GlycanSeq_Form
                 row[4] = tPeptide.AminoAcidAfter;
                 row[5] = tPeptide.StartTime;
                 row[6] = tPeptide.EndTime;
-
-                string Mod = "";
                 foreach (var modKey in tPeptide.Modifications.Keys)
                 {
-                    Mod += modKey + " * " + tPeptide.Modifications[modKey] + " ;";
+                    if (modKey == "Deamidated(N) (N)")
+                    {
+                        row[7] = tPeptide.Modifications[modKey];
+                    }
+                    else if (modKey == "Carbamidomethyl (M)")
+                    {
+                        row[8] = tPeptide.Modifications[modKey];
+                    }
+                    else
+                    {
+                        row[9] =  tPeptide.Modifications[modKey];
+                    }
                 }
-                row[7] = Mod;
+                row[10] = tPeptide.IdentifiedPeptide;
                 dtPeptide.Rows.Add(row);
             }
             dgvPeptide.DataSource = dtPeptide;
@@ -90,19 +107,28 @@ namespace GlycanSeq_Form
             _lstPeptides.Clear();
             foreach (DataRow dRow in dtPeptide.Rows)
             {
-                TargetPeptide tPeptide = new TargetPeptide(dRow[0].ToString(), dRow[2].ToString(), Convert.ToSingle(dRow[1]), Convert.ToSingle(dRow[5]), Convert.ToSingle(dRow[6]));
+                COL.GlycoLib.TargetPeptide tPeptide = new COL.GlycoLib.TargetPeptide(dRow[0].ToString(), dRow[2].ToString(), Convert.ToSingle(dRow[1]), Convert.ToSingle(dRow[5]), Convert.ToSingle(dRow[6]));
                 tPeptide.AminoAcidBefore = dRow[3].ToString();
                 tPeptide.AminoAcidAfter = dRow[4].ToString();
-                string[] ModArray = dRow[7].ToString().Split(';');
-                for (int i = 0; i < ModArray.Length; i++)
+                int tmpMod = 0;
+                int.TryParse(dRow[7].ToString(), out tmpMod);
+                if (tmpMod!=0)
                 {
-                    if (ModArray[i] != "")
-                    {
-                        string ModType = ModArray[i].Split('*')[0].TrimEnd();
-                        int ModCount = Convert.ToInt32(ModArray[i].Split('*')[1].TrimStart());
-                        tPeptide.Modifications.Add(ModType, ModCount);
-                    }
+                    tPeptide.Modifications.Add("Deamidated(N) (N)",tmpMod);    
                 }
+                tmpMod = 0;
+                int.TryParse(dRow[8].ToString(), out tmpMod);
+                if (tmpMod != 0)
+                {
+                    tPeptide.Modifications.Add("Carbamidomethyl (M)", tmpMod);
+                }
+                tmpMod = 0;
+                int.TryParse(dRow[9].ToString(), out tmpMod);
+                if (tmpMod != 0)
+                {
+                    tPeptide.Modifications.Add("Oxidation (M)", tmpMod);
+                }
+                tPeptide.IdentifiedPeptide = (bool)dRow[10];
                 _lstPeptides.Add(tPeptide);
             }
             MessageBox.Show("Total " + _lstPeptides.Count.ToString() + "  glycopeptides saved");

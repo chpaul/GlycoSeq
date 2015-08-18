@@ -63,9 +63,9 @@ namespace GlycanSeq_Form
         private int DividePartNum = 0;
         private enumPeptideMutation _PeptideMutation;
         private bool _ExportIndividualSpectrum = false;
-        private Dictionary<string, List<Tuple<int, string, Tuple<double, double, double>, string, bool,double>>> dictResultSortByPeptide = new Dictionary<string, List<Tuple<int, string,  Tuple<double,double,double>, string, bool,double>>>(); //Tuple 1:Scan Number, 2:Glycan Sequence 3:Score 4:Completed
+        private Dictionary<string, List<Tuple<int, string, Tuple<double, double, double>, string, bool, double>>> dictResultSortByPeptide = new Dictionary<string, List<Tuple<int, string, Tuple<double, double, double>, string, bool, double>>>(); //Tuple 1:Scan Number, 2:Glycan Sequence 3:Score 4:Completed
         private GlycanSeqParameters _sequencingParameters;
-        private List<Tuple<float, string>> _peptideMassList; 
+        private List<Tuple<float, string,TargetPeptide>> _peptideMassList; 
       
         /// <summary>
         /// Input Number of Glycans (blind search)
@@ -154,10 +154,10 @@ namespace GlycanSeq_Form
 
         private void GeneratePeptideList()
         {
-            _peptideMassList = new List<Tuple<float, string>>();   
+            _peptideMassList = new List<Tuple<float, string,TargetPeptide>>();   
             foreach (TargetPeptide peptide in _TargetPeptide)
             {
-                _peptideMassList.Add(new Tuple<float, string>(peptide.PeptideMass, peptide.PeptideSequence));
+                _peptideMassList.Add(new Tuple<float, string, TargetPeptide>(peptide.PeptideMass, peptide.PeptideSequence,peptide));
             }
         }
         public GlycanSeqParameters GlycanSequencingParemetets
@@ -806,6 +806,7 @@ namespace GlycanSeq_Form
 
 
                         GlycanSequencing_MultipleScoring GSM = null;
+                        #region old
                         //if (_UseGlycanList)
                         //{
                         //    float GlycanMonoMass = (_scan.ParentMZ - Atoms.ProtonMass) * _scan.ParentCharge -
@@ -929,6 +930,7 @@ namespace GlycanSeq_Form
                         //    }
                         //}
                         //else // no Glycan list
+                        #endregion
                         {
                        
                                 if (HCD != null)
@@ -974,7 +976,19 @@ namespace GlycanSeq_Form
                                 {
                                     foreach (GlycanStructure g in GSM.FullSequencedStructures)
                                     {
-                                        Tuple<string, GlycanStructure, double> Result = new Tuple<string, GlycanStructure, double>(g.PeptideSequence, g, g.Score);
+                                        Tuple<string, GlycanStructure, double> Result;
+                                        if (g.TargetPeptide != null && g.TargetPeptide.IdentifiedPeptide)
+                                        {
+                                            Result =
+                                                new Tuple<string, GlycanStructure, double>(
+                                                    g.PeptideSequence + "+" + g.PeptideModificationString, g, g.Score);
+                                        }
+                                        else
+                                        {
+                                            Result =
+                                                new Tuple<string, GlycanStructure, double>(
+                                                    g.PeptideSequence + "+" + g.PeptideModificationString+"#", g, g.Score);
+                                        }
                                         if (!lstSequenceResult.Contains(Result))
                                         {
                                             lstSequenceResult.Add(Result);
@@ -985,7 +999,19 @@ namespace GlycanSeq_Form
                                 {
                                     foreach (GlycanStructure g in GSM.GetTopRankScoreStructre(_GetTopRank))
                                     {
-                                        Tuple<string, GlycanStructure, double> Result = new Tuple<string, GlycanStructure, double>(GSM.Peptide.PeptideSequence, g, g.Score);
+                                        Tuple<string, GlycanStructure, double> Result;
+                                        if (g.TargetPeptide != null && g.TargetPeptide.IdentifiedPeptide)
+                                        {
+                                            Result =
+                                                new Tuple<string, GlycanStructure, double>(
+                                                    g.PeptideSequence + "+" + g.PeptideModificationString, g, g.Score);
+                                        }
+                                        else
+                                        {
+                                            Result =
+                                                new Tuple<string, GlycanStructure, double>(
+                                                    g.PeptideSequence + "+" + g.PeptideModificationString + "#", g, g.Score);
+                                        }
                                         if (!lstSequenceResult.Contains(Result))
                                         {
                                             lstSequenceResult.Add(Result);

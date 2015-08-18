@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.IO;
+using COL.GlycoLib;
 namespace COL.GlycoSequence
 {
     public static class PeptideReader
@@ -107,7 +108,7 @@ namespace COL.GlycoSequence
                         TargetPeptide tPep = new TargetPeptide(PeptideSequence, ProteinName, PeptideMass, StartTime,EndTime);
                         tPep.AminoAcidBefore = NTerm;
                         tPep.AminoAcidAfter = CTerm;
-
+                        tPep.IdentifiedPeptide = true;
 
                         Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase);  //NXS NXT  X!=P
                         string FullSeq = tPep.AminoAcidBefore + tPep.PeptideSequence + tPep.AminoAcidAfter;
@@ -144,7 +145,7 @@ namespace COL.GlycoSequence
                             for (int i = 0; i < ModAry.Length; i++)
                             {
                                 string modType = ModAry[i].Split(':')[1].Trim();
-                                int modLocIdx = Convert.ToInt32(ModAry[i].Split(':')[0]) -1;
+                                int modLocIdx = Convert.ToInt32(ModAry[i].Split(':')[0]);
                                 if (!dictModifications.ContainsKey(modType))
                                 {
                                     dictModifications.Add(modType,0);
@@ -173,6 +174,7 @@ namespace COL.GlycoSequence
 
                  
                             TargetPeptide NativePeptide = (TargetPeptide) tPep.Clone();
+                            NativePeptide.IdentifiedPeptide = false;
                             foreach (string key in NativePeptide.Modifications.Keys.ToList())
                             {
                                 NativePeptide.PeptideMass -= dictVariableModMass[key]*NativePeptide.Modifications[key];
@@ -183,6 +185,7 @@ namespace COL.GlycoSequence
                            for (int i = 0; i <= NumOfN - lstDeamidatedIdx.Count; i++)
                            {
                                TargetPeptide deAmidatedPeptide = (TargetPeptide)NativePeptide.Clone();
+                               deAmidatedPeptide.IdentifiedPeptide = false;
                                deAmidatedPeptide.PeptideMass += dictVariableModMass["Deamidated(N) (N)"] * i;
                                deAmidatedPeptide.Modifications["Deamidated(N) (N)"] += i;
                                tmpPeptides.Add(deAmidatedPeptide);
@@ -245,7 +248,8 @@ namespace COL.GlycoSequence
                         {
                             continue;
                         }
-                        //Remove Redundent 
+                        //Remove Zero Modifications 
+                        lstTargetPeptides.Add(tPep);
                         foreach (TargetPeptide t in tmpPeptides)
                         {
                             List<string> RemoveKey = new List<string>();
@@ -260,8 +264,13 @@ namespace COL.GlycoSequence
                             {
                                 t.Modifications.Remove(key);
                             }
+                            if (t.PeptideMass == tPep.PeptideMass && t.Modifications.Count == tPep.Modifications.Count)
+                            {
+                                continue;
+                            }
                             lstTargetPeptides.Add(t);
                         }
+
                         break;
                 }
             } while (!sr.EndOfStream);

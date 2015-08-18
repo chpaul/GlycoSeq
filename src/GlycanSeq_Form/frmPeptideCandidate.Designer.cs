@@ -53,13 +53,13 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgvPeptide);
-            this.splitContainer1.Size = new System.Drawing.Size(1025, 626);
+            this.splitContainer1.Size = new System.Drawing.Size(1130, 626);
             this.splitContainer1.SplitterDistance = 33;
             this.splitContainer1.TabIndex = 0;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(922, 3);
+            this.btnSave.Location = new System.Drawing.Point(1043, 7);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 1;
@@ -73,7 +73,7 @@
             this.dgvPeptide.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvPeptide.Location = new System.Drawing.Point(0, 0);
             this.dgvPeptide.Name = "dgvPeptide";
-            this.dgvPeptide.Size = new System.Drawing.Size(1025, 589);
+            this.dgvPeptide.Size = new System.Drawing.Size(1130, 589);
             this.dgvPeptide.TabIndex = 0;
             this.dgvPeptide.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgvPeptide_CellValidating);
             this.dgvPeptide.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvPeptide_DataError);
@@ -82,7 +82,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1025, 626);
+            this.ClientSize = new System.Drawing.Size(1130, 626);
             this.Controls.Add(this.splitContainer1);
             this.Name = "frmPeptideCandidate";
             this.Text = "Peptide Candidates";

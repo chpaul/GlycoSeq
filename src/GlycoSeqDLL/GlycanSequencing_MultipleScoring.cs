@@ -66,8 +66,8 @@ namespace COL.GlycoSequence
         private int _topCorePeaks_k = 0;
         private int _topBrancingPeaks_l = 0;
         private int _maxGlycansToCompleteStruct_m = 0;
-        private List<Tuple<float,string>> _peptideList = new List<Tuple<float, string>>();
-        public GlycanSequencing_MultipleScoring(MSScan argScan, int argPrecursorCharge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol, List<int> argPeaksParameters, List<Tuple<float, string>> argPeptideList)
+        private List<Tuple<float, string, TargetPeptide>> _peptideList = new List<Tuple<float, string, TargetPeptide>>();
+        public GlycanSequencing_MultipleScoring(MSScan argScan, int argPrecursorCharge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol, List<int> argPeaksParameters, List<Tuple<float, string,TargetPeptide>> argPeptideList)
         {
             _NGlycanData = argNGlycanData;
             _precursorCharge = argPrecursorCharge;
@@ -959,10 +959,10 @@ namespace COL.GlycoSequence
                     GlycanStructure Core = new GlycanStructure(new Glycan(Glycan.Type.HexNAc, currentCharge), Y1);
                     Core.Charge = currentCharge;
                     Core.PrecursorMonoMass = _scan.ParentMonoMW;
-                    Tuple<float, string> ClosedPeptide = Peptides.GetClosedPeptideByMass(_peptideList, peptidemono);
+                    Tuple<float, string,TargetPeptide> ClosedPeptide = Peptides.GetClosedPeptideByMass(_peptideList, peptidemono);
                     if (ClosedPeptide!=null && Math.Abs(ClosedPeptide.Item1 - peptidemono) < 0.8)
                     {
-                        Core.PeptideSequence = ClosedPeptide.Item2;
+                        Core.TargetPeptide = ClosedPeptide.Item3;
                     }
                     if (!foundDiagFucPeak)
                     {

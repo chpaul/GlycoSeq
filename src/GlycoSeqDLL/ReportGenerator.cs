@@ -33,7 +33,7 @@ namespace COL.GlycoSequence
             if (!hasFile)
             {
                 sw.WriteLine(
-                    "MSn_Scan,Parent_Scan,Parent_Mz,Mono_Mz,Charge_State,Monoisotopic_Mass,CID_time,Y1,Peptide,Core_Score,Branch_Score,Append_Glycan_Score,Completed_Sequencing,PPM,HexNAc,Hex,Fuc,NeuAc,NeuGc,Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),IUPAC");
+                    "MSn_Scan,Parent_Scan,Parent_Mz,Mono_Mz,Charge_State,Monoisotopic_Mass,CID_time,Y1,Peptide,Peptide_Mod,Identified_By_Mascot,Core_Score,Branch_Score,Append_Glycan_Score,Completed_Sequencing,PPM,HexNAc,Hex,Fuc,NeuAc,NeuGc,Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),IUPAC");
             }
             string header = argScan.ScanNo.ToString() + "," + argScan.ParentScanNo.ToString() + "," +
                             argScan.ParentMZ.ToString() + "," +argScan.ParentMonoMz+","+ argScan.ParentCharge.ToString() + "," +
@@ -68,9 +68,16 @@ namespace COL.GlycoSequence
                            GlycanMass.GetGlycanMass(Glycan.Type.DeHex)*SeqResult.Item2.NoOfDeHex +
                            GlycanMass.GetGlycanMass(Glycan.Type.NeuAc)*SeqResult.Item2.NoOfNeuAc +
                            GlycanMass.GetGlycanMass(Glycan.Type.NeuGc)*SeqResult.Item2.NoOfNeuGc;
-               
+               string IdentifedPeptide = "No";
+               if (SeqResult.Item2.TargetPeptide != null && SeqResult.Item2.TargetPeptide.IdentifiedPeptide == true)
+               {
+                   IdentifedPeptide = "Yes";
+               }
+
                sw.WriteLine(header + SeqResult.Item2.Y1.Mass.ToString("0.0000") +"," +
                             SeqResult.Item2.PeptideSequence + "," +
+                            SeqResult.Item2.PeptideModificationString + "," +
+                            IdentifedPeptide + "," +
                             SeqResult.Item2.CoreScore.ToString("0.00")+","+
                             SeqResult.Item2.BranchScore.ToString("0.00") + "," +
                             SeqResult.Item2.InCompleteScore.ToString("0.00") + "," +
@@ -139,10 +146,10 @@ namespace COL.GlycoSequence
             sb.AppendLine("<tr>\n\t<td>Peptide Mutation: </td>\n\t<td>" +
                              argGlycanSeqParas.PeptideMutation.ToString() + "</td>\n</tr>");
             sb.AppendLine("</Table>\n<br>\n<br>");
-
+            sb.AppendLine("#: Peptide identified by Mascot\n<br>\n<br>");
             foreach (string pepStr in argResults.Keys)
             {
-                if (pepStr == "")
+                if (pepStr == "+#" || pepStr == "+")
                 {
                     sb.AppendLine("Peptide: Unknown" );
                 }
@@ -240,6 +247,8 @@ namespace COL.GlycoSequence
                 argSW.WriteLine("<tr>\n\t<td>Peptide Mutation: </td>\n\t<td>" +
                                  argGlycanSeqParas.PeptideMutation.ToString() + "</td>\n</tr>");
                 argSW.WriteLine("</Table>\n<br>\n<br>");
+
+                argSW.WriteLine("#: Peptide identified by Mascot\n<br>\n<br>");
                 argSW.Flush();
                 StreamReader Sr;
                 foreach (string fileName in Directory.GetFiles(argGlycanSeqParas.ExportFolder))
@@ -621,7 +630,15 @@ namespace COL.GlycoSequence
                 }
                 else
                 {
-                    sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.PeptideSequence + "</td>");
+                    if (SeqResult.Item2.TargetPeptide != null && SeqResult.Item2.TargetPeptide.IdentifiedPeptide)
+                    {
+                        sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.PeptideSequence + "   " + SeqResult.Item2.PeptideModificationString + "#</td>");    
+                    }
+                    else
+                    {
+                        sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.PeptideSequence + "   " + SeqResult.Item2.PeptideModificationString + "</td>");    
+                    }
+                    
                 }
                 sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.IUPACString + "</td>");
 

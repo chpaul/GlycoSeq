@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using COL.ProtLib;
 using CSMSL.IO;
-
+using COL.GlycoLib;
 namespace COL.GlycoSequence
 {
     public class GlycanSeqParameters
