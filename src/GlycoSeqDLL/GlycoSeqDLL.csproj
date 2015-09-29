@@ -106,16 +106,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CSMSL">
-      <HintPath>..\..\lib\CSMSL.dll</HintPath>
-    </Reference>
-    <Reference Include="CSMSL.Thermo">
-      <HintPath>..\..\lib\CSMSL.Thermo.dll</HintPath>
+      <HintPath>..\..\..\MascotProteinIDExtractor\lib\CSMSL.dll</HintPath>
     </Reference>
     <Reference Include="GlycoLib">
       <HintPath>..\..\lib\GlycoLib.dll</HintPath>
     </Reference>
-    <Reference Include="MassLib">
-      <HintPath>..\..\lib\MassLib.dll</HintPath>
+    <Reference Include="MassLib, Version=1.0.0.4, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\COL_Lib\src\MassLibNative\bin\Release\MassLib.dll</HintPath>
     </Reference>
     <Reference Include="ProtLib, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

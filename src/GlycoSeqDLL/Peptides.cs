@@ -23,20 +23,19 @@ namespace COL.GlycoSequence
             return lstPeptideList;
         }
 
-        public static Tuple<float, string, TargetPeptide> GetClosedPeptideByMass(List<Tuple<float, string, TargetPeptide>> argPeptideList,
-            float argTargetMass)
+        public static List<Tuple<float, string, TargetPeptide>> GetClosedPeptideByMass(List<Tuple<float, string, TargetPeptide>> argPeptideList,
+            float argTargetMass, float argTolerance = 0.5f)
         {
-            float minDistance = 100.0f;
-            Tuple<float, string, TargetPeptide> minPeptide = null;
+            
+            List<Tuple<float, string, TargetPeptide>> minPeptides = new List<Tuple<float, string, TargetPeptide>>();
             foreach (Tuple<float, string, TargetPeptide> peptide in argPeptideList)
             {
-                if (Math.Abs(peptide.Item1 - argTargetMass) <= minDistance)
+                if (Math.Abs(peptide.Item1 - argTargetMass) <= argTolerance)
                 {
-                    minDistance = Math.Abs(peptide.Item1 - argTargetMass);
-                    minPeptide = peptide;
+                    minPeptides.Add(peptide);
                 }
             }
-            return minPeptide;
+            return minPeptides;
         }
     }
 }

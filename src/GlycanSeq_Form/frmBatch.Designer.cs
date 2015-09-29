@@ -114,6 +114,7 @@
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
+            this.mascotProteinIDExtractorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -895,7 +896,8 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.singleScanModeToolStripMenuItem});
+            this.singleScanModeToolStripMenuItem,
+            this.mascotProteinIDExtractorToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -903,7 +905,7 @@
             // singleScanModeToolStripMenuItem
             // 
             this.singleScanModeToolStripMenuItem.Name = "singleScanModeToolStripMenuItem";
-            this.singleScanModeToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.singleScanModeToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.singleScanModeToolStripMenuItem.Text = "Single Scan Mode";
             this.singleScanModeToolStripMenuItem.Click += new System.EventHandler(this.singleScanModeToolStripMenuItem_Click);
             // 
@@ -1010,6 +1012,13 @@
             this.label15.Size = new System.Drawing.Size(112, 13);
             this.label15.TabIndex = 0;
             this.label15.Text = "Get top i peaks as Y1:";
+            // 
+            // mascotProteinIDExtractorToolStripMenuItem
+            // 
+            this.mascotProteinIDExtractorToolStripMenuItem.Name = "mascotProteinIDExtractorToolStripMenuItem";
+            this.mascotProteinIDExtractorToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.mascotProteinIDExtractorToolStripMenuItem.Text = "MascotProteinIDExtractor";
+            this.mascotProteinIDExtractorToolStripMenuItem.Click += new System.EventHandler(this.mascotProteinIDExtractorToolStripMenuItem_Click);
             // 
             // frmBatch
             // 
@@ -1146,5 +1155,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.RadioButton rdoMascotExtractor;
         private System.Windows.Forms.Button btnChkPeptideCandidate;
+        private System.Windows.Forms.ToolStripMenuItem mascotProteinIDExtractorToolStripMenuItem;
     }
 }

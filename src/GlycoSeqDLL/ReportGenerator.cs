@@ -7,6 +7,7 @@ using COL.GlycoLib;
 using COL.MassLib;
 using System.Drawing;
 using System.IO;
+using COL.ProtLib;
 using CSMSL.Chemistry;
 
 namespace COL.GlycoSequence
@@ -33,7 +34,7 @@ namespace COL.GlycoSequence
             if (!hasFile)
             {
                 sw.WriteLine(
-                    "MSn_Scan,Parent_Scan,Parent_Mz,Mono_Mz,Charge_State,Monoisotopic_Mass,CID_time,Y1,Peptide,Peptide_Mod,Identified_By_Mascot,Core_Score,Branch_Score,Append_Glycan_Score,Completed_Sequencing,PPM,HexNAc,Hex,Fuc,NeuAc,NeuGc,Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),IUPAC");
+                    "MSn_Scan,Parent_Scan,Parent_Mz,Mono_Mz,Charge_State,Monoisotopic_Mass,CID_time,Y1,Peptide,Peptide_Mod,Identified_By_Mascot,Core_Score,Branch_Score,Append_Glycan_Score,Completed_Sequencing,PPM,Full_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),IUPAC");
             }
             string header = argScan.ScanNo.ToString() + "," + argScan.ParentScanNo.ToString() + "," +
                             argScan.ParentMZ.ToString() + "," +argScan.ParentMonoMz+","+ argScan.ParentCharge.ToString() + "," +
@@ -61,13 +62,7 @@ namespace COL.GlycoSequence
                }
               // lstExportedResult.Add(key);
 
-               float GlycoPeptideMass = SeqResult.Item2.Y1.Mass*SeqResult.Item2.Charge - Atoms.ProtonMass*SeqResult.Item2.Charge -
-                           GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) +
-                           GlycanMass.GetGlycanMass(Glycan.Type.HexNAc)*SeqResult.Item2.NoOfHexNac +
-                           GlycanMass.GetGlycanMass(Glycan.Type.Hex)*SeqResult.Item2.NoOfHexNac +
-                           GlycanMass.GetGlycanMass(Glycan.Type.DeHex)*SeqResult.Item2.NoOfDeHex +
-                           GlycanMass.GetGlycanMass(Glycan.Type.NeuAc)*SeqResult.Item2.NoOfNeuAc +
-                           GlycanMass.GetGlycanMass(Glycan.Type.NeuGc)*SeqResult.Item2.NoOfNeuGc;
+         
                string IdentifedPeptide = "No";
                if (SeqResult.Item2.TargetPeptide != null && SeqResult.Item2.TargetPeptide.IdentifiedPeptide == true)
                {
@@ -82,12 +77,8 @@ namespace COL.GlycoSequence
                             SeqResult.Item2.BranchScore.ToString("0.00") + "," +
                             SeqResult.Item2.InCompleteScore.ToString("0.00") + "," +
                             SeqResult.Item2.IsCompleteSequenced.ToString()+ "," +
-                            SeqResult.Item2.PPM.ToString("0.0000") + "," +
-                            SeqResult.Item2.NoOfHexNac.ToString() + "," +
-                            SeqResult.Item2.NoOfHex.ToString() + "," +
-                            SeqResult.Item2.NoOfDeHex.ToString() + "," +
-                            SeqResult.Item2.NoOfNeuAc.ToString() + "," +
-                            SeqResult.Item2.NoOfNeuGc.ToString() + "," +
+                            SeqResult.Item2.PPM.ToString("0.00") + "," +
+                            SeqResult.Item2.FullSequencedGlycanString.ToString() + "," +
                             SeqResult.Item2.RestGlycanString+ "," +
                             SeqResult.Item2.IUPACString);
 
@@ -95,12 +86,13 @@ namespace COL.GlycoSequence
             sw.Flush();
             sw.Close();
         }
+       
         /// <summary>
         /// 
         /// </summary>
         /// <param name="argExportFolder"></param>
-        /// <param name="argResults">Key: Peptide Seq //Tuple 1:Scan Number, 2:Glycan Sequence 3:CoreScore 4:BranceScore 5:IncompletedScore 6:RestGlycan 7:isCompleted 8:PPM</param>
-        public static void GenerateHtmlReportSortByPeptide(string argFolder, Dictionary<string, List<Tuple<int, string, Tuple<double, double, double>, string, bool, double>>> argResults, COL.GlycoSequence.GlycanSeqParameters argGlycanSeqParas)
+        /// <param name="argResults">Key: Peptide Seq //Tuple 1:Scan Number, 2:Glycan Sequence 3-1:CoreScore 3-2:BranceScore 3-3:IncompletedScore 4Full Glycan 5:RestGlycan 6:isCompleted 7:PPM</param>
+        public static void GenerateHtmlReportSortByPeptide(string argFolder, Dictionary<string, List<Tuple<int, string, Tuple<double, double, double>, string, string, bool, double>>> argResults, COL.GlycoSequence.GlycanSeqParameters argGlycanSeqParas)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
@@ -158,26 +150,28 @@ namespace COL.GlycoSequence
                     sb.AppendLine("Peptide:" + pepStr);
                 }
                 sb.AppendLine("<table  border=\"1\">");
-                sb.AppendLine("<tr><td>Scan No</td><td>Glycan Sequence</td><td>Glycan Picture</td><td>Core Score</td><td>Branch Score</td><td>Append Score</td><td>Append Glycan</td><td>Completed Sequence?</td><td>PPM</td></tr>");
-                foreach (Tuple <int, string, Tuple<double,double,double>,string, bool, double>  rResult in argResults[pepStr])
+                sb.AppendLine("<tr><td>Scan No</td><td>Glycan Sequence</td><td>Glycan Picture</td><td>Core + Branch - Append Score = Total Score</td><td>Full Glycan</td><td>Append Glycan</td><td>Completed Sequence?</td><td>PPM</td></tr>");
+                foreach (Tuple <int, string, Tuple<double,double,double>,string,string, bool, double>  rResult in argResults[pepStr])
                 {
                     sb.AppendLine("<tr>");
                     sb.AppendLine("<td>" + rResult.Item1 + "</td>");
                     sb.AppendLine("<td>" + rResult.Item2 + "</td>");
                     sb.AppendLine("<td><img src=\".\\Pics\\" + rResult.Item2 + ".png\"/></td>");
-                    sb.AppendLine("<td>" + rResult.Item3.Item1.ToString("0.0000") + "</td>");
-                    sb.AppendLine("<td>" + rResult.Item3.Item2.ToString("0.0000") + "</td>");
-                    sb.AppendLine("<td>" + rResult.Item3.Item3.ToString("0.0000") + "</td>");
-                    if (rResult.Item4 == "")
+                    double TotalScore = rResult.Item3.Item1 + rResult.Item3.Item2 + rResult.Item3.Item3;
+                    sb.AppendLine("<td>" + rResult.Item3.Item1.ToString("0.00") + " + " + rResult.Item3.Item2.ToString("0.0000") + " - " + rResult.Item3.Item3.ToString("0.00") + " = " + TotalScore.ToString("0.00") + "</td>");
+                    //sb.AppendLine("<td>" + rResult.Item3.Item2.ToString("0.00") + "</td>");
+                    //sb.AppendLine("<td>" + rResult.Item3.Item3.ToString("0.00") + "</td>");
+                    sb.AppendLine("<td>" + rResult.Item4.ToString() + "</td>");
+                    if (rResult.Item5 == "")
                     {
                         sb.AppendLine("<td>-</td>");
                     }
                     else
                     {
-                        sb.AppendLine("<td>" + rResult.Item4.ToString() + "</td>");
+                        sb.AppendLine("<td>" + rResult.Item5.ToString() + "</td>");
                     }
                    
-                    if (rResult.Item5)
+                    if (rResult.Item6)
                     {
                         sb.AppendLine("<td>Yes</td>");
                     }
@@ -185,7 +179,7 @@ namespace COL.GlycoSequence
                     {
                         sb.AppendLine("<td>No</td>");
                     }
-                    sb.AppendLine("<td>" + rResult.Item6.ToString("0.0000") + "</td>");
+                    sb.AppendLine("<td>" + rResult.Item7.ToString("0.00") + "</td>");
                     sb.AppendLine("</tr>");
                 }
                 sb.AppendLine("</table><br>-----------------------------------------------------------<br>");
@@ -613,9 +607,8 @@ namespace COL.GlycoSequence
             sbResult.AppendLine("\t\t<td>Peptide Sequence</td>");
             sbResult.AppendLine("\t\t<td>Glycan Sequence</td>");
             sbResult.AppendLine("\t\t<td>Glycan Picture</td>");
-            sbResult.AppendLine("\t\t<td>Core Score</td>");
-            sbResult.AppendLine("\t\t<td>Branch Score</td>");
-            sbResult.AppendLine("\t\t<td>Append Glycan Score</td>");
+            sbResult.AppendLine("\t\t<td>Core + Branch +Append Glycan = Total Score</td>");
+            sbResult.AppendLine("\t\t<td>Full Glycan Structure</td>");
             sbResult.AppendLine("\t\t<td>Append Glycan<br>(HexNAc-Hex-deHex-NeuAc-NeuGc)</td>");
             sbResult.AppendLine("\t\t<td>Completed Sequence?</td>");
             sbResult.AppendLine("\t\t<td>PPM</td>");
@@ -653,10 +646,15 @@ namespace COL.GlycoSequence
                     Pic.Dispose();
                     Pic = null;
                 }
+                float totalScore = SeqResult.Item2.CoreScore + SeqResult.Item2.BranchScore +
+                                   SeqResult.Item2.InCompleteScore;
                 sbResult.AppendLine("<td><img src=\".\\Pics\\" + SeqResult.Item2.IUPACString.ToString() + ".png\"/></td>");
-                sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.CoreScore.ToString("0.000") + "</td>");
-                sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.BranchScore.ToString("0.000") + "</td>");
-                sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.InCompleteScore.ToString("0.000") + "</td>");
+                sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.CoreScore.ToString("0.00") + "+" + SeqResult.Item2.BranchScore.ToString("0.00") + "-" + SeqResult.Item2.InCompleteScore.ToString("0.00") + "=" + totalScore.ToString("0.000") + "</td>");
+                //sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.BranchScore.ToString("0.000") + "</td>");
+                //sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.InCompleteScore.ToString("0.000") + "</td>");
+                //Sequenced Glycan
+                sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.FullSequencedGlycanString.ToString() + "</td>");
+
                 if (SeqResult.Item2.RestGlycanString == "")
                 {
                     sbResult.AppendLine("\t\t<td>-</td>");
@@ -674,15 +672,9 @@ namespace COL.GlycoSequence
                 {
                     sbResult.AppendLine("\t\t<td>No</td>");
                 }
-                float GlycoPeptideMass = SeqResult.Item2.Y1.Mass * SeqResult.Item2.Charge - Atoms.ProtonMass * SeqResult.Item2.Charge -
-                          GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) +
-                          GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) * SeqResult.Item2.NoOfHexNac +
-                          GlycanMass.GetGlycanMass(Glycan.Type.Hex) * SeqResult.Item2.NoOfHexNac +
-                          GlycanMass.GetGlycanMass(Glycan.Type.DeHex) * SeqResult.Item2.NoOfDeHex +
-                          GlycanMass.GetGlycanMass(Glycan.Type.NeuAc) * SeqResult.Item2.NoOfNeuAc +
-                          GlycanMass.GetGlycanMass(Glycan.Type.NeuGc) * SeqResult.Item2.NoOfNeuGc;
+
+                sbResult.AppendLine("\t\t<td>" + SeqResult.Item2.PPM.ToString("0.00") + "</td>");
                 
-                sbResult.AppendLine("\t\t<td>" +  SeqResult.Item2.PPM.ToString("0.00") + "</td>");
                 sbResult.AppendLine("\t</tr>");
 
             }

@@ -14,6 +14,7 @@ using COL.GlycoLib;
 using COL.MassLib;
 using COL.ProtLib;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 namespace GlycanSeq_Form
 {
     public partial class frmBatch : Form
@@ -215,32 +216,29 @@ namespace GlycanSeq_Form
                     sequencingParameters.ExportFolder = folderBrowserDialog1.SelectedPath;
                     sequencingParameters.ExportIndividualSpectrum = chkIndividualReport.Checked;
 
-                    //if (chkGlycanList.Checked) // Use Glycan List
-                    //{
-                    //    GenerateGlycanList();
-                    //    frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
-                    //                                                                           Convert.ToInt32(txtEnd.Text),
-                    //                                                                           Convert.ToSingle(txtPeaKTol.Text),
-                    //                                                                           Convert.ToSingle(txtPrecusorTol.Text),
-                    //                                                                           chkNLinked.Checked,
-                    //                                                                           rdoNeuAc.Checked,
-                    //                                                                           _glycanCompounds,
-                    //                                                                           _MassGlycanMapping,
-                    //                                                                           GlycanCompoundMassList,
-                    //                                                                           txtGlycanList.Text,
-                    //                                                                           txtRaw.Text,
-                    //                                                                           lstTargetPeptides,
-                    //                                                                           chkAvgMass.Checked,
-                    //                                                                           chkHCD.Checked,
-                    //                                                                           chkSeqHCD.Checked,
-                    //                                                                           folderBrowserDialog1.SelectedPath,
-                    //                                                                           Convert.ToInt32(cboTopRank.Text),
-                    //                                                                           chkCompletedOnly.Checked,
-                    //                                                                           Convert.ToSingle(txtCompReward.Text),
-                    //                                                                           chkIndividualReport.Checked
-                    //                                                                           );
-                    //}
-                    //else
+                    if (chkGlycanList.Checked) // Use Glycan List
+                    {
+                        GenerateGlycanList();
+                        frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
+                                                                                               Convert.ToInt32(txtEnd.Text),
+                                                                                               Convert.ToSingle(txtPeaKTol.Text),
+                                                                                               Convert.ToSingle(txtPrecusorTol.Text),
+                                                                                               chkNLinked.Checked,
+                                                                                               rdoNeuAc.Checked,
+                                                                                               txtGlycanList.Text,
+                                                                                               txtRaw.Text,
+                                                                                               lstTargetPeptides,
+                                                                                               chkAvgMass.Checked,
+                                                                                               chkHCD.Checked,
+                                                                                               chkSeqHCD.Checked,
+                                                                                               folderBrowserDialog1.SelectedPath,
+                                                                                               Convert.ToInt32(cboTopRank.Text),
+                                                                                               chkCompletedOnly.Checked,
+                                                                                               Convert.ToSingle(txtCompReward.Text),
+                                                                                               chkIndividualReport.Checked
+                                                                                               );
+                    }
+                    else
                     {
                         frmProcess = new frmProcessing(Convert.ToInt32(txtStart.Text),
                                                                                                Convert.ToInt32(txtEnd.Text),
@@ -744,6 +742,7 @@ namespace GlycanSeq_Form
         private List<TargetPeptide> GeneratePeptideCandidates(string argFile)
         {
             List<TargetPeptide> lstTargetPeptides = new List<TargetPeptide>() ;
+            List<TargetPeptide> lstGlycoPeptides = new List<TargetPeptide>();
             if (rdoPeptideWithTime.Checked)  // Old format 
             {
                 lstTargetPeptides.AddRange(PeptideReader.GetCandidatePeptidesFromFile(argFile));
@@ -754,7 +753,7 @@ namespace GlycanSeq_Form
                 List<ProteinInfo> PInfos = FastaReader.ReadFasta(txtFasta.Text);
                 List<string> GlycoPeptide = new List<string>();
                 List<Protease.Type> ProteaseType = new List<Protease.Type>();
-
+    
                 if (chkEnzy_Trypsin.Checked)//Trypsin
                 {
                     ProteaseType.Add(Protease.Type.Trypsin);
@@ -784,26 +783,25 @@ namespace GlycanSeq_Form
                 {
                     lstTargetPeptides.Add(new TargetPeptide(gpeptide));
                 }
+                lstGlycoPeptides.AddRange(lstTargetPeptides);
             }
             else //MascotPID extractor result  //Mascot Protein ID Extractor
             {
                 lstTargetPeptides.AddRange(PeptideReader.GetCandidatePeptidesFromMascotProteinIDExtractorResult(argFile));
-            }
-            
-            Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase);  //NXS NXT  X!=P
-            Regex sequonEnd = new Regex("N[ARNDCEQGHILKMFSTWYV]$", RegexOptions.IgnoreCase);  //NX NX  X!=P in the end
+                Regex sequon = new Regex("N[ARNDCEQGHILKMFSTWYV][S|T]", RegexOptions.IgnoreCase);  //NXS NXT  X!=P
+                Regex sequonEnd = new Regex("N[ARNDCEQGHILKMFSTWYV]$", RegexOptions.IgnoreCase);  //NX NX  X!=P in the end
 
-            List<TargetPeptide> lstGlycoPeptides = new List<TargetPeptide>();
-            foreach (TargetPeptide tPep in lstTargetPeptides)
-            {
-                string pep = tPep.PeptideSequence + tPep.AminoAcidAfter;
-                if (IsGlycopeptide(pep, pepMuta))
+                foreach (TargetPeptide tPep in lstTargetPeptides)
                 {
-                    lstGlycoPeptides.Add(tPep);
+                    string pep = tPep.PeptideSequence + tPep.AminoAcidAfter;
+                    if (IsGlycopeptide(pep, pepMuta))
+                    {
+                        lstGlycoPeptides.Add(tPep);
+                    }
                 }
             }
-
-
+            
+ 
             //Adjust Time
             float shiftTime = Convert.ToSingle(txtShiftTime.Text);
             float tolTime = Convert.ToSingle(txtTolTime.Text);
@@ -961,6 +959,8 @@ namespace GlycanSeq_Form
             groupBox5.Enabled = chkGlycanList.Checked;
             grpGlycan.Enabled = !chkGlycanList.Checked;
             chkCompletedOnly.Checked = chkGlycanList.Checked;
+            txtGlycanList.Enabled = chkGlycanList.Checked;
+            btnGlycanList.Enabled = chkGlycanList.Checked;
         }
 
         private Bitmap GetImageFromURL(string argGlycan)
@@ -1053,6 +1053,36 @@ namespace GlycanSeq_Form
         {
             frmPeptideCandidate frmPepCand = new frmPeptideCandidate(ref lstTargetPeptides);
             frmPepCand.ShowDialog();
+        }
+
+        private void mascotProteinIDExtractorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = false;
+            startInfo.UseShellExecute = false;
+            startInfo.FileName = Environment.CurrentDirectory+"\\MascotProteinIDExtractor.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                if (!File.Exists(Environment.CurrentDirectory + "\\MascotProteinIDExtractor.exe"))
+                {
+                    MessageBox.Show("MascotProteinIDExtractor.exe  not found");
+                }
+                else
+                {
+                    MessageBox.Show("Mascot result extractor failed.");    
+                }
+                
+            }
         }
     }
 }

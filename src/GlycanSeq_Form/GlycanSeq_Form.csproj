@@ -74,11 +74,9 @@
     <Reference Include="GlycoLib">
       <HintPath>..\..\lib\GlycoLib.dll</HintPath>
     </Reference>
-    <Reference Include="MassLib">
-      <HintPath>..\..\lib\MassLib.dll</HintPath>
-    </Reference>
-    <Reference Include="NamedPiped">
-      <HintPath>..\..\lib\NamedPiped.dll</HintPath>
+    <Reference Include="MassLib, Version=1.0.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\COL_Lib\src\MassLibNative\bin\Release\MassLib.dll</HintPath>
     </Reference>
     <Reference Include="ProtLib, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -181,6 +179,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\New_Scoring.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\MascotProteinIDExtractor.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
