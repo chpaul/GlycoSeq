@@ -178,12 +178,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resource\New_Scoring.jpg" />
+    <None Include="Resources\New_Scoring.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resource\MascotProteinIDExtractor.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <None Include="Resources\bracket.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DeHex.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Hex.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HexNAc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NeuAc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NeuGc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MascotProteinIDExtractor.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\model.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

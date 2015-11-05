@@ -20,6 +20,7 @@ namespace GlycanSeq_Form
 {
     public partial class frmProcessing : Form
     {
+        private const  bool _exportLearingMatrix = false;
         private object lockObject = new object();
         private int completedScan = 0;
         private DateTime StartTime;
@@ -68,11 +69,11 @@ namespace GlycanSeq_Form
         private GlycanSeqParameters _sequencingParameters;
         private List<Tuple<float, string, TargetPeptide>> _peptideMassList;
         private List<GlycanCompound> lstGlycans;
+        private List<int> _lstScans;
         /// <summary>
         /// Input Number of Glycans (blind search)
         /// </summary>
-        /// <param name="argStartScan"></param>
-        /// <param name="argEndScan"></param>
+        /// <param name="argScans"></param>
         /// <param name="argMSMSTol"></param>
         /// <param name="argPrecursorTol"></param>
         /// <param name="argNGlycan"></param>
@@ -91,8 +92,7 @@ namespace GlycanSeq_Form
         /// <param name="argGetTopRank"></param>
         /// <param name="argCompletedOnly"></param>
         /// <param name="argCompletedReward"></param>
-        public frmProcessing(int argStartScan,
-            int argEndScan,
+        public frmProcessing(List<int>  argScans,
             float argMSMSTol,
             float argPrecursorTol,
             bool argNGlycan,
@@ -115,8 +115,7 @@ namespace GlycanSeq_Form
         {
             InitializeComponent();
             AAMW = new AminoAcidMass();
-            _StartScan = argStartScan;
-            _EndScan = argEndScan;
+            _lstScans = argScans;
             _MSMSTol = argMSMSTol;
             _PrecursorTol = argPrecursorTol;
             _NGlycan = argNGlycan;
@@ -175,8 +174,7 @@ namespace GlycanSeq_Form
         /// <param name="argGetTopRank"></param>
         /// <param name="argCompletedOnly"></param>
         /// <param name="argCompletedReward"></param>
-        public frmProcessing(int argStartScan,
-            int argEndScan,
+        public frmProcessing(List<int> argScans ,
             float argMSMSTol,
             float argPrecursorTol,
             bool argNGlycan,
@@ -196,8 +194,7 @@ namespace GlycanSeq_Form
         {
             InitializeComponent();
             AAMW = new AminoAcidMass();
-            _StartScan = argStartScan;
-            _EndScan = argEndScan;
+            _lstScans = argScans;
             _MSMSTol = argMSMSTol;
             _PrecursorTol = argPrecursorTol;
             _NGlycan = argNGlycan;
@@ -207,7 +204,7 @@ namespace GlycanSeq_Form
 
             _TargetPeptide = argTargetPeptides;
             _AverageMass = argAverageMass;
-            _UseGlycanList = false;
+            _UseGlycanList = true;
             _UseHCD = argUseHCD;
             _SeqHCD = argSeqHCD;
             _CompletedOnly = argCompletedOnly;
@@ -237,147 +234,7 @@ namespace GlycanSeq_Form
             get { return _sequencingParameters; }
             set { _sequencingParameters = value; }
         }
-        //private List<string> GenerateGlycoPeptide()
-        //{
-        //    List<ProteinInfo> PInfos = FastaReader.ReadFasta(_fastaFile);
-        //    List<string> GlycoPeptide = new List<string>();
-        //    foreach (ProteinInfo Pinfo in PInfos)
-        //    {
-        //        GlycoPeptide.AddRange(Pinfo.NGlycopeptide(_MissCLeavage,_ProteaseType,_PeptideMutation));
-        //    }
-        //    return GlycoPeptide;
-        //}
-
-        //private void WriteParametersToXML()
-        //{
-        //    List<int> EndScans = new List<int>();
-        //    int PartStart = _StartScan;
-        //    int PartEndScan = 0;
-        //    int DivideInterval = 1000;
-        //    while (true)
-        //    {
-        //        PartEndScan = PartStart + DivideInterval - 1;
-        //        if (PartEndScan >= _EndScan)
-        //        {
-        //            PartEndScan = _EndScan;
-        //            EndScans.Add(PartEndScan);
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            EndScans.Add(PartEndScan);
-        //            PartStart = PartEndScan + 1;
-        //        }
-        //    }
-        //    DividePartNum = EndScans.Count;
-        //    for (int i = 0; i < EndScans.Count; i++)
-        //    {
-        //        XmlWriter writer =
-        //            XmlWriter.Create(Path.GetDirectoryName(_exportFolder) + "\\" +
-        //                             Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i + 1).ToString() + ".xml");
-        //        writer.WriteStartDocument();
-        //        writer.WriteStartElement("GlycanSequencing");
-        //        //Raw
-        //        writer.WriteStartElement("RawFile");
-        //        writer.WriteElementString("FilePath", _rawFilePath);
-        //        //writer.WriteElementString("StartScan",(EndScans[i] - DivideInterval+1).ToString());
-        //        //writer.WriteElementString("EndScan", EndScans[i].ToString());
-        //        writer.WriteElementString("SequencingHCD", _SeqHCD.ToString());
-        //        writer.WriteElementString("UseHCDInfo", _UseHCD.ToString());
-        //        for (int j = EndScans[i] - DivideInterval + 1; j <= EndScans[i]; j++)
-        //        {
-        //            writer.WriteElementString("Scan", j.ToString());
-        //        }
-        //        writer.WriteEndElement();
-        //        //Fasta
-        //        // writer.WriteStartElement("FastaFile");
-        //        //writer.WriteElementString("FilePath", _fastaFile);
-
-        //        //foreach (string glycopeptide in GenerateGlycoPeptide())
-        //        //{
-        //        //    writer.WriteElementString("GlycoPeptide", glycopeptide);
-        //        //}
-        //        //writer.WriteEndElement();
-        //        //Glycan
-        //        writer.WriteStartElement("Glycans");
-        //        writer.WriteAttributeString("GlycansFile", _UseGlycanList.ToString());
-        //        if (_UseGlycanList)
-        //        {
-        //            writer.WriteElementString("FilePath", _glycanFile);
-        //        }
-        //        else
-        //        {
-        //            writer.WriteElementString("Hex", _NoHex.ToString());
-        //            writer.WriteElementString("HexNAc", _NoHexNAc.ToString());
-        //            writer.WriteElementString("deHex", _NoDeHex.ToString());
-        //            writer.WriteElementString("Sia", _NoSia.ToString());
-        //        }
-        //        writer.WriteElementString("NLink", _NGlycan.ToString());
-        //        writer.WriteElementString("Human", _Human.ToString());
-        //        writer.WriteElementString("AvgMass", _AverageMass.ToString());
-        //        writer.WriteEndElement();
-        //        //Torelance
-        //        writer.WriteStartElement("Torelance");
-        //        writer.WriteAttributeString("MSMS_Da", _MSMSTol.ToString());
-        //        writer.WriteAttributeString("Precursor_PPM", _PrecursorTol.ToString());
-        //        writer.WriteEndElement();
-
-        //        //Export
-        //        writer.WriteStartElement("Export");
-        //        writer.WriteAttributeString("GetTopRank", _GetTopRank.ToString());
-        //        writer.WriteAttributeString("OnlyCompleteStructure", _CompletedOnly.ToString());
-        //        writer.WriteAttributeString("CompletedReward", _CompletedReward.ToString());
-        //        writer.WriteEndElement();
-
-        //        writer.WriteEndElement();
-        //        writer.WriteEndDocument();
-        //        writer.Flush();
-        //        writer.Close();
-        //    }
-        //}
-
-
-        //private void StartProcess()
-        //{
-        //    Thread ThreadUpdate = new Thread(() => UpdateStatus());
-        //    ThreadUpdate.Start();
-        //    for (int i = 1; i <= DividePartNum; i++)
-        //    {
-        //        CurrentRunningPart = i;
-        //        RunExecutable(i);
-        //    }
-        //    ThreadUpdate.Abort();
-        //    this.lblCurrentScan.SafeBeginInvoke(new Action(() => lblCurrentScan.Text = "Exporting Result"));
-        //    MergeReport();
-        //}
-
-        //private void MergeReport()
-        //{
-        //    StreamWriter sw = new StreamWriter(_exportFolder);
-        //    GenerateReportHeader(sw);
-        //    for (int i = 1; i <= DividePartNum; i++)
-        //    {
-        //        if (
-        //            File.Exists(Path.GetDirectoryName(_exportFolder) + "\\" +
-        //                        Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() + ".xml_tmp"))
-        //        {
-        //            //
-        //            StreamReader sr =
-        //                new StreamReader(Path.GetDirectoryName(_exportFolder) + "\\" +
-        //                                 Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() +
-        //                                 ".xml_tmp");
-        //            sw.Write(sr.ReadToEnd());
-        //            sr.Close();
-        //            //Delete xml Parameters
-        //            File.Delete(Path.GetDirectoryName(_exportFolder) + "\\" +
-        //                        Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() + ".xml");
-        //            File.Delete(Path.GetDirectoryName(_exportFolder) + "\\" +
-        //                        Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() + ".xml_tmp");
-        //        }
-        //    }
-        //    GenerateReportFooter(sw);
-        //    sw.Close();
-        //}
+      
 
         private RunResults runResults;
         private int CurrentRunningPart = 0;
@@ -459,8 +316,9 @@ namespace GlycanSeq_Form
         private void PrepareSequencing()
         {
             StreamWriter SW = new StreamWriter(_exportFolder);
-            for (int ScanNo = _StartScan; ScanNo <= _EndScan; ScanNo++)
+            foreach (int ScanNo in _lstScans)
             {
+
                 if (Raw.GetMsLevel(ScanNo) != 2)
                 {
                     completedScan = completedScan + 1;
@@ -509,122 +367,7 @@ namespace GlycanSeq_Form
         }
 
 
-        //Merge to Class GenerateHtmlReport
-        //private void MergeResults(StreamWriter argSW)
-        //{
-        //    argSW.WriteLine(
-        //        "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-        //    argSW.WriteLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-        //    argSW.WriteLine("<head>");
-        //    argSW.WriteLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
-        //    argSW.WriteLine("<title>Glycoseq result for raw " + Path.GetFileName(_rawFilePath) +
-        //                    "</title>\n</head>\n<body>");
-        //    argSW.WriteLine("<Table border=\"1\">");
-
-        //    argSW.WriteLine("<tr>\n\t<td>Raw File: </td>\n\t<td>" + _rawFilePath + "</td>\n</tr>");
-        //    argSW.WriteLine("<tr>\n\t<td>Scan Range: </td>\n\t<td>" + _StartScan.ToString() + "~" + _EndScan.ToString() +
-        //                    "</td>\n</tr>");
-        //    //argSW.WriteLine("<tr>\n\t<td>Fasta File: </td>\n\t<td>" + _fastaFile + "</td>\n</tr>");
-        //    string tmp = "";
-        //    //foreach (Protease.Type p in _ProteaseType)
-        //    //{
-        //    //    tmp = tmp + p.ToString() + ",";
-        //    //}
-        //    //argSW.WriteLine("<tr>\n\t<td>ProteaseType: </td>\n\t<td>" + tmp + "</td>\n</tr>");
-        //    //argSW.WriteLine("<tr>\n\t<td>MissCleavage: </td>\n\t<td>" + _MissCLeavage.ToString() + "</td>\n</tr>");
-        //    if (_UseGlycanList)
-        //    {
-        //        argSW.WriteLine("<tr>\n\t<td>Glycan File: </td>\n\t<td>" + _glycanFile + "</td>\n</tr>");
-        //    }
-        //    else
-        //    {
-        //        tmp = "HexNAc:" + _NoHexNAc.ToString() + ";" +
-        //              "Hex:" + _NoHex.ToString() + ";" +
-        //              "Sia" + _NoSia.ToString() + ";" +
-        //              "DeHex:" + _NoDeHex.ToString() + ";";
-        //        argSW.WriteLine("<tr>\n\t<td>Glycan Composition: </td>\n\t<td>" + tmp + "</td>\n</tr>");
-        //    }
-        //    argSW.WriteLine("<tr>\n\t<td>MS Tol/MS2 Tol: </td>\n\t<td>" + _PrecursorTol.ToString() + "/" +
-        //                    _MSMSTol.ToString() + "</td>\n</tr>");
-        //    argSW.WriteLine("<tr>\n\t<td>N-Glycan/Human: </td>\n\t<td>" + _NGlycan.ToString() + "/" + _Human.ToString() +
-        //                    "</td>\n</tr>");
-        //    argSW.WriteLine("<tr>\n\t<td>Use HCD/Sequencing HCD: </td>\n\t<td>" + _UseHCD.ToString() + "/" +
-        //                    _SeqHCD.ToString() + "</td>\n</tr>");
-        //    argSW.WriteLine("<tr>\n\t<td>Export Completed Only/Completed Reward: </td>\n\t<td>" +
-        //                    _CompletedOnly.ToString() + "/" + _CompletedReward.ToString() + "</td>\n</tr>");
-        //    argSW.WriteLine("</Table>\n<br>\n<br>");
-        //    argSW.Flush();
-        //    StreamReader Sr;
-        //    foreach (string fileName in Directory.GetFiles(_exportFolder))
-        //    {
-        //        if (Path.GetExtension(fileName) == ".txt")
-        //        {
-        //            Sr = new StreamReader(fileName);
-        //            do
-        //            {
-        //                argSW.WriteLine(Sr.ReadLine());
-        //            } while (!Sr.EndOfStream);
-        //            Sr.Close();
-        //            File.Delete(fileName);
-        //            argSW.WriteLine("<a>");
-        //        }
-        //    }
-        //    argSW.WriteLine("<br></body>\n</html>");
-        //}
-        //private void GenerateReportBody(List<GlycanSequencing> argGSequencing, StreamWriter argSW)
-        //{
-        //    lock (lockObject)
-        //    {
-        //        argSW.WriteLine("<h1>Scan number:" + argGSequencing[0].ScanInfo.ScanNo.ToString() + "[Precursor m/z:" +
-        //                        argGSequencing[0].ScanInfo.ParentMZ.ToString("0.000") + "]</h1>");
-        //        argSW.WriteLine("<Table border=\"1\">");
-
-        //        foreach (GlycanSequencing GS in argGSequencing)
-        //        {
-        //            List<GlycanStructure> ExportStructure;
-        //            if (_CompletedOnly)
-        //            {
-        //                ExportStructure = GS.FullSequencedStructures;
-        //            }
-        //            else
-        //            {
-        //                ExportStructure = GS.GetTopRankScoreStructre(_GetTopRank);
-        //            }
-
-        //            argSW.WriteLine("<tr>");
-        //            argSW.WriteLine("\t<td colspan=3>Peptide:" + GS.PeptideSeq + "</td></tr>");
-        //            argSW.WriteLine("<tr>\n\t<td>Score</td>\n\t<td>Glycan  IUPAC</td>\n\t<td>IMG</td>\n</tr>");
-        //            foreach (GlycanStructure gs in ExportStructure)
-        //            {
-        //                string PicLocation = Path.GetDirectoryName(_exportFolder) + "\\Pics\\" + gs.IUPACString.ToString() +
-        //                                     ".png";
-        //                //if (!File.Exists(PicLocation))
-        //                //{
-        //                //    GlycansDrawer Draw = new GlycansDrawer(gs.IUPACString, false);
-        //                //    Image Pic = Draw.GetImage();
-
-        //                //    System.IO.MemoryStream mss = new System.IO.MemoryStream();
-        //                //    System.IO.FileStream fs = new System.IO.FileStream(PicLocation, System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite);
-
-        //                //    Pic.Save(mss, System.Drawing.Imaging.ImageFormat.Png);
-        //                //    byte[] matriz = mss.ToArray();
-        //                //    fs.Write(matriz, 0, matriz.Length);
-
-        //                //    mss.Close();
-        //                //    fs.Close();
-        //                //    Pic.Dispose();
-        //                //    Pic = null;
-        //                //    Draw = null;
-        //                //}
-        //                argSW.WriteLine("<tr>\n\t<td>" + gs.Score.ToString("0.00") + "</td>\n\t<td>" + gs.IUPACString +
-        //                                "</td>\n\t<td><img src=\".\\Pics\\" + gs.IUPACString.ToString() +
-        //                                ".png\"/></td>\n</tr>");
-        //            }
-        //        }
-        //        argSW.WriteLine("</table>\n<br><br>");
-        //        argSW.Flush();
-        //    }
-        //}
+    
 
         private void Sequencing(object argPassInfo)
         {
@@ -779,6 +522,7 @@ namespace GlycanSeq_Form
                             GS.NumbersOfPeaksForSequencing = 140;
                             GS.UseAVGMass = _AverageMass;
                             GS.CreatePrecursotMZ = true;
+                      
                             if (!_CompletedOnly)
                             {
                                 GS.RewardForCompleteStructure = 0.0f;
@@ -813,7 +557,7 @@ namespace GlycanSeq_Form
                     new Action(
                         () =>
                             progressBar1.Value =
-                                Convert.ToInt32((completedScan / (float)(_EndScan - _StartScan + 1) * 100))));
+                                Convert.ToInt32((completedScan / (float)(_lstScans.Count) * 100))));
                 this.lblPercentage.SafeBeginInvoke(
                     new Action(() => lblPercentage.Text = progressBar1.Value.ToString() + "%"));
             }
@@ -822,14 +566,20 @@ namespace GlycanSeq_Form
         private void bgWorker_Process_DoWork(object sender, DoWorkEventArgs e)
         {
             int ProcessReport = 0;
-            for (int ScanNo = _StartScan; ScanNo <= _EndScan; ScanNo++)
+            ReportGenerator.CSVFormatParameter(_sequencingParameters,_exportFolder);
+            foreach (int ScanNo in _lstScans)
             {
+                if (bgWorker_Process!=null && bgWorker_Process.CancellationPending)
+                {
+                    e.Cancel = true;
+                    return;
+                }
                 List<Tuple<string, GlycanStructure, double>> lstSequenceResult = new List<Tuple<string, GlycanStructure, double>>();
                 if (Raw.GetMsLevel(ScanNo) == 1)
                 {
                     CurrentScan = ScanNo;
                     ProcessReport =
-                        Convert.ToInt32(((ScanNo - _StartScan + 1) / (float)(_EndScan - _StartScan + 1) * 100));
+                        Convert.ToInt32(((_lstScans.IndexOf(ScanNo)+1) / (float)(_lstScans.Count) * 100));
                     //Console.WriteLine("Scan:" + ScanNo.ToString()+"\t Peptide:" + Peptide + "  completed");
                     bgWorker_Process.ReportProgress(ProcessReport);
                     continue;
@@ -838,7 +588,7 @@ namespace GlycanSeq_Form
                 {
                     CurrentScan = ScanNo;
                     ProcessReport =
-                        Convert.ToInt32(((ScanNo - _StartScan + 1) / (float)(_EndScan - _StartScan + 1) * 100));
+                        Convert.ToInt32(((_lstScans.IndexOf(ScanNo)+1) / (float)(_lstScans.Count) * 100));
                     //Console.WriteLine("Scan:" + ScanNo.ToString()+"\t Peptide:" + Peptide + "  completed");
                     bgWorker_Process.ReportProgress(ProcessReport);
                     continue;
@@ -880,6 +630,13 @@ namespace GlycanSeq_Form
                 List<Tuple<TargetPeptide, GlycanCompound>> lstGlycoPeptides = new List<Tuple<TargetPeptide, GlycanCompound>>();
                 if (_glycanFile != null)
                 {
+                    if (!File.Exists(_exportFolder + "\\PrecursorMassMatch.csv"))
+                    {
+                        using (StreamWriter swNew = new StreamWriter(_exportFolder + "\\PrecursorMassMatch.csv"))
+                        {
+                            swNew.WriteLine("ScanNum,ParentMonoMW,PeptideSequence,PeptideMass,GlycanSequence,GlycanMass,PPM");
+                        }
+                    }
                     StreamWriter sw =new StreamWriter(_exportFolder+"\\PrecursorMassMatch.csv",true );
                     
                     foreach (TargetPeptide tPeptide in _TargetPeptide)
@@ -948,17 +705,21 @@ namespace GlycanSeq_Form
                     GSM = new GlycanSequencing_MultipleScoring(_scan, PrecursorCharge, lstGlycoPeptides, @"d:\tmp", _NGlycan, _MSMSTol, _PrecursorTol, _sequencingParameters.PeaksParameters);
                 }
 
-
+                GSM.UnknownPeptideSearch = _sequencingParameters.UnknownPeptideSearch;
                 GSM.NumbersOfPeaksForSequencing = 140;
                 GSM.UseAVGMass = _AverageMass;
                 GSM.CreatePrecursotMZ = true;
+                GSM.GlycansList = lstGlycans;
+                GSM.PeptideList = _TargetPeptide;
                 GSM.RewardForCompleteStructure = _CompletedReward;
+                GSM.PeptideFromMascotResult = _sequencingParameters.PeptideFromMascotResult;
                 if (HCD != null)
                 {
                     GSM.GlycanType = HCD.GlycanType;
                 }
                 GSM.StartSequencing();
                 //GS.ExportToFolder(_exportFolder, _ExportIndividualSpectrum, _GetTopRank);
+                
                 if (GSM.SequencedStructures.Count > 0)
                 {
                     if (_CompletedOnly)
@@ -1010,16 +771,42 @@ namespace GlycanSeq_Form
                 }
                 CurrentScan = ScanNo;
                 CurrentPeptide = GSM.PeptideSeq;
-                ProcessReport = Convert.ToInt32(((ScanNo - _StartScan + 1) / (float)(_EndScan - _StartScan + 1) * 100));
+                ProcessReport = Convert.ToInt32(((_lstScans.IndexOf(ScanNo) + 1) / (float)(_lstScans.Count) * 100));
                 //Console.WriteLine("Scan:" + ScanNo.ToString()+"\t Peptide:" + Peptide + "  completed");
+                if (e.Cancel)
+                {
+                    break;
+                }
                 bgWorker_Process.ReportProgress(ProcessReport);
 
+                //Update SVM score
+                var glycanStructure = GSM.FullSequencedStructures.GroupBy(x => new { GlycanTotal = x.NoOfTotalGlycan, Score = x.BranchScore + x.CoreScore }).OrderByDescending(y => y.Key.GlycanTotal).ThenByDescending(z => z.Key.Score).ToList();
+                glycanStructure.AddRange(GSM.SequencedStructures.GroupBy(x => new { GlycanTotal = x.NoOfTotalGlycan, Score = x.BranchScore + x.CoreScore }).OrderByDescending(y => y.Key.GlycanTotal).ThenByDescending(z => z.Key.Score).ToList());
+                List<List<double>> allSVMMatrices = new List<List<double>>();
 
-                //Export
-                if (lstSequenceResult.Count > 0)
+                foreach (var glycans in glycanStructure.AsEnumerable())
                 {
-                    ReportGenerator.HtmlFormatTempForEachScan(_exportFolder, _scan, _ExportIndividualSpectrum, _GetTopRank,
-                        lstSequenceResult);
+                    foreach (var glycan in glycans.AsEnumerable())
+                    {
+                        allSVMMatrices.Add(glycan.SVMMatrices);
+                    }
+                }
+                List<Tuple<int, List<double>>> results = SVMScoring.GetSVMScore(allSVMMatrices);
+
+                int idx = 0;
+                foreach (var glycans in glycanStructure.AsEnumerable())
+                {
+                    foreach (var glycan in glycans.AsEnumerable())
+                    {
+                        glycan.SVMPredictedLabel = results[idx].Item1;
+                        glycan.SVMPrrdictedProbabilities = results[idx].Item2;
+                        idx++;
+                    }
+                }
+                //Export
+                if (lstSequenceResult.Count > 0 && !e.Cancel)
+                {
+                    //ReportGenerator.HtmlFormatTempForEachScan(_exportFolder, _scan, _ExportIndividualSpectrum, _GetTopRank,lstSequenceResult);
                     ReportGenerator.CSVFormat(_exportFolder, _scan, _GetTopRank, lstSequenceResult);
                     foreach (Tuple<string, GlycanStructure, double> result in lstSequenceResult)
                     {
@@ -1029,7 +816,7 @@ namespace GlycanSeq_Form
                             dictResultSortByPeptide.Add(result.Item1, new List<Tuple<int, string, Tuple<double, double, double>, string, string, bool, double>>());
                         }
 
-                        if (result.Item2.IsCompleteSequenced == true ||
+                        if (result.Item2.MatchWithPrecursorMW == true ||
                             result.Item2.IsCompleteByPrecursorDifference == true)
                         {
                             dictResultSortByPeptide[result.Item1].Add(
@@ -1048,10 +835,16 @@ namespace GlycanSeq_Form
                         }
                     }
                 }
+                if (_exportLearingMatrix)
+                {
+                    ReportGenerator.GenerateLearningMatrix(GSM,_exportFolder+"\\LeanringMatrix.csv",_GetTopRank);
+                }
+
+
+                
             } //Foreach Scan
-
         }
-
+       
         private void bgWorker_Process_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             try
@@ -1070,13 +863,28 @@ namespace GlycanSeq_Form
 
         private void bgWorker_Process_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (e.Cancelled)
+            {
+                Directory.Delete(_sequencingParameters.ExportFolder, true);
+                return;
+            }
+            
             lblCurrentScan.Text = "Outputing";
             progressBar1.Value = 99;
             lblPercentage.Text = "99%";
 
+            //Copy
+            GlycanSeq_Form.Properties.Resources.DeHex.Save(_exportFolder+"\\Pics\\DeHex.png");
+            GlycanSeq_Form.Properties.Resources.Hex.Save(_exportFolder+"\\Pics\\Hex.png");
+            GlycanSeq_Form.Properties.Resources.HexNAc.Save(_exportFolder+"\\Pics\\HexNAc.png");
+            GlycanSeq_Form.Properties.Resources.NeuAc.Save(_exportFolder+"\\Pics\\NeuAc.png");
+            GlycanSeq_Form.Properties.Resources.NeuGc.Save(_exportFolder+"\\Pics\\NeuGc.png");
+            GlycanSeq_Form.Properties.Resources.bracket.Save(_exportFolder+"\\Pics\\bracket.jpg");
             //Merge Report
-            ReportGenerator.GenerateHtmlReportSortByPeptide(_exportFolder, dictResultSortByPeptide, _sequencingParameters);
-            ReportGenerator.GenerateHtmlReportSortByScan(_sequencingParameters);
+
+            ReportGenerator.GenerateHtmlReport(_sequencingParameters);
+            //ReportGenerator.GenerateHtmlReportSortByPeptide(_exportFolder, dictResultSortByPeptide, _sequencingParameters);
+            //ReportGenerator.GenerateHtmlReportSortByScan(_sequencingParameters);
             //MergeResults(swExport);
 
             //foreach (GlycanSequencing GS in _lstGS)
@@ -1292,26 +1100,287 @@ namespace GlycanSeq_Form
 
         private void frmProcessing_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //if (MessageBox.Show("Cancel all process?", "Cancel", MessageBoxButtons.YesNo) ==
-            //    System.Windows.Forms.DialogResult.Yes)
-            //{
-            //    //if (proc != null && proc.Responding == true)
-            //    //{
-            //    //    proc.Kill();
-            //    //}
-            //    //if (Process.GetProcesses().Any(x => x.Id == runResults.PID))
-            //    //{
-            //    //    Process.GetProcessById(runResults.PID).Kill();
-            //    //}
-            //    this.Dispose();
-            //}
-            //else
-            //{
-            //    e.Cancel = true;
-            //}
+            if (bgWorker_Process.IsBusy)
+            {
+                if (MessageBox.Show("Cancel all process?", "Cancel", MessageBoxButtons.YesNo) ==
+                    System.Windows.Forms.DialogResult.Yes)
+                {
+                    bgWorker_Process.CancelAsync();
+                    //Delete file and folder
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
         }
 
-        //function
+        private void frmProcessing_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            
+        }
+
+        //Old
+
+        //Merge to Class GenerateHtmlReport
+        //private void MergeResults(StreamWriter argSW)
+        //{
+        //    argSW.WriteLine(
+        //        "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+        //    argSW.WriteLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+        //    argSW.WriteLine("<head>");
+        //    argSW.WriteLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+        //    argSW.WriteLine("<title>Glycoseq result for raw " + Path.GetFileName(_rawFilePath) +
+        //                    "</title>\n</head>\n<body>");
+        //    argSW.WriteLine("<Table border=\"1\">");
+
+        //    argSW.WriteLine("<tr>\n\t<td>Raw File: </td>\n\t<td>" + _rawFilePath + "</td>\n</tr>");
+        //    argSW.WriteLine("<tr>\n\t<td>Scan Range: </td>\n\t<td>" + _StartScan.ToString() + "~" + _EndScan.ToString() +
+        //                    "</td>\n</tr>");
+        //    //argSW.WriteLine("<tr>\n\t<td>Fasta File: </td>\n\t<td>" + _fastaFile + "</td>\n</tr>");
+        //    string tmp = "";
+        //    //foreach (Protease.Type p in _ProteaseType)
+        //    //{
+        //    //    tmp = tmp + p.ToString() + ",";
+        //    //}
+        //    //argSW.WriteLine("<tr>\n\t<td>ProteaseType: </td>\n\t<td>" + tmp + "</td>\n</tr>");
+        //    //argSW.WriteLine("<tr>\n\t<td>MissCleavage: </td>\n\t<td>" + _MissCLeavage.ToString() + "</td>\n</tr>");
+        //    if (_UseGlycanList)
+        //    {
+        //        argSW.WriteLine("<tr>\n\t<td>Glycan File: </td>\n\t<td>" + _glycanFile + "</td>\n</tr>");
+        //    }
+        //    else
+        //    {
+        //        tmp = "HexNAc:" + _NoHexNAc.ToString() + ";" +
+        //              "Hex:" + _NoHex.ToString() + ";" +
+        //              "Sia" + _NoSia.ToString() + ";" +
+        //              "DeHex:" + _NoDeHex.ToString() + ";";
+        //        argSW.WriteLine("<tr>\n\t<td>Glycan Composition: </td>\n\t<td>" + tmp + "</td>\n</tr>");
+        //    }
+        //    argSW.WriteLine("<tr>\n\t<td>MS Tol/MS2 Tol: </td>\n\t<td>" + _PrecursorTol.ToString() + "/" +
+        //                    _MSMSTol.ToString() + "</td>\n</tr>");
+        //    argSW.WriteLine("<tr>\n\t<td>N-Glycan/Human: </td>\n\t<td>" + _NGlycan.ToString() + "/" + _Human.ToString() +
+        //                    "</td>\n</tr>");
+        //    argSW.WriteLine("<tr>\n\t<td>Use HCD/Sequencing HCD: </td>\n\t<td>" + _UseHCD.ToString() + "/" +
+        //                    _SeqHCD.ToString() + "</td>\n</tr>");
+        //    argSW.WriteLine("<tr>\n\t<td>Export Completed Only/Completed Reward: </td>\n\t<td>" +
+        //                    _CompletedOnly.ToString() + "/" + _CompletedReward.ToString() + "</td>\n</tr>");
+        //    argSW.WriteLine("</Table>\n<br>\n<br>");
+        //    argSW.Flush();
+        //    StreamReader Sr;
+        //    foreach (string fileName in Directory.GetFiles(_exportFolder))
+        //    {
+        //        if (Path.GetExtension(fileName) == ".txt")
+        //        {
+        //            Sr = new StreamReader(fileName);
+        //            do
+        //            {
+        //                argSW.WriteLine(Sr.ReadLine());
+        //            } while (!Sr.EndOfStream);
+        //            Sr.Close();
+        //            File.Delete(fileName);
+        //            argSW.WriteLine("<a>");
+        //        }
+        //    }
+        //    argSW.WriteLine("<br></body>\n</html>");
+        //}
+        //private void GenerateReportBody(List<GlycanSequencing> argGSequencing, StreamWriter argSW)
+        //{
+        //    lock (lockObject)
+        //    {
+        //        argSW.WriteLine("<h1>Scan number:" + argGSequencing[0].ScanInfo.ScanNo.ToString() + "[Precursor m/z:" +
+        //                        argGSequencing[0].ScanInfo.ParentMZ.ToString("0.000") + "]</h1>");
+        //        argSW.WriteLine("<Table border=\"1\">");
+
+        //        foreach (GlycanSequencing GS in argGSequencing)
+        //        {
+        //            List<GlycanStructure> ExportStructure;
+        //            if (_CompletedOnly)
+        //            {
+        //                ExportStructure = GS.FullSequencedStructures;
+        //            }
+        //            else
+        //            {
+        //                ExportStructure = GS.GetTopRankScoreStructre(_GetTopRank);
+        //            }
+
+        //            argSW.WriteLine("<tr>");
+        //            argSW.WriteLine("\t<td colspan=3>Peptide:" + GS.PeptideSeq + "</td></tr>");
+        //            argSW.WriteLine("<tr>\n\t<td>Score</td>\n\t<td>Glycan  IUPAC</td>\n\t<td>IMG</td>\n</tr>");
+        //            foreach (GlycanStructure gs in ExportStructure)
+        //            {
+        //                string PicLocation = Path.GetDirectoryName(_exportFolder) + "\\Pics\\" + gs.IUPACString.ToString() +
+        //                                     ".png";
+        //                //if (!File.Exists(PicLocation))
+        //                //{
+        //                //    GlycansDrawer Draw = new GlycansDrawer(gs.IUPACString, false);
+        //                //    Image Pic = Draw.GetImage();
+
+        //                //    System.IO.MemoryStream mss = new System.IO.MemoryStream();
+        //                //    System.IO.FileStream fs = new System.IO.FileStream(PicLocation, System.IO.FileMode.Create, System.IO.FileAccess.ReadWrite);
+
+        //                //    Pic.Save(mss, System.Drawing.Imaging.ImageFormat.Png);
+        //                //    byte[] matriz = mss.ToArray();
+        //                //    fs.Write(matriz, 0, matriz.Length);
+
+        //                //    mss.Close();
+        //                //    fs.Close();
+        //                //    Pic.Dispose();
+        //                //    Pic = null;
+        //                //    Draw = null;
+        //                //}
+        //                argSW.WriteLine("<tr>\n\t<td>" + gs.Score.ToString("0.00") + "</td>\n\t<td>" + gs.IUPACString +
+        //                                "</td>\n\t<td><img src=\".\\Pics\\" + gs.IUPACString.ToString() +
+        //                                ".png\"/></td>\n</tr>");
+        //            }
+        //        }
+        //        argSW.WriteLine("</table>\n<br><br>");
+        //        argSW.Flush();
+        //    }
+        //}
+
+        //private List<string> GenerateGlycoPeptide()
+        //{
+        //    List<ProteinInfo> PInfos = FastaReader.ReadFasta(_fastaFile);
+        //    List<string> GlycoPeptide = new List<string>();
+        //    foreach (ProteinInfo Pinfo in PInfos)
+        //    {
+        //        GlycoPeptide.AddRange(Pinfo.NGlycopeptide(_MissCLeavage,_ProteaseType,_PeptideMutation));
+        //    }
+        //    return GlycoPeptide;
+        //}
+
+        //private void WriteParametersToXML()
+        //{
+        //    List<int> EndScans = new List<int>();
+        //    int PartStart = _StartScan;
+        //    int PartEndScan = 0;
+        //    int DivideInterval = 1000;
+        //    while (true)
+        //    {
+        //        PartEndScan = PartStart + DivideInterval - 1;
+        //        if (PartEndScan >= _EndScan)
+        //        {
+        //            PartEndScan = _EndScan;
+        //            EndScans.Add(PartEndScan);
+        //            break;
+        //        }
+        //        else
+        //        {
+        //            EndScans.Add(PartEndScan);
+        //            PartStart = PartEndScan + 1;
+        //        }
+        //    }
+        //    DividePartNum = EndScans.Count;
+        //    for (int i = 0; i < EndScans.Count; i++)
+        //    {
+        //        XmlWriter writer =
+        //            XmlWriter.Create(Path.GetDirectoryName(_exportFolder) + "\\" +
+        //                             Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i + 1).ToString() + ".xml");
+        //        writer.WriteStartDocument();
+        //        writer.WriteStartElement("GlycanSequencing");
+        //        //Raw
+        //        writer.WriteStartElement("RawFile");
+        //        writer.WriteElementString("FilePath", _rawFilePath);
+        //        //writer.WriteElementString("StartScan",(EndScans[i] - DivideInterval+1).ToString());
+        //        //writer.WriteElementString("EndScan", EndScans[i].ToString());
+        //        writer.WriteElementString("SequencingHCD", _SeqHCD.ToString());
+        //        writer.WriteElementString("UseHCDInfo", _UseHCD.ToString());
+        //        for (int j = EndScans[i] - DivideInterval + 1; j <= EndScans[i]; j++)
+        //        {
+        //            writer.WriteElementString("Scan", j.ToString());
+        //        }
+        //        writer.WriteEndElement();
+        //        //Fasta
+        //        // writer.WriteStartElement("FastaFile");
+        //        //writer.WriteElementString("FilePath", _fastaFile);
+
+        //        //foreach (string glycopeptide in GenerateGlycoPeptide())
+        //        //{
+        //        //    writer.WriteElementString("GlycoPeptide", glycopeptide);
+        //        //}
+        //        //writer.WriteEndElement();
+        //        //Glycan
+        //        writer.WriteStartElement("Glycans");
+        //        writer.WriteAttributeString("GlycansFile", _UseGlycanList.ToString());
+        //        if (_UseGlycanList)
+        //        {
+        //            writer.WriteElementString("FilePath", _glycanFile);
+        //        }
+        //        else
+        //        {
+        //            writer.WriteElementString("Hex", _NoHex.ToString());
+        //            writer.WriteElementString("HexNAc", _NoHexNAc.ToString());
+        //            writer.WriteElementString("deHex", _NoDeHex.ToString());
+        //            writer.WriteElementString("Sia", _NoSia.ToString());
+        //        }
+        //        writer.WriteElementString("NLink", _NGlycan.ToString());
+        //        writer.WriteElementString("Human", _Human.ToString());
+        //        writer.WriteElementString("AvgMass", _AverageMass.ToString());
+        //        writer.WriteEndElement();
+        //        //Torelance
+        //        writer.WriteStartElement("Torelance");
+        //        writer.WriteAttributeString("MSMS_Da", _MSMSTol.ToString());
+        //        writer.WriteAttributeString("Precursor_PPM", _PrecursorTol.ToString());
+        //        writer.WriteEndElement();
+
+        //        //Export
+        //        writer.WriteStartElement("Export");
+        //        writer.WriteAttributeString("GetTopRank", _GetTopRank.ToString());
+        //        writer.WriteAttributeString("OnlyCompleteStructure", _CompletedOnly.ToString());
+        //        writer.WriteAttributeString("CompletedReward", _CompletedReward.ToString());
+        //        writer.WriteEndElement();
+
+        //        writer.WriteEndElement();
+        //        writer.WriteEndDocument();
+        //        writer.Flush();
+        //        writer.Close();
+        //    }
+        //}
+
+
+        //private void StartProcess()
+        //{
+        //    Thread ThreadUpdate = new Thread(() => UpdateStatus());
+        //    ThreadUpdate.Start();
+        //    for (int i = 1; i <= DividePartNum; i++)
+        //    {
+        //        CurrentRunningPart = i;
+        //        RunExecutable(i);
+        //    }
+        //    ThreadUpdate.Abort();
+        //    this.lblCurrentScan.SafeBeginInvoke(new Action(() => lblCurrentScan.Text = "Exporting Result"));
+        //    MergeReport();
+        //}
+
+        //private void MergeReport()
+        //{
+        //    StreamWriter sw = new StreamWriter(_exportFolder);
+        //    GenerateReportHeader(sw);
+        //    for (int i = 1; i <= DividePartNum; i++)
+        //    {
+        //        if (
+        //            File.Exists(Path.GetDirectoryName(_exportFolder) + "\\" +
+        //                        Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() + ".xml_tmp"))
+        //        {
+        //            //
+        //            StreamReader sr =
+        //                new StreamReader(Path.GetDirectoryName(_exportFolder) + "\\" +
+        //                                 Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() +
+        //                                 ".xml_tmp");
+        //            sw.Write(sr.ReadToEnd());
+        //            sr.Close();
+        //            //Delete xml Parameters
+        //            File.Delete(Path.GetDirectoryName(_exportFolder) + "\\" +
+        //                        Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() + ".xml");
+        //            File.Delete(Path.GetDirectoryName(_exportFolder) + "\\" +
+        //                        Path.GetFileNameWithoutExtension(_exportFolder) + "_" + (i).ToString() + ".xml_tmp");
+        //        }
+        //    }
+        //    GenerateReportFooter(sw);
+        //    sw.Close();
+        //}
+
     }
 } //class
 

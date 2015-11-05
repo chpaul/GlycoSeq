@@ -45,7 +45,6 @@
             this.rdoMascotExtractor = new System.Windows.Forms.RadioButton();
             this.btnChkPeptideCandidate = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
-            this.rdoPeptideWithTime = new System.Windows.Forms.RadioButton();
             this.rdoFastaOnly = new System.Windows.Forms.RadioButton();
             this.txtTolTime = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -64,6 +63,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.rdoPeptideWithTime = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkIndividualReport = new System.Windows.Forms.CheckBox();
             this.txtCompReward = new System.Windows.Forms.TextBox();
@@ -74,8 +74,8 @@
             this.txtPrecusorTol = new System.Windows.Forms.TextBox();
             this.txtPeaKTol = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chkUnknownPeptideSearch = new System.Windows.Forms.CheckBox();
             this.chkPrecursorCreate = new System.Windows.Forms.CheckBox();
-            this.txtScanFileList = new System.Windows.Forms.TextBox();
             this.btnScanList = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.chkSeqHCD = new System.Windows.Forms.CheckBox();
@@ -103,6 +103,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.singleScanModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mascotProteinIDExtractorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.txtMaxGlycansToCompleteStruct_m = new System.Windows.Forms.TextBox();
             this.txtTopBrancingPeaks_l = new System.Windows.Forms.TextBox();
@@ -114,7 +115,6 @@
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.mascotProteinIDExtractorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -152,7 +152,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(552, 427);
+            this.btnStart.Location = new System.Drawing.Point(568, 394);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 25;
@@ -251,7 +251,6 @@
             this.groupBox2.Controls.Add(this.rdoMascotExtractor);
             this.groupBox2.Controls.Add(this.btnChkPeptideCandidate);
             this.groupBox2.Controls.Add(this.label14);
-            this.groupBox2.Controls.Add(this.rdoPeptideWithTime);
             this.groupBox2.Controls.Add(this.rdoFastaOnly);
             this.groupBox2.Controls.Add(this.txtTolTime);
             this.groupBox2.Controls.Add(this.label10);
@@ -272,7 +271,7 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(426, 211);
+            this.groupBox2.Location = new System.Drawing.Point(426, 177);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(342, 211);
             this.groupBox2.TabIndex = 1;
@@ -282,7 +281,8 @@
             // rdoMascotExtractor
             // 
             this.rdoMascotExtractor.AutoSize = true;
-            this.rdoMascotExtractor.Location = new System.Drawing.Point(6, 38);
+            this.rdoMascotExtractor.Checked = true;
+            this.rdoMascotExtractor.Location = new System.Drawing.Point(6, 19);
             this.rdoMascotExtractor.Name = "rdoMascotExtractor";
             this.rdoMascotExtractor.Size = new System.Drawing.Size(161, 17);
             this.rdoMascotExtractor.TabIndex = 41;
@@ -310,22 +310,10 @@
             this.label14.TabIndex = 40;
             this.label14.Text = "mins";
             // 
-            // rdoPeptideWithTime
-            // 
-            this.rdoPeptideWithTime.AutoSize = true;
-            this.rdoPeptideWithTime.Checked = true;
-            this.rdoPeptideWithTime.Location = new System.Drawing.Point(6, 19);
-            this.rdoPeptideWithTime.Name = "rdoPeptideWithTime";
-            this.rdoPeptideWithTime.Size = new System.Drawing.Size(148, 17);
-            this.rdoPeptideWithTime.TabIndex = 33;
-            this.rdoPeptideWithTime.TabStop = true;
-            this.rdoPeptideWithTime.Text = "Peptides with defined time";
-            this.rdoPeptideWithTime.UseVisualStyleBackColor = true;
-            // 
             // rdoFastaOnly
             // 
             this.rdoFastaOnly.AutoSize = true;
-            this.rdoFastaOnly.Location = new System.Drawing.Point(160, 19);
+            this.rdoFastaOnly.Location = new System.Drawing.Point(173, 19);
             this.rdoFastaOnly.Name = "rdoFastaOnly";
             this.rdoFastaOnly.Size = new System.Drawing.Size(73, 17);
             this.rdoFastaOnly.TabIndex = 32;
@@ -339,7 +327,7 @@
             this.txtTolTime.Name = "txtTolTime";
             this.txtTolTime.Size = new System.Drawing.Size(29, 20);
             this.txtTolTime.TabIndex = 39;
-            this.txtTolTime.Text = "2";
+            this.txtTolTime.Text = "3";
             // 
             // label10
             // 
@@ -519,17 +507,26 @@
             this.label2.TabIndex = 22;
             this.label2.Text = "Allow up to             missed cleavages";
             // 
+            // rdoPeptideWithTime
+            // 
+            this.rdoPeptideWithTime.AutoSize = true;
+            this.rdoPeptideWithTime.Location = new System.Drawing.Point(45, 432);
+            this.rdoPeptideWithTime.Name = "rdoPeptideWithTime";
+            this.rdoPeptideWithTime.Size = new System.Drawing.Size(148, 17);
+            this.rdoPeptideWithTime.TabIndex = 33;
+            this.rdoPeptideWithTime.Text = "Peptides with defined time";
+            this.rdoPeptideWithTime.UseVisualStyleBackColor = true;
+            this.rdoPeptideWithTime.Visible = false;
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.chkIndividualReport);
-            this.groupBox3.Controls.Add(this.txtCompReward);
-            this.groupBox3.Controls.Add(this.lblCompReward);
             this.groupBox3.Controls.Add(this.chkCompletedOnly);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.cboTopRank);
-            this.groupBox3.Location = new System.Drawing.Point(213, 324);
+            this.groupBox3.Location = new System.Drawing.Point(223, 306);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(207, 117);
+            this.groupBox3.Size = new System.Drawing.Size(197, 98);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Export";
@@ -537,7 +534,7 @@
             // chkIndividualReport
             // 
             this.chkIndividualReport.AutoSize = true;
-            this.chkIndividualReport.Location = new System.Drawing.Point(14, 81);
+            this.chkIndividualReport.Location = new System.Drawing.Point(13, 73);
             this.chkIndividualReport.Name = "chkIndividualReport";
             this.chkIndividualReport.Size = new System.Drawing.Size(129, 17);
             this.chkIndividualReport.TabIndex = 32;
@@ -547,28 +544,30 @@
             // 
             // txtCompReward
             // 
-            this.txtCompReward.Location = new System.Drawing.Point(147, 59);
+            this.txtCompReward.Location = new System.Drawing.Point(653, 429);
             this.txtCompReward.Name = "txtCompReward";
             this.txtCompReward.Size = new System.Drawing.Size(29, 20);
             this.txtCompReward.TabIndex = 35;
             this.txtCompReward.Text = "1.0";
+            this.txtCompReward.Visible = false;
             // 
             // lblCompReward
             // 
             this.lblCompReward.AutoSize = true;
             this.lblCompReward.Enabled = false;
-            this.lblCompReward.Location = new System.Drawing.Point(10, 62);
+            this.lblCompReward.Location = new System.Drawing.Point(516, 432);
             this.lblCompReward.Name = "lblCompReward";
             this.lblCompReward.Size = new System.Drawing.Size(124, 13);
             this.lblCompReward.TabIndex = 34;
             this.lblCompReward.Text = "Completed score reward:";
+            this.lblCompReward.Visible = false;
             // 
             // chkCompletedOnly
             // 
             this.chkCompletedOnly.AutoSize = true;
             this.chkCompletedOnly.Checked = true;
             this.chkCompletedOnly.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCompletedOnly.Location = new System.Drawing.Point(13, 42);
+            this.chkCompletedOnly.Location = new System.Drawing.Point(13, 48);
             this.chkCompletedOnly.Name = "chkCompletedOnly";
             this.chkCompletedOnly.Size = new System.Drawing.Size(137, 17);
             this.chkCompletedOnly.TabIndex = 33;
@@ -611,24 +610,34 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.chkPrecursorCreate);
+            this.groupBox4.Controls.Add(this.chkUnknownPeptideSearch);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.txtPeaKTol);
             this.groupBox4.Controls.Add(this.label5);
             this.groupBox4.Controls.Add(this.txtPrecusorTol);
-            this.groupBox4.Location = new System.Drawing.Point(6, 324);
+            this.groupBox4.Location = new System.Drawing.Point(6, 306);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(201, 117);
+            this.groupBox4.Size = new System.Drawing.Size(211, 98);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Torelance";
+            // 
+            // chkUnknownPeptideSearch
+            // 
+            this.chkUnknownPeptideSearch.AutoSize = true;
+            this.chkUnknownPeptideSearch.Location = new System.Drawing.Point(13, 73);
+            this.chkUnknownPeptideSearch.Name = "chkUnknownPeptideSearch";
+            this.chkUnknownPeptideSearch.Size = new System.Drawing.Size(195, 17);
+            this.chkUnknownPeptideSearch.TabIndex = 36;
+            this.chkUnknownPeptideSearch.Text = "Search Y1 without matched peptide";
+            this.chkUnknownPeptideSearch.UseVisualStyleBackColor = true;
             // 
             // chkPrecursorCreate
             // 
             this.chkPrecursorCreate.AutoSize = true;
             this.chkPrecursorCreate.Checked = true;
             this.chkPrecursorCreate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPrecursorCreate.Location = new System.Drawing.Point(17, 86);
+            this.chkPrecursorCreate.Location = new System.Drawing.Point(395, 433);
             this.chkPrecursorCreate.Name = "chkPrecursorCreate";
             this.chkPrecursorCreate.Size = new System.Drawing.Size(122, 17);
             this.chkPrecursorCreate.TabIndex = 26;
@@ -636,18 +645,9 @@
             this.chkPrecursorCreate.UseVisualStyleBackColor = true;
             this.chkPrecursorCreate.Visible = false;
             // 
-            // txtScanFileList
-            // 
-            this.txtScanFileList.Enabled = false;
-            this.txtScanFileList.Location = new System.Drawing.Point(93, 46);
-            this.txtScanFileList.Name = "txtScanFileList";
-            this.txtScanFileList.Size = new System.Drawing.Size(280, 20);
-            this.txtScanFileList.TabIndex = 32;
-            // 
             // btnScanList
             // 
-            this.btnScanList.Enabled = false;
-            this.btnScanList.Location = new System.Drawing.Point(379, 43);
+            this.btnScanList.Location = new System.Drawing.Point(221, 41);
             this.btnScanList.Name = "btnScanList";
             this.btnScanList.Size = new System.Drawing.Size(24, 23);
             this.btnScanList.TabIndex = 33;
@@ -661,7 +661,6 @@
             this.groupBox6.Controls.Add(this.chkHCD);
             this.groupBox6.Controls.Add(this.btnScanList);
             this.groupBox6.Controls.Add(this.rdoScanRange);
-            this.groupBox6.Controls.Add(this.txtScanFileList);
             this.groupBox6.Controls.Add(this.lblEndScan);
             this.groupBox6.Controls.Add(this.rdoScanList);
             this.groupBox6.Controls.Add(this.txtStart);
@@ -716,7 +715,8 @@
             this.grpGlycan.Controls.Add(this.label8);
             this.grpGlycan.Controls.Add(this.label9);
             this.grpGlycan.Controls.Add(this.chkNLinked);
-            this.grpGlycan.Location = new System.Drawing.Point(7, 163);
+            this.grpGlycan.Enabled = false;
+            this.grpGlycan.Location = new System.Drawing.Point(7, 240);
             this.grpGlycan.Name = "grpGlycan";
             this.grpGlycan.Size = new System.Drawing.Size(413, 60);
             this.grpGlycan.TabIndex = 31;
@@ -821,7 +821,7 @@
             this.chkHuman.AutoSize = true;
             this.chkHuman.Checked = true;
             this.chkHuman.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkHuman.Location = new System.Drawing.Point(432, 433);
+            this.chkHuman.Location = new System.Drawing.Point(329, 433);
             this.chkHuman.Name = "chkHuman";
             this.chkHuman.Size = new System.Drawing.Size(60, 17);
             this.chkHuman.TabIndex = 4;
@@ -834,7 +834,7 @@
             this.chkAvgMass.AutoSize = true;
             this.chkAvgMass.Checked = true;
             this.chkAvgMass.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAvgMass.Location = new System.Drawing.Point(679, 433);
+            this.chkAvgMass.Location = new System.Drawing.Point(216, 433);
             this.chkAvgMass.Name = "chkAvgMass";
             this.chkAvgMass.Size = new System.Drawing.Size(94, 17);
             this.chkAvgMass.TabIndex = 32;
@@ -846,7 +846,7 @@
             // 
             this.groupBox5.Controls.Add(this.btnGlycanList);
             this.groupBox5.Controls.Add(this.txtGlycanList);
-            this.groupBox5.Location = new System.Drawing.Point(6, 256);
+            this.groupBox5.Location = new System.Drawing.Point(6, 181);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(414, 53);
             this.groupBox5.TabIndex = 29;
@@ -855,7 +855,6 @@
             // 
             // btnGlycanList
             // 
-            this.btnGlycanList.Enabled = false;
             this.btnGlycanList.Location = new System.Drawing.Point(379, 14);
             this.btnGlycanList.Name = "btnGlycanList";
             this.btnGlycanList.Size = new System.Drawing.Size(23, 23);
@@ -866,7 +865,6 @@
             // 
             // txtGlycanList
             // 
-            this.txtGlycanList.Enabled = false;
             this.txtGlycanList.Location = new System.Drawing.Point(3, 16);
             this.txtGlycanList.Name = "txtGlycanList";
             this.txtGlycanList.Size = new System.Drawing.Size(370, 20);
@@ -875,7 +873,9 @@
             // chkGlycanList
             // 
             this.chkGlycanList.AutoSize = true;
-            this.chkGlycanList.Location = new System.Drawing.Point(6, 236);
+            this.chkGlycanList.Checked = true;
+            this.chkGlycanList.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkGlycanList.Location = new System.Drawing.Point(6, 161);
             this.chkGlycanList.Name = "chkGlycanList";
             this.chkGlycanList.Size = new System.Drawing.Size(94, 17);
             this.chkGlycanList.TabIndex = 5;
@@ -909,28 +909,33 @@
             this.singleScanModeToolStripMenuItem.Text = "Single Scan Mode";
             this.singleScanModeToolStripMenuItem.Click += new System.EventHandler(this.singleScanModeToolStripMenuItem_Click);
             // 
+            // mascotProteinIDExtractorToolStripMenuItem
+            // 
+            this.mascotProteinIDExtractorToolStripMenuItem.Name = "mascotProteinIDExtractorToolStripMenuItem";
+            this.mascotProteinIDExtractorToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.mascotProteinIDExtractorToolStripMenuItem.Text = "MascotProteinIDExtractor";
+            this.mascotProteinIDExtractorToolStripMenuItem.Click += new System.EventHandler(this.mascotProteinIDExtractorToolStripMenuItem_Click);
+            // 
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.txtMaxGlycansToCompleteStruct_m);
             this.groupBox7.Controls.Add(this.txtTopBrancingPeaks_l);
             this.groupBox7.Controls.Add(this.txtTopCorePeaks_k);
-            this.groupBox7.Controls.Add(this.txtTopDiagPeaks_j);
             this.groupBox7.Controls.Add(this.txtTopPeaks_i);
             this.groupBox7.Controls.Add(this.label19);
             this.groupBox7.Controls.Add(this.label18);
             this.groupBox7.Controls.Add(this.label17);
-            this.groupBox7.Controls.Add(this.label16);
             this.groupBox7.Controls.Add(this.label15);
             this.groupBox7.Location = new System.Drawing.Point(426, 27);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(342, 178);
+            this.groupBox7.Size = new System.Drawing.Size(342, 144);
             this.groupBox7.TabIndex = 39;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Sequencing Parameters";
             // 
             // txtMaxGlycansToCompleteStruct_m
             // 
-            this.txtMaxGlycansToCompleteStruct_m.Location = new System.Drawing.Point(287, 150);
+            this.txtMaxGlycansToCompleteStruct_m.Location = new System.Drawing.Point(287, 116);
             this.txtMaxGlycansToCompleteStruct_m.Name = "txtMaxGlycansToCompleteStruct_m";
             this.txtMaxGlycansToCompleteStruct_m.Size = new System.Drawing.Size(41, 20);
             this.txtMaxGlycansToCompleteStruct_m.TabIndex = 9;
@@ -938,7 +943,7 @@
             // 
             // txtTopBrancingPeaks_l
             // 
-            this.txtTopBrancingPeaks_l.Location = new System.Drawing.Point(287, 118);
+            this.txtTopBrancingPeaks_l.Location = new System.Drawing.Point(287, 84);
             this.txtTopBrancingPeaks_l.Name = "txtTopBrancingPeaks_l";
             this.txtTopBrancingPeaks_l.Size = new System.Drawing.Size(41, 20);
             this.txtTopBrancingPeaks_l.TabIndex = 8;
@@ -946,19 +951,20 @@
             // 
             // txtTopCorePeaks_k
             // 
-            this.txtTopCorePeaks_k.Location = new System.Drawing.Point(287, 86);
+            this.txtTopCorePeaks_k.Location = new System.Drawing.Point(287, 52);
             this.txtTopCorePeaks_k.Name = "txtTopCorePeaks_k";
             this.txtTopCorePeaks_k.Size = new System.Drawing.Size(41, 20);
             this.txtTopCorePeaks_k.TabIndex = 7;
-            this.txtTopCorePeaks_k.Text = "30";
+            this.txtTopCorePeaks_k.Text = "150";
             // 
             // txtTopDiagPeaks_j
             // 
-            this.txtTopDiagPeaks_j.Location = new System.Drawing.Point(287, 54);
+            this.txtTopDiagPeaks_j.Location = new System.Drawing.Point(217, 422);
             this.txtTopDiagPeaks_j.Name = "txtTopDiagPeaks_j";
             this.txtTopDiagPeaks_j.Size = new System.Drawing.Size(41, 20);
             this.txtTopDiagPeaks_j.TabIndex = 6;
             this.txtTopDiagPeaks_j.Text = "30";
+            this.txtTopDiagPeaks_j.Visible = false;
             // 
             // txtTopPeaks_i
             // 
@@ -971,7 +977,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(19, 154);
+            this.label19.Location = new System.Drawing.Point(19, 120);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(265, 13);
             this.label19.TabIndex = 4;
@@ -980,7 +986,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(33, 122);
+            this.label18.Location = new System.Drawing.Point(33, 88);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(251, 13);
             this.label18.TabIndex = 3;
@@ -989,7 +995,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(41, 90);
+            this.label17.Location = new System.Drawing.Point(41, 56);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(243, 13);
             this.label17.TabIndex = 2;
@@ -998,11 +1004,12 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(90, 58);
+            this.label16.Location = new System.Drawing.Point(20, 426);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(194, 13);
             this.label16.TabIndex = 1;
             this.label16.Text = "Get top j peaks as peptide + core peak:";
+            this.label16.Visible = false;
             // 
             // label15
             // 
@@ -1013,13 +1020,6 @@
             this.label15.TabIndex = 0;
             this.label15.Text = "Get top i peaks as Y1:";
             // 
-            // mascotProteinIDExtractorToolStripMenuItem
-            // 
-            this.mascotProteinIDExtractorToolStripMenuItem.Name = "mascotProteinIDExtractorToolStripMenuItem";
-            this.mascotProteinIDExtractorToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.mascotProteinIDExtractorToolStripMenuItem.Text = "MascotProteinIDExtractor";
-            this.mascotProteinIDExtractorToolStripMenuItem.Click += new System.EventHandler(this.mascotProteinIDExtractorToolStripMenuItem_Click);
-            // 
             // frmBatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1027,9 +1027,15 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.ClientSize = new System.Drawing.Size(773, 454);
             this.Controls.Add(this.groupBox7);
+            this.Controls.Add(this.txtCompReward);
+            this.Controls.Add(this.chkPrecursorCreate);
+            this.Controls.Add(this.txtTopDiagPeaks_j);
+            this.Controls.Add(this.lblCompReward);
             this.Controls.Add(this.chkGlycanList);
             this.Controls.Add(this.chkHuman);
+            this.Controls.Add(this.rdoPeptideWithTime);
             this.Controls.Add(this.groupBox5);
+            this.Controls.Add(this.label16);
             this.Controls.Add(this.chkAvgMass);
             this.Controls.Add(this.grpGlycan);
             this.Controls.Add(this.groupBox6);
@@ -1095,7 +1101,6 @@
         private System.Windows.Forms.RadioButton rdoScanList;
         private System.Windows.Forms.RadioButton rdoScanRange;
         private System.Windows.Forms.Button btnScanList;
-        private System.Windows.Forms.TextBox txtScanFileList;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.CheckBox chkPrecursorCreate;
@@ -1156,5 +1161,6 @@
         private System.Windows.Forms.RadioButton rdoMascotExtractor;
         private System.Windows.Forms.Button btnChkPeptideCandidate;
         private System.Windows.Forms.ToolStripMenuItem mascotProteinIDExtractorToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkUnknownPeptideSearch;
     }
 }
