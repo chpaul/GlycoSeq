@@ -20,11 +20,11 @@ namespace GlycanSeq_Form
     {
         List<GlycanStructure> ReportStructure;
         DataTable dtTrees;
-        public COL.GlycoSequence.GlycanSequencing GS = null;
+        public COL.GlycoSequence.GlycanSequencing_MultipleScoring GS = null;
         MSScan scan;
         float _torelance = 500.0f;
         float _precursorTorelance = 50.0f;
-        float PredictedY1;
+        
         private void frmSingle_Load(object sender, EventArgs e)
         {
             /*rdoPeptide.Checked = false;
@@ -41,15 +41,25 @@ namespace GlycanSeq_Form
             InitializeComponent();
             dtTrees = new DataTable();
             DataColumn dcID = new DataColumn("ID", Type.GetType("System.Int32"));
-            DataColumn dcMass = new DataColumn("Mass", Type.GetType("System.Single"));
-            DataColumn dcScore = new DataColumn("Score", Type.GetType("System.Single"));
+            DataColumn dcMass = new DataColumn("Glycan Mass", Type.GetType("System.Single"));
+            DataColumn dcY1 = new DataColumn("Y1", Type.GetType("System.Single"));
+            DataColumn dcCoreScore = new DataColumn("Core Score", Type.GetType("System.Single"));
+            DataColumn dcBranchScore= new DataColumn("Branch Score", Type.GetType("System.Single"));
+            DataColumn dcAppendScore = new DataColumn("Append Glycan Score", Type.GetType("System.Single"));
             DataColumn dcPPM = new DataColumn("PPM", Type.GetType("System.Single"));
+            DataColumn dcPeptide = new DataColumn("Peptide", Type.GetType("System.String"));
+            DataColumn dcRestGlycan = new DataColumn("Append Glycan", Type.GetType("System.String"));
             DataColumn dcIUPAC = new DataColumn("IUPAC", Type.GetType("System.String"));
             DataColumn dcStructure = new DataColumn("Structure", typeof(Image));
             
             dtTrees.Columns.Add(dcID);
             dtTrees.Columns.Add(dcMass);
-            dtTrees.Columns.Add(dcScore);
+            dtTrees.Columns.Add(dcY1);
+            dtTrees.Columns.Add(dcCoreScore);
+            dtTrees.Columns.Add(dcBranchScore);
+            dtTrees.Columns.Add(dcAppendScore);
+            dtTrees.Columns.Add(dcPeptide);
+            dtTrees.Columns.Add(dcRestGlycan);
             dtTrees.Columns.Add(dcPPM);
             dtTrees.Columns.Add(dcStructure);
             dtTrees.Columns.Add(dcIUPAC);
@@ -57,26 +67,22 @@ namespace GlycanSeq_Form
             dgView.DataSource = dtTrees;
             dgView.Columns[0].Width = 30;
             dgView.Columns[1].Width = 70;
-            dgView.Columns[2].Width = 45;
-            dgView.Columns[3].Width = 45;
-            dgView.Columns[4].Width = 315;
-            dgView.Columns[5].Width = 200;
-
-            cboScan.Items.Add("2471-1113.1011");
-            cboScan.Items.Add("2449-1113.1011");
-            cboScan.Items.Add("1287-1162.33");
-            cboScan.Items.Add("2196-1113.1011");
-            cboScan.Items.Add("1407-1395.142");
-            cboScan.Items.Add("1189-1395.142");
-            cboScan.Items.Add("1325-1395.142");
-
+            dgView.Columns[2].Width = 70;
+            dgView.Columns[3].Width = 50;
+            dgView.Columns[4].Width = 50;
+            dgView.Columns[5].Width = 50;
+            dgView.Columns[6].Width = 130;
+            dgView.Columns[7].Width = 70;
+            dgView.Columns[8].Width = 45;
+            dgView.Columns[9].Width = 400;
+            dgView.Columns[10].Width = 400;
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "Raw files (*.RAW,*.mzXML)|*.RAW;*.mzXML";
             openFileDialog1.RestoreDirectory = true;
-            if (txtScanNo.Text == "" || txtY1ChargeStatus.Text == "" || (rdoY1.Checked == true && txtY1.Text == "") || (rdoPeptide.Checked == true && txtPeptideSeq.Text == ""))
+            if (txtScanNo.Text == ""  || txtPeptideSeq.Text == "")
             {
                 MessageBox.Show("Please fill the information");
                 return;
@@ -105,14 +111,10 @@ namespace GlycanSeq_Form
                 }
                 else
                 {
+                    
                     //scan = new mzXMLReader(openFileDialog1.FileName).ReadScan(ScanNo);
                 }
 
-                //PlotScan(scan);
-                //scan.ProcessFineMonoPeak();
-                //int MonoPeak = scan.Peak.Length;
-                //int DeisotopePea = scan.MonoTransfromResult.Length;
-                //label1.Text = MonoPeak.ToString() + ";" + DeisotopePea.ToString();
 
                 int NoNeuAc = 0;
                 int NoNeuGc = 0;
@@ -125,70 +127,34 @@ namespace GlycanSeq_Form
                     NoNeuGc = Convert.ToInt32(txtSia.Text);
                 }
 
-                int PredictedY1CS = Convert.ToInt32(txtY1ChargeStatus.Text);
-                float PredictedY1 = 0.0f;
                
-                if (rdoPeptide.Checked)
-                {
+                List<int> SequenceParameters = new List<int>();
+                SequenceParameters.Add(Convert.ToInt32(txtTopPeaks_i.Text));
+                SequenceParameters.Add(Convert.ToInt32(txtTopDiagPeaks_j.Text));
+                SequenceParameters.Add(Convert.ToInt32(txtTopCorePeaks_k.Text));
+                SequenceParameters.Add(Convert.ToInt32(txtTopBrancingPeaks_l.Text));
+                SequenceParameters.Add(Convert.ToInt32(txtMaxGlycansToCompleteStruct_m.Text));
+                
 
-                    GS = new COL.GlycoSequence.GlycanSequencing(scan, txtPeptideSeq.Text,true, PredictedY1CS,
-                                                                                            Convert.ToInt32(txtHex.Text),
-                                                                                            Convert.ToInt32(txtHexNAc.Text),
-                                                                                            Convert.ToInt32(txtdeHex.Text),
-                                                                                            NoNeuAc, NoNeuGc, Path.GetDirectoryName(openFileDialog1.FileName).ToString(),
-                                                                                            chkNLinked.Checked, Convert.ToSingle(txtPeaKTol.Text),
-                                                                                            Convert.ToSingle(txtPrecusorTol.Text));
-                }
-                else
-                {
-                    AminoAcidMass AAMW = new AminoAcidMass();
-                    PredictedY1 = (AAMW.GetAVGMonoMW(txtPeptideSeq.Text, true) + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + Atoms.ProtonMass * PredictedY1CS) /
-                                 (float)PredictedY1CS;
-                    PredictedY1 = Convert.ToSingle(scan.MSPeaks[MassUtility.GetClosestMassIdx(scan.MSPeaks, Convert.ToSingle(txtY1.Text))].MonoMass);
-                    GS = new COL.GlycoSequence.GlycanSequencing(scan, PredictedY1, PredictedY1CS,
-                                                                                            Convert.ToInt32(txtHex.Text),
-                                                                                            Convert.ToInt32(txtHexNAc.Text),
-                                                                                            Convert.ToInt32(txtdeHex.Text),
-                                                                                            NoNeuAc, NoNeuGc, Path.GetDirectoryName(openFileDialog1.FileName).ToString(),
-                                                                                            chkNLinked.Checked, Convert.ToSingle(txtPeaKTol.Text),
-                                                                                            Convert.ToSingle(txtPrecusorTol.Text));
-                }
-
-
-      
+                GS = new GlycanSequencing_MultipleScoring(scan, scan.ParentCharge,Convert.ToInt32(txtHex.Text),Convert.ToInt32(txtHexNAc.Text), Convert.ToInt32(txtdeHex.Text),NoNeuAc, NoNeuGc,@"D:\tmp",true,0.8f,10,SequenceParameters,Peptides.ReadFastaFile(txtPeptideSeq.Text) ) ;
                 GS.NumbersOfPeaksForSequencing = 140;
-                GS.UseAVGMass = chkAVGMass.Checked;
+                GS.UseAVGMass = true;
                 //GS.DebugMode(@"E:\temp\SeqTmp\");
                 GS.CreatePrecursotMZ = true;
                 GS.RewardForCompleteStructure = 3;
                 GS.StartSequencing();
                 GS.GetTopRankScoreStructre(1);
-                lstPeak.Items.Clear();
 
 
-                //float[] _mz = new float[scan.MSPeaks.Count];
-                //float[] _intesity = new float[scan.MSPeaks.Count];
-                //for (int i = 0; i < scan.MSPeaks.Count; i++)
+
+
+                //lstPeak.Items.Add("Top " + GS.FilteredPeaks.Count.ToString() + "  peaks");
+                //lstPeak.Items.Add("m/z / normailzed intensity ");
+                //foreach (MSPoint p in GS.FilteredPeaks)
                 //{
-                //    _mz[i] = scan.MSPeaks[i].MonoMass;
-                //    _intesity[i] = scan.MSPeaks[i].MonoIntensity;
+                //    lstPeak.Items.Add(p.Mass.ToString("0.0000") +"/" + p.Intensity.ToString("0.0000"));
                 //}
-                //MSScan _tmpScan = new MSScan(_mz, _intesity, 1226.2273922296611f, 4898.8771594054051f, 4);
-                //COL.GlycoSequence.GlycanSequencing _Gs = new COL.GlycoSequence.GlycanSequencing(scan, PredictedY1, PredictedY1CS);
-                //_Gs.NumbersOfPeaksForSequencing = 150;
-                //_Gs.StartSequencing();
-
-                lstPeak.Items.Add("Top " + GS.FilteredPeaks.Count.ToString() + "  peaks");
-                lstPeak.Items.Add("m/z / normailzed intensity ");
-                foreach (MSPoint p in GS.FilteredPeaks)
-                {
-                    lstPeak.Items.Add(p.Mass.ToString("0.0000") +"/" + p.Intensity.ToString("0.0000"));
-                }
-                //YxFinder yx = new YxFinder(scan.MSPeaks, PredictedY1, PredictedY1CS, 500.0f);
-                //GS = new GlycanSequencing(scan, PredictedY1, PredictedY1CS,chkHex.Checked,chkHexNAc.Checked, chkFuc.Checked, rdoNeuAc.Checked, rdoNeuGC.Checked, Path.GetDirectoryName(openFileDialog1.FileName).ToString(), chkNLinked.Checked, Convert.ToSingle(txtPeaKTol.Text), Convert.ToSingle(txtPrecusorTol.Text));
-                //DataGridViewRowCollection row = dgView.Rows;
-
-    
+            
                 bool isFullSeq = false;
                 ReportStructure = GS.SequencedStructures;
                 if (ReportStructure.Count == 0)
@@ -202,40 +168,69 @@ namespace GlycanSeq_Form
                     isFullSeq = true;
                 }
                 AminoAcidMass AA = new AminoAcidMass();
-                for(int i =0;i<ReportStructure.Count;i++) 
+                for (int i = 0; i < ReportStructure.Count; i++)
                 {
                     GlycanStructure gt = ReportStructure[i];
                     DataRow row = dtTrees.NewRow();
                     //row.Add(new Object[] (gt.Mass.ToString("0.0000"), gt.Score.ToString("0.0000"),gt.GetIUPACString()));
                     row["ID"] = i.ToString();
-                    row["Mass"] = gt.GlycanAVGMonoMass.ToString("0.0000");
-                    row["Score"] =Convert.ToSingle( (gt.Score).ToString("0.0000") );
-                    row["PPM"] = MassUtility.GetMassPPM(gt.GlycanMonoMass + AA.GetMonoMW(GS.PeptideSeq, true), GS.PrecusorMonoMass);
+                    row["Glycan Mass"] = gt.GlycanAVGMonoMass.ToString("0.0000");
+                    row["Y1"] = gt.Y1.Mass.ToString("0.0000"); ;
+                    row["Core Score"] = Convert.ToSingle((gt.CoreScore).ToString("0.00"));
+                    row["Branch Score"] = Convert.ToSingle((gt.BranchScore).ToString("0.00"));
+                    row["Append Glycan Score"] = Convert.ToSingle((gt.InCompleteScore).ToString("0.00"));
+                    if (gt.IsCompleteByPrecursorDifference)
+                    {
+                        row["PPM"] =
+                            Convert.ToSingle(
+                                MassUtility.GetMassPPM(
+                                    gt.GlycanMonoMass + AA.GetMonoMW(gt.PeptideSequence, true) +
+                                    GetGlycanMassByGlycanString(gt.RestGlycanString), GS.PrecusorMonoMass)
+                                    .ToString("0.00"));
+                    }
+                    else
+                    {
+                        row["PPM"] =
+                            Convert.ToSingle(
+                                MassUtility.GetMassPPM(
+                                    gt.GlycanMonoMass + AA.GetMonoMW(gt.PeptideSequence, true) , GS.PrecusorMonoMass).ToString("0.00"));
+                    }
+                    row["Peptide"] = gt.PeptideSequence;
+                    row["Append Glycan"] = gt.RestGlycanString;
                     row["IUPAC"] = gt.IUPACString;
-                   
+
                     GlycansDrawer GDRaw = new GlycansDrawer(gt.IUPACString, false);
                     Image tmpImg = GDRaw.GetImage();
                     row["Structure"] = tmpImg;
                     dtTrees.Rows.Add(row);
 
                 }
-                //GS.SequencStructures[0].TheoreticalFragment
-                dtTrees.DefaultView.Sort = "Mass DESC, Score  DESC";
+                ////GS.SequencStructures[0].TheoreticalFragment
+                dtTrees.DefaultView.Sort = "Glycan Mass DESC";
 
 
                 for (int i = 0; i < dgView.Rows.Count; i++)
                 {
                     this.dgView.AutoResizeRow(i);
-                    if (isFullSeq)
+                    if (Convert.ToSingle(dgView.Rows[i].Cells["PPM"].Value)<=Convert.ToSingle(txtPrecusorTol.Text))
                     {
                         dgView.Rows[i].DefaultCellStyle.BackColor = Color.Red;
                     }
                 }
-                dgView.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             }
         }
 
-
+        private float GetGlycanMassByGlycanString(string argStr)
+        {
+            string[] tmpAry = argStr.Split('-');
+            float glycanMass = 0;
+            glycanMass = glycanMass + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) * Convert.ToInt32(tmpAry[0]);
+            glycanMass = glycanMass + GlycanMass.GetGlycanMass(Glycan.Type.Hex) * Convert.ToInt32(tmpAry[1]);
+            glycanMass = glycanMass + GlycanMass.GetGlycanMass(Glycan.Type.DeHex) * Convert.ToInt32(tmpAry[2]);
+            glycanMass = glycanMass + GlycanMass.GetGlycanMass(Glycan.Type.NeuAc) * Convert.ToInt32(tmpAry[3]);
+            glycanMass = glycanMass + GlycanMass.GetGlycanMass(Glycan.Type.NeuGc) * Convert.ToInt32(tmpAry[4]);
+            return glycanMass;
+        }
      
         private Image RotateImage(Image inputImg, double degreeAngle)
         {
@@ -322,9 +317,7 @@ namespace GlycanSeq_Form
             }
 
             GlycanStructure Structure = ReportStructure[Convert.ToInt32(dgView.Rows[e.RowIndex].Cells[0].Value)];
-            treeView1.Nodes.Clear();
-            treeView1.Nodes.Add(TreeStructure2TreeView.Convert2TreeView(Structure.Root));
-            treeView1.ExpandAll();
+
             if (GS.FullSequencedStructures.Count != 0)
             {
                 Structure = GS.FullSequencedStructures[Convert.ToInt32(dgView.Rows[e.RowIndex].Cells[0].Value)];
@@ -345,41 +338,7 @@ namespace GlycanSeq_Form
                                       (GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.DeHex)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.DeHex), ParentAVGMono).ToString("00000.000") + ")\n" +
                                       "Sia:          " + (GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.NeuAc)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.NeuAc), ParentMono).ToString("00000.000") + ")  " +
                                       (GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuAc)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuAc), ParentAVGMono).ToString("00000.000") + ")\n";*/
-            if (GS.FullSequencedStructures.Count != 0)
-            {
-                if (chkAVGMass.Checked && ParentAVGMono!=0.0f)
-                {
-                    lblPPM.Text = "AVG Precursor Mass: " + ParentAVGMono.ToString() + "\n" +
-                          (GS.PeptideMonoMass + Structure.GlycanAVGMonoMass).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanAVGMonoMass, ParentAVGMono).ToString("000.000") + ") ppm";
-                }
-                else
-                {
-                    lblPPM.Text = "Mono Precursor Mass: " + ParentMono.ToString() + "\n" +
-                    (GS.PeptideMonoMass + Structure.GlycanMonoMass).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanMonoMass, ParentMono).ToString("000.000") + ") ppm";
-                }
-            }
-            else
-            {
-                if (chkAVGMass.Checked && ParentAVGMono != 0.0f)
-                {
-                    lblPPM.Text = "     AVG Mass\n" +
-                              "Precursor Mass: " + ParentAVGMono.ToString() + "\n" +
-                              "Extra Hex:         " + (GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.Hex)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.Hex), ParentAVGMono).ToString("00000.000") + ")\n" +
-                              "Extra HexNAc:  " + (GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc), ParentAVGMono).ToString("00000.000") + ")\n" +
-                              "Extra deHex:     " + (GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.DeHex)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.DeHex), ParentAVGMono).ToString("00000.000") + ")\n" +
-                              "Extra Sia:          " + (GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuAc)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanAVGMonoMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.NeuAc), ParentAVGMono).ToString("00000.000") + ")\n";
-                }
-                else
-                {
-                    lblPPM.Text = "     Mono Mass\n" +
-                              "Precursor Mass: " + ParentMono.ToString() + "\n" +
-                              "Extra Hex:         " + (GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.Hex)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.Hex), ParentMono).ToString("00000.000") + ")\n" +
-                              "Extra HexNAc:  " + (GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc), ParentMono).ToString("00000.000") + ")\n" +
-                              "Extra deHex:     " + (GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.DeHex)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.DeHex), ParentMono).ToString("00000.000") + ")\n" +
-                              "Extra Sia:          " + (GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.NeuAc)).ToString("0000.000") + "(" + MassUtility.GetMassPPM(GS.PeptideMonoMass + Structure.GlycanMonoMass + GlycanMass.GetGlycanMass(Glycan.Type.NeuAc), ParentMono).ToString("00000.000") + ")\n";
 
-                }
-            }
         }
         private void ListIDPeak(GlycanStructure argStructure)
         {
@@ -451,11 +410,11 @@ namespace GlycanSeq_Form
             dtDetail.Columns.Add(dcScore);
             dtDetail.Columns.Add(dcStructure);
 
-            dgDetail.DataSource = dtDetail;
-            dgDetail.Columns[0].Width = 30;
-            dgDetail.Columns[1].Width = 70;
-            dgDetail.Columns[2].Width = 50;
-            dgDetail.Columns[3].Width = 315;
+            //dgDetail.DataSource = dtDetail;
+            //dgDetail.Columns[0].Width = 30;
+            //dgDetail.Columns[1].Width = 70;
+            //dgDetail.Columns[2].Width = 50;
+            //dgDetail.Columns[3].Width = 315;
 
             dtDetail.DefaultView.Sort = "Mass";
             int idx = 0;
@@ -465,7 +424,7 @@ namespace GlycanSeq_Form
             {
                 DataRow row = dtDetail.NewRow();
                 row[0] = idx;
-                float glycanmass = COL.GlycoLib.GlycanMass.GetGlycanMasswithCharge(frm.GlycanType, argStructure.Charge) + PredictedY1 - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, argStructure.Charge);
+                float glycanmass = COL.GlycoLib.GlycanMass.GetGlycanMasswithCharge(frm.GlycanType, argStructure.Charge) + argStructure.Y1.Mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, argStructure.Charge);
                 
                 int closepeakidx = MassUtility.GetClosestMassIdx(scan.MSPeaks, glycanmass);
                 row[1] = glycanmass;
@@ -487,17 +446,13 @@ namespace GlycanSeq_Form
 
             DataRow dtrow = dtDetail.NewRow();
             dtrow[0] = idx;
-            dtrow[1] = GlycanMass.GetGlycanMasswithCharge(argStructure.Root.GlycanType, argStructure.Charge) + PredictedY1 - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, argStructure.Charge);
+            dtrow[1] = GlycanMass.GetGlycanMasswithCharge(argStructure.Root.GlycanType, argStructure.Charge) + argStructure.Y1.Mass - GlycanMass.GetGlycanMasswithCharge(Glycan.Type.HexNAc, argStructure.Charge);
             dtrow[2] = TotalScore;
             GDRaw = new GlycansDrawer(argStructure.IUPACString, false);
             dtrow[3] = GDRaw.GetImage();
             dtDetail.Rows.Add(dtrow);
 
 
-            for (int i = 0; i < dgDetail.Rows.Count; i++)
-            {
-                this.dgDetail.AutoResizeRow(i);
-            }
         }
 
         public void DrawsequencingGraph(GlycanStructure argStructure)
@@ -883,24 +838,6 @@ namespace GlycanSeq_Form
             return default(bool);
         }
 
-
-        private void cboScan_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string[] tmpAry = cboScan.Text.Split('-');
-            txtScanNo.Text = tmpAry[0];
-            txtY1.Text = tmpAry[1];
-        }
-
-        private void rdoY1_CheckedChanged(object sender, EventArgs e)
-        {
-            txtY1.Enabled = rdoY1.Checked;
-            txtPeptideSeq.Enabled = !rdoY1.Checked;
-        }
-
-
-
-
-
         private void dgView_Sorted(object sender, EventArgs e)
         {
             for (int i = 0; i < dgView.Rows.Count; i++)
@@ -913,32 +850,16 @@ namespace GlycanSeq_Form
             }
         }
 
-        private void txtPeptideSeq_TextChanged(object sender, EventArgs e)
+        private void btnBrowse_Click(object sender, EventArgs e)
         {
-            if (txtY1ChargeStatus.Text == "")
+            openFileDialog1.Filter = "Fasta file(*.fasta)|*.fasta|CSV file(*.csv)|*.csv";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                return;
+                txtPeptideSeq.Text = openFileDialog1.FileName;
             }
-            AminoAcidMass AAMW = new AminoAcidMass();
-            int Y1ChargeSt = Convert.ToInt32(txtY1ChargeStatus.Text);
-
-            double PeptideMass;
-            if (chkAVGMass.Checked)
-            {
-                PeptideMass = AAMW.GetAVGMonoMW(txtPeptideSeq.Text, true);
-                 txtY1.Text = Convert.ToString( (float)(PeptideMass + GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc) + COL.MassLib.Atoms.ProtonMass * Y1ChargeSt) / Y1ChargeSt);
-            }
-            else
-            {
-                PeptideMass = AAMW.GetMonoMW(txtPeptideSeq.Text, true);
-                 txtY1.Text = Convert.ToString( (float)(PeptideMass + GlycanMass.GetGlycanMass(Glycan.Type.HexNAc) + COL.MassLib.Atoms.ProtonMass * Y1ChargeSt) / Y1ChargeSt);
-
-            }
-            lblMass.Text = "Peptide m/z:" + PeptideMass.ToString();
-
-            
-           
         }
+
+     
 
 
 

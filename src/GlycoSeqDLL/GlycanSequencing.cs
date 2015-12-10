@@ -13,7 +13,6 @@ namespace COL.GlycoSequence
 {
     public class GlycanSequencing
     {
-
         private bool _isDebug = false;
         private bool _NGlycanData = true;
         private bool _allowSiaConnectToHexNac = false;
@@ -290,7 +289,6 @@ namespace COL.GlycoSequence
                 RankedList.AddRange(_SequencedGlycanStructure);
             }
             return RankedList;
-
         }
 
         /// <summary>
@@ -895,7 +893,7 @@ namespace COL.GlycoSequence
                 {
                     foreach (GlycanStructure g in _FullSequencedGlycanStructure)
                     {
-                        g.Score = g.Score + _rewardForCompleteStructure;
+                       // g.Score = g.Score + _rewardForCompleteStructure;
                     }
                 }
             }
@@ -1085,7 +1083,7 @@ namespace COL.GlycoSequence
                         List<GlycanStructure> AddedTrees = AddGlycanToNGlycanTree(t, NextGlycan, _scan.ParentMonoMW, 0.0f);
                         foreach (GlycanStructure GS in AddedTrees)
                         {
-                            GS.IsCompleteSequenced = true;
+                            GS.MatchWithPrecursorMW = true;
                             GS.Root.IDIntensity = GS.Root.IDIntensity + _rewardForCompleteStructure;
                             //if (MassLib.MassUtility.GetMassPPM(_scan.ParentMonoMW, _peptideMass+GS.GlycanAVGMonoMass  ) < _precursorTorelance)
                             //{

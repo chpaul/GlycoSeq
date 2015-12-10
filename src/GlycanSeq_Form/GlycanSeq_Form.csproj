@@ -74,11 +74,9 @@
     <Reference Include="GlycoLib">
       <HintPath>..\..\lib\GlycoLib.dll</HintPath>
     </Reference>
-    <Reference Include="MassLib">
-      <HintPath>..\..\lib\MassLib.dll</HintPath>
-    </Reference>
-    <Reference Include="NamedPiped">
-      <HintPath>..\..\lib\NamedPiped.dll</HintPath>
+    <Reference Include="MassLib, Version=1.0.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\COL_Lib\src\MassLibNative\bin\Release\MassLib.dll</HintPath>
     </Reference>
     <Reference Include="ProtLib, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -107,6 +105,12 @@
     <Compile Include="frmBatch.designer.cs">
       <DependentUpon>frmBatch.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmPeptideCandidate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPeptideCandidate.Designer.cs">
+      <DependentUpon>frmPeptideCandidate.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmProcessing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,6 +137,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmBatch.resx">
       <DependentUpon>frmBatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPeptideCandidate.resx">
+      <DependentUpon>frmPeptideCandidate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmProcessing.resx">
       <DependentUpon>frmProcessing.cs</DependentUpon>
@@ -169,6 +176,37 @@
       <Project>{4a55b578-c7e9-49bf-84bd-4c2d9e2032b3}</Project>
       <Name>GlycoSeqDLL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\New_Scoring.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bracket.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DeHex.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Hex.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HexNAc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NeuAc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NeuGc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\model.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\MascotProteinIDExtractor.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

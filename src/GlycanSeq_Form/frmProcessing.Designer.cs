@@ -75,6 +75,7 @@
             // bgWorker_Process
             // 
             this.bgWorker_Process.WorkerReportsProgress = true;
+            this.bgWorker_Process.WorkerSupportsCancellation = true;
             this.bgWorker_Process.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorker_Process_DoWork);
             this.bgWorker_Process.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgWorker_Process_ProgressChanged);
             this.bgWorker_Process.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgWorker_Process_RunWorkerCompleted);
@@ -123,6 +124,7 @@
             this.Name = "frmProcessing";
             this.Text = "Processing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmProcessing_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmProcessing_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 
