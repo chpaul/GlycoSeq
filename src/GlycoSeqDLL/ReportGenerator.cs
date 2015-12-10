@@ -93,17 +93,24 @@ namespace COL.GlycoSequence
             string header = argScan.ScanNo.ToString() + "," + argScan.ParentScanNo.ToString() + "," +
                             argScan.ParentMZ.ToString() + "," +argScan.ParentMonoMz+","+ argScan.ParentCharge.ToString() + "," +
                             (argScan.ParentMonoMz * argScan.ParentCharge - Atoms.ProtonMass*argScan.ParentCharge)+","+ argScan.Time.ToString("0.00")+",";
-           argStructureResults = argStructureResults.OrderByDescending(x => x.Item2.Score).ToList();
+           argStructureResults = argStructureResults.OrderBy(y=>y.Item2.IsCompleteByPrecursorDifference).ThenByDescending(x => x.Item2.Score).ToList();
 
           // List<string> lstExportedResult = new List<string>();
            double previousScore = 0;
            int ExportedRank = 0;
 
-           var GroupedRecords = argStructureResults.GroupBy(x => new {x.Item1, x.Item3}).OrderByDescending(x=>x.Key.Item3);
-           int UpperBound = GroupedRecords.Count() < argTopRank ? GroupedRecords.Count() : argTopRank;
-           var filteredRecords = GroupedRecords.Take(UpperBound);
 
+           var GroupedRecords = argStructureResults.GroupBy(x => new {x.Item1, x.Item3});
+           var GroupedRecordsWithPeptide = GroupedRecords.Where(x => !x.Key.Item1.StartsWith("+")).OrderByDescending(x=>x.Key.Item3);
+           var GroupedRecordsNoPeptide =    GroupedRecords.Where(x => x.Key.Item1.StartsWith("+")).OrderByDescending(x => x.Key.Item3);
+           var filteredRecords = GroupedRecordsWithPeptide.Take(argTopRank);
+           
+           int different = argTopRank - GroupedRecordsWithPeptide.ToList().Count;
 
+           if (different > 0)
+           {
+               filteredRecords = filteredRecords.Concat(GroupedRecordsNoPeptide.Take(different));
+           }
            foreach (var SeqResult in filteredRecords)
            {
                var lstRecords = SeqResult.ToArray();
@@ -153,19 +160,33 @@ namespace COL.GlycoSequence
                string Peptide = lstRecords[0].Item2.PeptideSequence == "" ? "-" : lstRecords[0].Item2.PeptideSequence;
                string PeptideModificationString = lstRecords[0].Item2.PeptideModificationString == ""? "-": lstRecords[0].Item2.PeptideModificationString;
                sw.WriteLine(header + lstRecords[0].Item2.Y1.Mass.ToString("0.0000") + "," +
-                            Peptide + "," +
-                           PeptideModificationString + "," +
-                            IdentifedPeptide + "," +
-                            lstRecords[0].Item2.SVMPredictedLabel +"," +
-                         lstRecords[0].Item2.SVMPrrdictedProbabilities[lstRecords[0].Item2.SVMPredictedLabel - 1].ToString("0.00") + ","+
-                         lstRecords[0].Item2.CoreScore.ToString("0.00") + "," +
-                         lstRecords[0].Item2.BranchScore.ToString("0.00") + "," +
-                         lstRecords[0].Item2.InCompleteScore.ToString("0.00") + "," +
-                         lstRecords[0].Item2.MatchWithPrecursorMW.ToString() + "," +
-                        PPM + "," +
-                         lstRecords[0].Item2.FullSequencedGlycanString.ToString() + "," +
-                         lstRecords[0].Item2.RestGlycanString + "," +
-                        mergerdIUPAC);
+             Peptide + "," +
+            PeptideModificationString + "," +
+             IdentifedPeptide + "," +
+             lstRecords[0].Item2.SVMPredictedLabel + "," +
+          lstRecords[0].Item2.SVMPrrdictedProbabilities[lstRecords[0].Item2.SVMPredictedLabel].ToString("0.00") + "," +
+          lstRecords[0].Item2.CoreScore.ToString("0.00") + "," +
+          lstRecords[0].Item2.BranchScore.ToString("0.00") + "," +
+          lstRecords[0].Item2.InCompleteScore.ToString("0.00") + "," +
+          lstRecords[0].Item2.MatchWithPrecursorMW.ToString() + "," +
+         PPM + "," +
+          lstRecords[0].Item2.FullSequencedGlycanString.ToString() + "," +
+          lstRecords[0].Item2.RestGlycanString + "," +
+         mergerdIUPAC);
+               //sw.WriteLine(header + lstRecords[0].Item2.Y1.Mass.ToString("0.0000") + "," +
+               //             Peptide + "," +
+               //            PeptideModificationString + "," +
+               //             IdentifedPeptide + "," +
+               //             lstRecords[0].Item2.SVMPredictedLabel +"," +
+               //          lstRecords[0].Item2.SVMPrrdictedProbabilities[lstRecords[0].Item2.SVMPredictedLabel - 1].ToString("0.00") + ","+
+               //          lstRecords[0].Item2.CoreScore.ToString("0.00") + "," +
+               //          lstRecords[0].Item2.BranchScore.ToString("0.00") + "," +
+               //          lstRecords[0].Item2.InCompleteScore.ToString("0.00") + "," +
+               //          lstRecords[0].Item2.MatchWithPrecursorMW.ToString() + "," +
+               //         PPM + "," +
+               //          lstRecords[0].Item2.FullSequencedGlycanString.ToString() + "," +
+               //          lstRecords[0].Item2.RestGlycanString + "," +
+               //         mergerdIUPAC);
            }
            
            // foreach (Tuple<string, GlycanStructure, double> SeqResult in argStructureResults)
@@ -210,7 +231,103 @@ namespace COL.GlycoSequence
             sw.Flush();
             sw.Close();
         }
-        
+        public static void GenerateLearningMatrixTwoLabels(GlycanSequencing_MultipleScoring argGS, string argExportFile, int argGetTopCount)
+        {
+            List<string> lstLearningMatrixStrings = new List<string>();
+            //Title
+            if (!File.Exists(argExportFile))
+            {
+                using (StreamWriter sw = new StreamWriter(argExportFile))
+                {
+                    sw.WriteLine("ScanNum,PeptideSequence,GlycanSequence,IsPeptide,CoreFuc,TotalGlycan,PPM,CorePeakIDNum,CorePeakIDScore,BranchPeakIDNum,BranchPeakIDScore,Y1,Y2,Y3,Y4,Y5,MatchedPrecursorMW,Category");
+                }
+            }
+            List<GlycanStructure> AllStructure = argGS.FullSequencedStructures;
+            AllStructure.AddRange(argGS.SequencedStructures);
+            var glycanStructure = AllStructure.GroupBy(x => new { Peptide = x.PeptideSequence, Glycan = x.FullSequencedGlycanString}).OrderByDescending(z=>z.Key.Peptide.Length).ToList();
+            foreach (var glycans in glycanStructure.AsEnumerable())
+            {
+                foreach (var glycan in glycans.OrderByDescending(x=> x.BranchScore+ x.CoreScore).AsEnumerable().Take(1))
+                {
+                    string Peptide = "0";
+                    if (glycan.PeptideSequence != "")
+                    {
+                        Peptide = "1";
+                    }
+                    //Category
+                    bool categoey = false; //1: Peptide + Glycan <10PPM; 2: No peptide but complete sequence; 3:Other
+                    if (glycan.MatchWithPrecursorMW)
+                    {
+                        categoey = true;
+                    }
+
+                    string fuc = "1";
+                    int CoreYPeaks = glycan.CoreIDPeak.Count;
+                    float CoreYScore = glycan.CoreScore;
+                    if (!glycan.IUPACString.EndsWith("(DeHex-)HexNAc"))
+                    {
+                        CoreYPeaks = glycan.CoreIDPeak.Count - glycan.CoreIDPeak.Where(x => x.Item2.Contains("deHex")).ToList().Count;
+                        foreach (var core in glycan.CoreIDPeak.Where(x => x.Item2.EndsWith("(DeHex-)HexNAc")))
+                        {
+                            CoreYScore -= core.Item1.Intensity;
+                        }
+                        fuc = "0";
+                    }
+                    int totalGlycan = 0;
+                    string[] tmpGlycan = glycan.FullSequencedGlycanString.Split('-');
+                    for (int i = 0; i < tmpGlycan.Length; i++)
+                    {
+                        totalGlycan+= Convert.ToInt32(tmpGlycan[i]);
+                    }
+                    string tmpStr = argGS.ScanInfo.ScanNo.ToString() + "," +
+                                 glycan.PeptideSequence +","+
+                                 glycan.FullSequencedGlycanString + "," +
+                                 Peptide + "," +
+                                 fuc + "," +
+                                 totalGlycan.ToString() + "," +
+                                 glycan.PPM.ToString("0.000") + "," +
+                                 CoreYPeaks.ToString() + "," +
+                                 CoreYScore.ToString("0.0000") + "," +
+                                 glycan.BranchIDPeak.Count.ToString() + "," +
+                                 glycan.BranchScore.ToString("0.0000") + ",";
+
+
+                    var CorePeaks = glycan.CoreIDPeak.Where(x => x.Item2 == "HexNAc").ToList();
+                    tmpStr += (CorePeaks.Count != 0 ? CorePeaks[0].Item1.Intensity.ToString("0.0000") : "0") + ",";
+                    CorePeaks = glycan.CoreIDPeak.Where(x => x.Item2 == "HexNAc-HexNAc").ToList();
+                    tmpStr += (CorePeaks.Count != 0 ? CorePeaks[0].Item1.Intensity.ToString("0.0000") : "0") + ",";
+                    CorePeaks = glycan.CoreIDPeak.Where(x => x.Item2 == "HexNAc-HexNAc-Hex").ToList();
+                    tmpStr += (CorePeaks.Count != 0 ? CorePeaks[0].Item1.Intensity.ToString("0.0000") : "0") + ",";
+                    CorePeaks = glycan.CoreIDPeak.Where(x => x.Item2 == "HexNAc-HexNAc-Hex-Hex").ToList();
+                    tmpStr += (CorePeaks.Count != 0 ? CorePeaks[0].Item1.Intensity.ToString("0.0000") : "0") + ",";
+                    CorePeaks = glycan.CoreIDPeak.Where(x => x.Item2 == "HexNAc-HexNAc-Hex-(Hex-)Hex").ToList();
+                    tmpStr += (CorePeaks.Count != 0 ? CorePeaks[0].Item1.Intensity.ToString("0.0000") : "0") + ",";
+
+
+                    if (glycan.MatchWithPrecursorMW)
+                    {
+                        tmpStr += "1,";
+                    }
+                    else
+                    {
+                        tmpStr += "0,";
+                    }
+
+                    tmpStr += categoey;
+
+
+                    if (!lstLearningMatrixStrings.Contains(tmpStr))
+                    {
+                        using (StreamWriter sw = new StreamWriter(argExportFile, true))
+                        {
+                            sw.WriteLine(tmpStr);
+                        }
+                        lstLearningMatrixStrings.Add(tmpStr);
+                    }
+                }
+            }
+        }
+
         public static void GenerateLearningMatrix(GlycanSequencing_MultipleScoring argGS, string argExportFile, int argGetTopCount)
         {
             List<string> lstLearningMatrixStrings = new List<string>();
@@ -222,7 +339,7 @@ namespace COL.GlycoSequence
                     sw.WriteLine("ScanNum,PeptideSequence,GlycanSequence,CoreFuc,TotalGlycan,PPM,CorePeakIDNum,CorePeakIDScore,BranchPeakIDNum,BranchPeakIDScore,Y1,Y2,Y3,Y4,Y5,MatchedPrecursorMW,Category");
                 }
             }
-            var glycanStructure = argGS.FullSequencedStructures.GroupBy(x => new { GlycanTotal = x.NoOfTotalGlycan, Score = x.BranchScore + x.CoreScore }).OrderByDescending(y => y.Key.GlycanTotal).ThenByDescending(z => z.Key.Score).Take(1).ToList();
+            var glycanStructure = argGS.FullSequencedStructures.GroupBy(x => new { GlycanTotal = x.NoOfTotalGlycan, Score = x.BranchScore + x.CoreScore }).OrderByDescending(y => y.Key.GlycanTotal).ThenByDescending(z => z.Key.Score).ToList();
             glycanStructure.AddRange(argGS.SequencedStructures.GroupBy(x => new { GlycanTotal = x.NoOfTotalGlycan, Score = x.BranchScore + x.CoreScore }).OrderByDescending(y => y.Key.GlycanTotal).ThenByDescending(z => z.Key.Score).Take(argGetTopCount).ToList());
 
             foreach (var glycans in glycanStructure.AsEnumerable())

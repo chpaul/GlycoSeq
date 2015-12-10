@@ -122,6 +122,11 @@ namespace GlycanSeq_Form
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if (txtRaw.Text == "" || !File.Exists(txtRaw.Text) ||  txtFasta.Text=="" ||!File.Exists(txtFasta.Text) || ( chkGlycanList.Checked && (txtGlycanList.Text=="" || !File.Exists(txtGlycanList.Text)) ))
+            {
+                MessageBox.Show("Please fill in Raw, Glycan and Fasta file,");
+                return;
+            }
             string defaultOutputFolder = Path.GetDirectoryName(txtRaw.Text) + "\\" +
                                          Path.GetFileNameWithoutExtension(txtRaw.Text) + "_" +
                                          DateTime.Now.ToString("yyMMdd-HHmm");
@@ -1038,6 +1043,7 @@ namespace GlycanSeq_Form
 
         private void chkEnzy_None_CheckedChanged(object sender, EventArgs e)
         {
+            txtFasta.Text = "";
             if (chkEnzy_None.Checked)
             {
                 chkEnzy_GlucE.Checked = false;
@@ -1048,6 +1054,7 @@ namespace GlycanSeq_Form
 
         private void chkEnzy_GlucE_CheckedChanged(object sender, EventArgs e)
         {
+            txtFasta.Text = "";
             if (chkEnzy_GlucE.Checked)
             {
                 chkEnzy_None.Checked = false;
@@ -1057,6 +1064,7 @@ namespace GlycanSeq_Form
 
         private void chkEnzy_GlucED_CheckedChanged(object sender, EventArgs e)
         {
+            txtFasta.Text = "";
             if (chkEnzy_GlucED.Checked)
             {
                 chkEnzy_None.Checked = false;
@@ -1066,6 +1074,7 @@ namespace GlycanSeq_Form
 
         private void chkEnzy_Trypsin_CheckedChanged(object sender, EventArgs e)
         {
+            txtFasta.Text = "";
             if (chkEnzy_Trypsin.Checked)
             {
                 chkEnzy_None.Checked = false;
@@ -1088,8 +1097,9 @@ namespace GlycanSeq_Form
             label13.Enabled = !rdoFastaOnly.Checked;
             label14.Enabled = !rdoFastaOnly.Checked;
             txtTolTime.Enabled = !rdoFastaOnly.Checked;
-            btnChkPeptideCandidate.Enabled = false;
+            btnChkPeptideCandidate.Enabled = rdoFastaOnly.Checked;
             lstTargetPeptides = null;
+            txtFasta.Text = "";
         }
 
         private void chkIndividualReport_CheckedChanged(object sender, EventArgs e)
@@ -1119,7 +1129,12 @@ namespace GlycanSeq_Form
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.CreateNoWindow = false;
             startInfo.UseShellExecute = false;
-            startInfo.FileName = Environment.CurrentDirectory+"\\MascotProteinIDExtractor.exe";
+            startInfo.FileName = Environment.CurrentDirectory + "\\MascotProteinIDExtractor.exe";
+            if (File.Exists(Environment.CurrentDirectory + "\\Resources\\MascotProteinIDExtractor.exe"))
+            {
+                startInfo.FileName = Environment.CurrentDirectory + "\\Resources\\MascotProteinIDExtractor.exe";
+            }
+
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             try
             {
@@ -1160,6 +1175,32 @@ namespace GlycanSeq_Form
             }
         }
 
+        private void txtShiftTime_TextChanged(object sender, EventArgs e)
+        {
+            txtFasta.Text = "";
+        }
+
+        private void cboShiftSign_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtFasta.Text = "";
+        }
+
+        private void txtTolTime_TextChanged(object sender, EventArgs e)
+        {
+            txtFasta.Text = "";
+        }
+
+        private void cboMissCleavage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtFasta.Text = "";
+        }
+
+        private void cboPepMutation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtFasta.Text = "";
+        }
+
+    
 
         
     }

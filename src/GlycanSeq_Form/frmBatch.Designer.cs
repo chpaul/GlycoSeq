@@ -66,9 +66,9 @@
             this.rdoPeptideWithTime = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkIndividualReport = new System.Windows.Forms.CheckBox();
+            this.chkCompletedOnly = new System.Windows.Forms.CheckBox();
             this.txtCompReward = new System.Windows.Forms.TextBox();
             this.lblCompReward = new System.Windows.Forms.Label();
-            this.chkCompletedOnly = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.txtPrecusorTol = new System.Windows.Forms.TextBox();
@@ -108,13 +108,13 @@
             this.txtMaxGlycansToCompleteStruct_m = new System.Windows.Forms.TextBox();
             this.txtTopBrancingPeaks_l = new System.Windows.Forms.TextBox();
             this.txtTopCorePeaks_k = new System.Windows.Forms.TextBox();
-            this.txtTopDiagPeaks_j = new System.Windows.Forms.TextBox();
             this.txtTopPeaks_i = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
+            this.txtTopDiagPeaks_j = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -327,7 +327,8 @@
             this.txtTolTime.Name = "txtTolTime";
             this.txtTolTime.Size = new System.Drawing.Size(29, 20);
             this.txtTolTime.TabIndex = 39;
-            this.txtTolTime.Text = "3";
+            this.txtTolTime.Text = "8";
+            this.txtTolTime.TextChanged += new System.EventHandler(this.txtTolTime_TextChanged);
             // 
             // label10
             // 
@@ -349,6 +350,7 @@
             this.cboPepMutation.Name = "cboPepMutation";
             this.cboPepMutation.Size = new System.Drawing.Size(202, 21);
             this.cboPepMutation.TabIndex = 30;
+            this.cboPepMutation.SelectedIndexChanged += new System.EventHandler(this.cboPepMutation_SelectedIndexChanged);
             // 
             // label13
             // 
@@ -433,7 +435,8 @@
             this.txtShiftTime.Name = "txtShiftTime";
             this.txtShiftTime.Size = new System.Drawing.Size(43, 20);
             this.txtShiftTime.TabIndex = 35;
-            this.txtShiftTime.Text = "10";
+            this.txtShiftTime.Text = "8";
+            this.txtShiftTime.TextChanged += new System.EventHandler(this.txtShiftTime_TextChanged);
             // 
             // cboMissCleavage
             // 
@@ -455,6 +458,7 @@
             this.cboMissCleavage.Size = new System.Drawing.Size(31, 21);
             this.cboMissCleavage.TabIndex = 7;
             this.cboMissCleavage.Text = "0";
+            this.cboMissCleavage.SelectedIndexChanged += new System.EventHandler(this.cboMissCleavage_SelectedIndexChanged);
             // 
             // lstModification
             // 
@@ -477,6 +481,7 @@
             this.cboShiftSign.Name = "cboShiftSign";
             this.cboShiftSign.Size = new System.Drawing.Size(30, 21);
             this.cboShiftSign.TabIndex = 34;
+            this.cboShiftSign.SelectedIndexChanged += new System.EventHandler(this.cboShiftSign_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -526,7 +531,7 @@
             this.groupBox3.Controls.Add(this.cboTopRank);
             this.groupBox3.Location = new System.Drawing.Point(223, 306);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(197, 98);
+            this.groupBox3.Size = new System.Drawing.Size(197, 110);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Export";
@@ -541,6 +546,18 @@
             this.chkIndividualReport.Text = "Individual detail report";
             this.chkIndividualReport.UseVisualStyleBackColor = true;
             this.chkIndividualReport.CheckedChanged += new System.EventHandler(this.chkIndividualReport_CheckedChanged);
+            // 
+            // chkCompletedOnly
+            // 
+            this.chkCompletedOnly.AutoSize = true;
+            this.chkCompletedOnly.Checked = true;
+            this.chkCompletedOnly.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCompletedOnly.Location = new System.Drawing.Point(13, 41);
+            this.chkCompletedOnly.Name = "chkCompletedOnly";
+            this.chkCompletedOnly.Size = new System.Drawing.Size(137, 30);
+            this.chkCompletedOnly.TabIndex = 33;
+            this.chkCompletedOnly.Text = "Only complete structure\r\n(Cat 1 Only)";
+            this.chkCompletedOnly.UseVisualStyleBackColor = true;
             // 
             // txtCompReward
             // 
@@ -561,18 +578,6 @@
             this.lblCompReward.TabIndex = 34;
             this.lblCompReward.Text = "Completed score reward:";
             this.lblCompReward.Visible = false;
-            // 
-            // chkCompletedOnly
-            // 
-            this.chkCompletedOnly.AutoSize = true;
-            this.chkCompletedOnly.Checked = true;
-            this.chkCompletedOnly.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCompletedOnly.Location = new System.Drawing.Point(13, 48);
-            this.chkCompletedOnly.Name = "chkCompletedOnly";
-            this.chkCompletedOnly.Size = new System.Drawing.Size(137, 17);
-            this.chkCompletedOnly.TabIndex = 33;
-            this.chkCompletedOnly.Text = "Only complete structure";
-            this.chkCompletedOnly.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -617,7 +622,7 @@
             this.groupBox4.Controls.Add(this.txtPrecusorTol);
             this.groupBox4.Location = new System.Drawing.Point(6, 306);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(211, 98);
+            this.groupBox4.Size = new System.Drawing.Size(211, 110);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Torelance";
@@ -627,9 +632,9 @@
             this.chkUnknownPeptideSearch.AutoSize = true;
             this.chkUnknownPeptideSearch.Location = new System.Drawing.Point(13, 73);
             this.chkUnknownPeptideSearch.Name = "chkUnknownPeptideSearch";
-            this.chkUnknownPeptideSearch.Size = new System.Drawing.Size(195, 17);
+            this.chkUnknownPeptideSearch.Size = new System.Drawing.Size(195, 30);
             this.chkUnknownPeptideSearch.TabIndex = 36;
-            this.chkUnknownPeptideSearch.Text = "Search Y1 without matched peptide";
+            this.chkUnknownPeptideSearch.Text = "Search Y1 without matched peptide\r\n(Search for Cat. 2)";
             this.chkUnknownPeptideSearch.UseVisualStyleBackColor = true;
             // 
             // chkPrecursorCreate
@@ -907,6 +912,7 @@
             this.singleScanModeToolStripMenuItem.Name = "singleScanModeToolStripMenuItem";
             this.singleScanModeToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.singleScanModeToolStripMenuItem.Text = "Single Scan Mode";
+            this.singleScanModeToolStripMenuItem.Visible = false;
             this.singleScanModeToolStripMenuItem.Click += new System.EventHandler(this.singleScanModeToolStripMenuItem_Click);
             // 
             // mascotProteinIDExtractorToolStripMenuItem
@@ -957,15 +963,6 @@
             this.txtTopCorePeaks_k.TabIndex = 7;
             this.txtTopCorePeaks_k.Text = "150";
             // 
-            // txtTopDiagPeaks_j
-            // 
-            this.txtTopDiagPeaks_j.Location = new System.Drawing.Point(217, 422);
-            this.txtTopDiagPeaks_j.Name = "txtTopDiagPeaks_j";
-            this.txtTopDiagPeaks_j.Size = new System.Drawing.Size(41, 20);
-            this.txtTopDiagPeaks_j.TabIndex = 6;
-            this.txtTopDiagPeaks_j.Text = "30";
-            this.txtTopDiagPeaks_j.Visible = false;
-            // 
             // txtTopPeaks_i
             // 
             this.txtTopPeaks_i.Location = new System.Drawing.Point(287, 22);
@@ -1001,6 +998,24 @@
             this.label17.TabIndex = 2;
             this.label17.Text = "Get top k peaks as sequencing \"Core\" candidate:";
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(172, 26);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(112, 13);
+            this.label15.TabIndex = 0;
+            this.label15.Text = "Get top i peaks as Y1:";
+            // 
+            // txtTopDiagPeaks_j
+            // 
+            this.txtTopDiagPeaks_j.Location = new System.Drawing.Point(217, 422);
+            this.txtTopDiagPeaks_j.Name = "txtTopDiagPeaks_j";
+            this.txtTopDiagPeaks_j.Size = new System.Drawing.Size(41, 20);
+            this.txtTopDiagPeaks_j.TabIndex = 6;
+            this.txtTopDiagPeaks_j.Text = "30";
+            this.txtTopDiagPeaks_j.Visible = false;
+            // 
             // label16
             // 
             this.label16.AutoSize = true;
@@ -1010,15 +1025,6 @@
             this.label16.TabIndex = 1;
             this.label16.Text = "Get top j peaks as peptide + core peak:";
             this.label16.Visible = false;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(172, 26);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(112, 13);
-            this.label15.TabIndex = 0;
-            this.label15.Text = "Get top i peaks as Y1:";
             // 
             // frmBatch
             // 

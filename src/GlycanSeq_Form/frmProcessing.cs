@@ -611,9 +611,10 @@ namespace GlycanSeq_Form
                         //        HCD = new HCDInfo(Raw.GlypIDReader, HCDScanNo);
                         //        break;
                         //    }
-                        if (Raw.GetHCDInfo(CheckScanNO) != null)
+                        
+                        if (Raw.IsHCDScan(CheckScanNO))
                         {
-                            HCD = Raw.GetHCDInfo(CheckScanNO);
+                            HCD = (Raw.GetHCDInfo(CheckScanNO) != null) ? Raw.GetHCDInfo(CheckScanNO) : null;
                             break;
                         }
                     } while (Raw.GetMsLevel(CheckScanNO) != 1); //Check Until hit Next Full MS
@@ -747,6 +748,26 @@ namespace GlycanSeq_Form
                     }
                     else
                     {
+                        foreach (GlycanStructure g in GSM.FullSequencedStructures)
+                        {
+                            Tuple<string, GlycanStructure, double> Result;
+                            if (g.TargetPeptide != null && g.TargetPeptide.IdentifiedPeptide)
+                            {
+                                Result =
+                                    new Tuple<string, GlycanStructure, double>(
+                                        g.PeptideSequence + "+" + g.PeptideModificationString, g, g.Score);
+                            }
+                            else
+                            {
+                                Result =
+                                    new Tuple<string, GlycanStructure, double>(
+                                        g.PeptideSequence + "+" + g.PeptideModificationString + "#", g, g.Score);
+                            }
+                            if (!lstSequenceResult.Contains(Result))
+                            {
+                                lstSequenceResult.Add(Result);
+                            }
+                        }
                         foreach (GlycanStructure g in GSM.GetTopRankScoreStructre(_GetTopRank))
                         {
                             Tuple<string, GlycanStructure, double> Result;
@@ -837,7 +858,8 @@ namespace GlycanSeq_Form
                 }
                 if (_exportLearingMatrix)
                 {
-                    ReportGenerator.GenerateLearningMatrix(GSM,_exportFolder+"\\LeanringMatrix.csv",_GetTopRank);
+                    //ReportGenerator.GenerateLearningMatrix(GSM,_exportFolder+"\\LeanringMatrix.csv",_GetTopRank);
+                    ReportGenerator.GenerateLearningMatrixTwoLabels(GSM, _exportFolder + "\\LeanringMatrix.csv", _GetTopRank);
                 }
 
 
@@ -1081,7 +1103,7 @@ namespace GlycanSeq_Form
             progressBar1.Value = 100;
             lblPercentage.Text = "100%";
             EndTime = new DateTime(DateTime.Now.Ticks);
-
+            this.Text = "Done";
             //if (count > 2000)
             //{
             //    if (MessageBox.Show("Output file exceed memory limitation, some pics can not be generated!!\n\n Elapsed Tme:" + EndTime.Subtract(StartTime).TotalSeconds.ToString() + "sec.") == System.Windows.Forms.DialogResult.OK)

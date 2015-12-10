@@ -77,14 +77,16 @@ namespace COL.GlycoSequence
                 {
                     nodes.Add(new SVMNode(i + 1, feature[i]));
                 }
-                double[] outResult = new double[3]; //Labeling order = 2 3 1;
+                double[] outResult = new double[2]; //Labeling order = 2 3 1;
                 double result = model.PredictProbability(nodes.ToArray(), out outResult);
 
                 lstResult.Add(new Tuple<int, List<double>>(Convert.ToInt32(result),
-                    new List<double>() {outResult[model.Labels.ToList().IndexOf(1)],
-                outResult[model.Labels.ToList().IndexOf(2)],
-                outResult[model.Labels.ToList().IndexOf(3)]}));
-
+                    new List<double>() {outResult[model.Labels.ToList().IndexOf(0)],
+                outResult[model.Labels.ToList().IndexOf(1)]}));
+                //lstResult.Add(new Tuple<int, List<double>>(Convert.ToInt32(result),
+                // new List<double>() {outResult[model.Labels.ToList().IndexOf(1)],
+                //outResult[model.Labels.ToList().IndexOf(2)],
+                //outResult[model.Labels.ToList().IndexOf(3)]}));
             }
             return lstResult;
         }

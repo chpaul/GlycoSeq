@@ -199,14 +199,14 @@
     <None Include="Resources\NeuGc.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MascotProteinIDExtractor.exe">
+    <EmbeddedResource Include="Resources\model.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\model.txt">
+    <Content Include="Resources\MascotProteinIDExtractor.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
