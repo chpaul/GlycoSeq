@@ -8,6 +8,7 @@ using COL.GlycoLib;
 using COL.MassLib;
 using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using COL.ProtLib;
 using CSMSL.Chemistry;
 
@@ -73,8 +74,9 @@ namespace COL.GlycoSequence
                 }
                  sw.WriteLine("Peptide Mutation,"+argGlycanSeqParas.PeptideMutation.ToString());
                 sw.WriteLine("Peptide File," + argGlycanSeqParas.FastaFile);
+                sw.WriteLine("Score intercept(Alpha/Beta)," + argGlycanSeqParas.ScoreAlpha.ToString() +"/" + argGlycanSeqParas.ScoreBeta.ToString());
                 //Title
-                sw.WriteLine("MSn_Scan,Parent_Scan,Parent_Mz,Mono_Mz,Charge_State,Monoisotopic_Mass,CID_time,Y1,Peptide,Peptide_Mod,Identified_By_Mascot,Category,Category_Probability,Core_Score,Branch_Score,Append_Glycan_Score,MatchWithPrecursorMW,PPM,Full_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),IUPAC");
+                sw.WriteLine("MSn_Scan,Parent_Scan,Parent_Mz,Parent_Intensity,Parent_BasePeak,Mono_Mz,Charge_State,Monoisotopic_Mass,CID_time,Y1,Peptide,Peptide_Mod,Identified_By_Mascot,Category,Category_Probability,Core_Score,Branch_Score,Append_Glycan_Score,Integrated_Score,MatchWithPrecursorMW,PPM,Full_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc),IUPAC");
             }
         }
        /// <summary>
@@ -85,13 +87,13 @@ namespace COL.GlycoSequence
        /// <param name="argExportIndividualReport"></param>
        /// <param name="argTopRank"></param>
        /// <param name="argStructureResults"></param>
-        public static void CSVFormat(string argFolder, MSScan argScan, int argTopRank, List<Tuple<string, GlycanStructure, double>> argStructureResults)
+        public static void CSVFormat(string argFolder, MSScan argScan, int argTopRank, List<Tuple<string, GlycanStructure, double>> argStructureResults, Tuple<float,float> argScoreParameters)
         {
       
             StreamWriter sw = new StreamWriter(argFolder + "\\Result.csv",  true);
             
             string header = argScan.ScanNo.ToString() + "," + argScan.ParentScanNo.ToString() + "," +
-                            argScan.ParentMZ.ToString() + "," +argScan.ParentMonoMz+","+ argScan.ParentCharge.ToString() + "," +
+                            argScan.ParentMZ.ToString() + ","+ argScan.ParentIntensity.ToString()+"("+(argScan.ParentIntensity/argScan.ParentBasePeak *100.0).ToString("0.00") +"%)," + argScan.ParentBasePeak.ToString()+","+argScan.ParentMonoMz+","+ argScan.ParentCharge.ToString() + "," +
                             (argScan.ParentMonoMz * argScan.ParentCharge - Atoms.ProtonMass*argScan.ParentCharge)+","+ argScan.Time.ToString("0.00")+",";
            argStructureResults = argStructureResults.OrderBy(y=>y.Item2.IsCompleteByPrecursorDifference).ThenByDescending(x => x.Item2.Score).ToList();
 
@@ -160,14 +162,16 @@ namespace COL.GlycoSequence
                string Peptide = lstRecords[0].Item2.PeptideSequence == "" ? "-" : lstRecords[0].Item2.PeptideSequence;
                string PeptideModificationString = lstRecords[0].Item2.PeptideModificationString == ""? "-": lstRecords[0].Item2.PeptideModificationString;
                sw.WriteLine(header + lstRecords[0].Item2.Y1.Mass.ToString("0.0000") + "," +
-             Peptide + "," +
-            PeptideModificationString + "," +
-             IdentifedPeptide + "," +
-             lstRecords[0].Item2.SVMPredictedLabel + "," +
-          lstRecords[0].Item2.SVMPrrdictedProbabilities[lstRecords[0].Item2.SVMPredictedLabel].ToString("0.00") + "," +
-          lstRecords[0].Item2.CoreScore.ToString("0.00") + "," +
-          lstRecords[0].Item2.BranchScore.ToString("0.00") + "," +
-          lstRecords[0].Item2.InCompleteScore.ToString("0.00") + "," +
+                            Peptide + "," +
+                            PeptideModificationString + "," +
+                            IdentifedPeptide + "," +
+                            lstRecords[0].Item2.SVMPredictedLabel + "," +
+                            lstRecords[0].Item2.SVMPrrdictedProbabilities[lstRecords[0].Item2.SVMPredictedLabel]
+                                .ToString("0.00") + "," +
+                            lstRecords[0].Item2.CoreScore.ToString("0.00") + "," +
+                            lstRecords[0].Item2.BranchScore.ToString("0.00") + "," +
+                            lstRecords[0].Item2.InCompleteScore.ToString("0.00") + "," +
+                            (lstRecords[0].Item2.CoreScore*argScoreParameters.Item1 +lstRecords[0].Item2.BranchScore*argScoreParameters.Item2+lstRecords[0].Item2.InCompleteScore).ToString("0.00")+ ","+
           lstRecords[0].Item2.MatchWithPrecursorMW.ToString() + "," +
          PPM + "," +
           lstRecords[0].Item2.FullSequencedGlycanString.ToString() + "," +
@@ -466,7 +470,7 @@ namespace COL.GlycoSequence
                         string ScanNum = tmpAry[dictTitleMapping["MSn_Scan"]];
                         if (CurrentScanNum != "0" && CurrentScanNum != ScanNum) //Export
                         {
-                            swScan.WriteLine(WriteHTMLForScan(lstRecords, dictTitleMapping, argGlycanSeqParas.ExportFolder).ToString());
+                            swScan.WriteLine(WriteHTMLForScan(lstRecords, dictTitleMapping, argGlycanSeqParas.ExportFolder, new Tuple<float, float>(argGlycanSeqParas.ScoreAlpha,argGlycanSeqParas.ScoreBeta)).ToString());
                             CurrentScanNum = ScanNum;
                             lstRecords.Clear();
                             lstRecords.Add(tmpLine);
@@ -479,7 +483,7 @@ namespace COL.GlycoSequence
                     }
                     if (lstRecords.Count != 0)
                     {
-                        swScan.WriteLine(WriteHTMLForScan(lstRecords, dictTitleMapping, argGlycanSeqParas.ExportFolder).ToString());
+                        swScan.WriteLine(WriteHTMLForScan(lstRecords, dictTitleMapping, argGlycanSeqParas.ExportFolder, new Tuple<float, float>(argGlycanSeqParas.ScoreAlpha,argGlycanSeqParas.ScoreBeta)).ToString());
                     }
                     swScan.WriteLine("<br></body>\n</html>");
                 }
@@ -490,7 +494,7 @@ namespace COL.GlycoSequence
                 WriteHTMLTitle(swPeptide, argGlycanSeqParas);
                 if (dictRecordsByPeptides.ContainsKey("-"))
                 {
-                    swPeptide.Write(WriteHTMLForPeptide(dictRecordsByPeptides["-"], dictTitleMapping, argGlycanSeqParas.ExportFolder).ToString());
+                    swPeptide.Write(WriteHTMLForPeptide(dictRecordsByPeptides["-"], dictTitleMapping, argGlycanSeqParas.ExportFolder, new Tuple<float, float>(argGlycanSeqParas.ScoreAlpha,argGlycanSeqParas.ScoreBeta)).ToString());
                 }
                 foreach (string peptide in dictRecordsByPeptides.Keys)
                 {
@@ -498,7 +502,7 @@ namespace COL.GlycoSequence
                     {
                         continue;
                     }
-                    swPeptide.Write(WriteHTMLForPeptide(dictRecordsByPeptides[peptide], dictTitleMapping, argGlycanSeqParas.ExportFolder).ToString());
+                    swPeptide.Write(WriteHTMLForPeptide(dictRecordsByPeptides[peptide], dictTitleMapping, argGlycanSeqParas.ExportFolder,new Tuple<float, float>(argGlycanSeqParas.ScoreAlpha,argGlycanSeqParas.ScoreBeta)).ToString());
                 }
                 swPeptide.WriteLine("<br></body>\n</html>");
             }
@@ -581,6 +585,8 @@ namespace COL.GlycoSequence
                                 argGlycanSeqParas.PeptideMutation.ToString() + "</td>\n</tr>");
                 argSW.WriteLine("<tr>\n\t<td>Peptide File: </td>\n\t<td>" + argGlycanSeqParas.FastaFile.ToString() +
                                 "</td>\n</tr>");
+                argSW.WriteLine("<tr>\n\t<td>Score intercept(Alpha/Beta):</td>\n\t<td>" + argGlycanSeqParas.ScoreAlpha.ToString() + "/" + argGlycanSeqParas.ScoreBeta.ToString() +
+                                    "</td>\n</tr>");
                 argSW.WriteLine("</Table>\n<br>\n<br>");
 
                 if (argGlycanSeqParas.PeptideFromMascotResult)
@@ -593,7 +599,7 @@ namespace COL.GlycoSequence
             
         }
 
-        private static StringBuilder WriteHTMLForScan(List<string> argPeptideResult, Dictionary<string, int> argDictTitleMapping, string argFolder)
+        private static StringBuilder WriteHTMLForScan(List<string> argPeptideResult, Dictionary<string, int> argDictTitleMapping, string argFolder, Tuple<float,float> argScoreParameters)
         {
             StringBuilder sbResult = new StringBuilder();
             string ScanNum = argPeptideResult[0].Split(',')[argDictTitleMapping["MSn_Scan"]];
@@ -608,7 +614,7 @@ namespace COL.GlycoSequence
             sbResult.AppendLine("\t\t<td>Glycan Picture</td>");
             sbResult.AppendLine("\t\t<td>Category</td>");
             sbResult.AppendLine("\t\t<td>Category Probability</td>");
-            sbResult.AppendLine("\t\t<td>Core + Branch +Append Glycan = Total Score</td>");
+            sbResult.AppendLine("\t\t<td>Core * Alpha + Branch * Beta +Append Glycan = Integrated Score</td>");
             sbResult.AppendLine("\t\t<td>Full Glycan Structure</td>");
             sbResult.AppendLine("\t\t<td>Append Glycan<br>(HexNAc-Hex-deHex-NeuAc-NeuGc)</td>");
             sbResult.AppendLine("\t\t<td>MatchWithPrecursorMW</td>");
@@ -696,8 +702,8 @@ namespace COL.GlycoSequence
 
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Category"]] + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Category_Probability"]] + "</td>");
-                    float totalScore = Convert.ToSingle(tmpAry[argDictTitleMapping["Core_Score"]]) + Convert.ToSingle(tmpAry[argDictTitleMapping["Branch_Score"]]) + Convert.ToSingle(tmpAry[argDictTitleMapping["Append_Glycan_Score"]]);
-                    sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Core_Score"]] + "+" + tmpAry[argDictTitleMapping["Branch_Score"]] + tmpAry[argDictTitleMapping["Append_Glycan_Score"]] + "=" + totalScore.ToString("0.000") + "</td>");
+                    float totalScore = Convert.ToSingle(tmpAry[argDictTitleMapping["Core_Score"]]) * argScoreParameters.Item1 + Convert.ToSingle(tmpAry[argDictTitleMapping["Branch_Score"]]) * argScoreParameters.Item2 + Convert.ToSingle(tmpAry[argDictTitleMapping["Append_Glycan_Score"]]);
+                    sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Core_Score"]] +" * " + argScoreParameters.Item1+ " + " + tmpAry[argDictTitleMapping["Branch_Score"]] +" * " + argScoreParameters.Item2+ tmpAry[argDictTitleMapping["Append_Glycan_Score"]] + "=" + totalScore.ToString("0.000") + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Full_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc)"]] + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc)"]] + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["MatchWithPrecursorMW"]] + "</td>");
@@ -710,7 +716,7 @@ namespace COL.GlycoSequence
             sbResult.AppendLine("</table><br><br>");
             return sbResult;
         }
-        private static StringBuilder WriteHTMLForPeptide(List<string> argPeptideResult, Dictionary<string, int> argDictTitleMapping, string argFolder)
+        private static StringBuilder WriteHTMLForPeptide(List<string> argPeptideResult, Dictionary<string, int> argDictTitleMapping, string argFolder, Tuple<float,float> argScoreParameters)
         {
             StringBuilder sbResult = new StringBuilder();
             string PeptideSequence = argPeptideResult[0].Split(',')[argDictTitleMapping["Peptide"]];
@@ -725,7 +731,7 @@ namespace COL.GlycoSequence
             sbResult.AppendLine("\t\t<td>Glycan Picture</td>");
             sbResult.AppendLine("\t\t<td>Category</td>");
             sbResult.AppendLine("\t\t<td>Category Probability</td>");
-            sbResult.AppendLine("\t\t<td>Core + Branch +Append Glycan = Total Score</td>");
+            sbResult.AppendLine("\t\t<td>Core * Alpha+ Branch * Beta+Append Glycan = Integrated Score</td>");
             sbResult.AppendLine("\t\t<td>Full Glycan Structure</td>");
             sbResult.AppendLine("\t\t<td>Append Glycan<br>(HexNAc-Hex-deHex-NeuAc-NeuGc)</td>");
             sbResult.AppendLine("\t\t<td>MatchWithPrecursorMW</td>");
@@ -803,8 +809,8 @@ namespace COL.GlycoSequence
 
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Category"]] + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Category_Probability"]] + "</td>");
-                    float totalScore = Convert.ToSingle(tmpAry[argDictTitleMapping["Core_Score"]]) + Convert.ToSingle(tmpAry[argDictTitleMapping["Branch_Score"]]) + Convert.ToSingle(tmpAry[argDictTitleMapping["Append_Glycan_Score"]]);
-                    sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Core_Score"]] + "+" + tmpAry[argDictTitleMapping["Branch_Score"]] + tmpAry[argDictTitleMapping["Append_Glycan_Score"]] + "=" + totalScore.ToString("0.000") + "</td>");
+                    float totalScore = Convert.ToSingle(tmpAry[argDictTitleMapping["Core_Score"]]) * argScoreParameters.Item1 + Convert.ToSingle(tmpAry[argDictTitleMapping["Branch_Score"]]) * argScoreParameters.Item2 + Convert.ToSingle(tmpAry[argDictTitleMapping["Append_Glycan_Score"]]);
+                    sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Core_Score"]] +" * " + argScoreParameters.Item1 +" + " + tmpAry[argDictTitleMapping["Branch_Score"]] +" * " + argScoreParameters.Item2 + tmpAry[argDictTitleMapping["Append_Glycan_Score"]] + "=" + totalScore.ToString("0.000") + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Full_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc)"]] + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["Append_Glycan(HexNac-Hex-deHex-NeuAC-NeuGc)"]] + "</td>");
                     sbResult.AppendLine("\t\t<td>" + tmpAry[argDictTitleMapping["MatchWithPrecursorMW"]] + "</td>");

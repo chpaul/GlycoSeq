@@ -159,7 +159,7 @@ namespace GlycanSeq_Form
                     {
                         txtCompReward.Text = "1.0";
                     }
-                    if (defaultOutputFolder != folderBrowserDialog1.SelectedPath)
+                    if (defaultOutputFolder != folderBrowserDialog1.SelectedPath && Directory.Exists(defaultOutputFolder))
                     {
                         Directory.Delete(defaultOutputFolder);
                     }
@@ -228,7 +228,7 @@ namespace GlycanSeq_Form
                     sequencingParameters.GetBranch_l = Convert.ToInt32(txtTopBrancingPeaks_l.Text);
                     sequencingParameters.MaxPanddingGlycan = Convert.ToInt32(txtMaxGlycansToCompleteStruct_m.Text);
 
-
+                    
                     //Peptide 
                     if (cboMissCleavage.SelectedItem.ToString() == "")
                     {
@@ -270,6 +270,10 @@ namespace GlycanSeq_Form
                     sequencingParameters.TargetPeptides = lstTargetPeptides;
                     sequencingParameters.PeptideMutation = pepMuta;
                     
+                    //Score
+                    sequencingParameters.ScoreAlpha = Convert.ToSingle(txtScoreAlpha.Text);
+                    sequencingParameters.ScoreBeta = Convert.ToSingle(txtScoreBeta.Text);
+
                     //Scan Numbers
                     if (lstScans.Count == 0)
                     {
@@ -322,7 +326,12 @@ namespace GlycanSeq_Form
                                                                                                chkIndividualReport.Checked
                                                                                                );
                     }
+
                     frmProcess.GlycanSequencingParemetets = sequencingParameters;
+                    if (chkHCD.Checked)
+                    {
+                        frmProcess.HCDScore = Convert.ToSingle(txtHCDScore.Text);
+                    }
                     frmProcess.ShowDialog();
                 }
 
@@ -1039,6 +1048,8 @@ namespace GlycanSeq_Form
         private void chkHCD_CheckedChanged(object sender, EventArgs e)
         {
             chkSeqHCD.Enabled = chkHCD.Checked;
+            txtHCDScore.Enabled = chkHCD.Checked;
+            label20.Enabled = chkHCD.Checked;
         }
 
         private void chkEnzy_None_CheckedChanged(object sender, EventArgs e)
@@ -1199,6 +1210,14 @@ namespace GlycanSeq_Form
         {
             txtFasta.Text = "";
         }
+
+        private void chkDecoy_CheckedChanged(object sender, EventArgs e)
+        {
+            txtDecoyMass.Enabled = chkDecoy.Checked;
+            lblDecoyMass.Enabled = chkDecoy.Checked;
+        }
+
+   
 
     
 

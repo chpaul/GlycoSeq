@@ -75,6 +75,8 @@ namespace COL.GlycoSequence
         private List<GlycanCompound> lstGlycans = new List<GlycanCompound>();
         private List<TargetPeptide> lstPeptides = new List<TargetPeptide>();
         private bool _PeptideFromMascotResult = false;
+        private float _scorealpha = 1.0f;
+        private float _scorebeta = 1.0f;
         public GlycanSequencing_MultipleScoring(MSScan argScan, int argPrecursorCharge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol, List<int> argPeaksParameters, List<Tuple<float, string, TargetPeptide>> argPeptideList)
         {
             _NGlycanData = argNGlycanData;
@@ -89,7 +91,7 @@ namespace COL.GlycoSequence
             _MS2torelance = argPeakTol;
             _precursorTorelance = argPrecursorTol;
             _NumCompostionSet = true;
-            _structureRules = ReadFilterRules.ReadFilterRule();
+            //_structureRules = ReadFilterRules.ReadFilterRule();
             _topPeaks_i = argPeaksParameters[0];
             _topDiagPeaks_j = argPeaksParameters[1];
             _topCorePeaks_k = argPeaksParameters[2];
@@ -107,7 +109,7 @@ namespace COL.GlycoSequence
             _MS2torelance = argPeakTol;
             _precursorTorelance = argPrecursorTol;
             _NumCompostionSet = true;
-            _structureRules = ReadFilterRules.ReadFilterRule();
+            //_structureRules = ReadFilterRules.ReadFilterRule();
             _topPeaks_i = argPeaksParameters[0];
             _topDiagPeaks_j = argPeaksParameters[1];
             _topCorePeaks_k = argPeaksParameters[2];
@@ -116,7 +118,17 @@ namespace COL.GlycoSequence
             _glycopeptides = argGlycoPeptides;
 
         }
+        public float ScoreAlpha
+        {
+            get { return _scorealpha; }
+            set { _scorealpha = value; }
+        }
 
+        public float ScoreBeta
+        {
+            get { return _scorebeta; }
+            set { _scorebeta = value; }
+        }
         public bool PeptideFromMascotResult
         {
             get { return _PeptideFromMascotResult; }

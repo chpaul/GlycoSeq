@@ -130,6 +130,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FDR.cs" />
     <Compile Include="GlycanCombination.cs" />
     <Compile Include="GlycanSeqParameters.cs" />
     <Compile Include="GlycanSequencing.cs" />

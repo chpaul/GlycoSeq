@@ -59,6 +59,7 @@ namespace GlycanSeq_Form
         private int _GetTopRank;
         private bool _UseHCD;
         private bool _SeqHCD;
+        private float _HCDScore =0; //Score range:0~1    score = number of HCD peaks  / 6  ;  // Max 7 peaks
         private bool _CompletedOnly;
         private float _CompletedReward;
         private int DividePartNum = 0;
@@ -234,7 +235,12 @@ namespace GlycanSeq_Form
             get { return _sequencingParameters; }
             set { _sequencingParameters = value; }
         }
-      
+
+        public float HCDScore
+        {
+            get { return _HCDScore; }
+            set { _HCDScore = value; }
+        }
 
         private RunResults runResults;
         private int CurrentRunningPart = 0;
@@ -625,6 +631,10 @@ namespace GlycanSeq_Form
                 {
                     Console.WriteLine("CID Scan No:" + ScanNo.ToString() + "\tHCD Scan No:" + HCDScanNo.ToString() +
                                       "\tGlycanType:" + HCD.GlycanType.ToString());
+                    if (HCD.HCDScore <_HCDScore)
+                    {
+                        continue;
+                    }
                 }
 
                 GlycanSequencing_MultipleScoring GSM = null;
@@ -828,7 +838,7 @@ namespace GlycanSeq_Form
                 if (lstSequenceResult.Count > 0 && !e.Cancel)
                 {
                     //ReportGenerator.HtmlFormatTempForEachScan(_exportFolder, _scan, _ExportIndividualSpectrum, _GetTopRank,lstSequenceResult);
-                    ReportGenerator.CSVFormat(_exportFolder, _scan, _GetTopRank, lstSequenceResult);
+                    ReportGenerator.CSVFormat(_exportFolder, _scan, _GetTopRank, lstSequenceResult, new Tuple<float, float>(_sequencingParameters.ScoreAlpha,_sequencingParameters.ScoreBeta));
                     foreach (Tuple<string, GlycanStructure, double> result in lstSequenceResult)
                     {
 
@@ -902,7 +912,14 @@ namespace GlycanSeq_Form
             GlycanSeq_Form.Properties.Resources.NeuAc.Save(_exportFolder+"\\Pics\\NeuAc.png");
             GlycanSeq_Form.Properties.Resources.NeuGc.Save(_exportFolder+"\\Pics\\NeuGc.png");
             GlycanSeq_Form.Properties.Resources.bracket.Save(_exportFolder+"\\Pics\\bracket.jpg");
-            //Merge Report
+
+            //FDR
+            //Reading Result            //FDR estimate 
+
+            FDR.ProduceFDRResult(_sequencingParameters.ExportFolder+"\\Result.csv" ,0.05f,_sequencingParameters.ScoreAlpha,_sequencingParameters.ScoreBeta);
+
+            
+            
 
             ReportGenerator.GenerateHtmlReport(_sequencingParameters);
             //ReportGenerator.GenerateHtmlReportSortByPeptide(_exportFolder, dictResultSortByPeptide, _sequencingParameters);

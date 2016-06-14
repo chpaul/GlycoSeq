@@ -57,7 +57,8 @@ namespace COL.GlycoSequence
         private string _status = "";
         private enumGlycanType _glycanType;
         private TargetPeptide _TargetPeptide;
-
+        private float _scorealpha = 1.0f;
+        private float _scorebeta = 1.0f;
         public GlycanSequencing(MSScan argScan, float argY1MZ, int argY1Charge, int argNoHex, int argNoHexNAc, int argNoDeHex, int argNoNeuAc, int argNoNeuGc, string argOutput, bool argNGlycanData, float argPeakTol, float argPrecursorTol)
         {
             _NGlycanData = argNGlycanData;
@@ -115,6 +116,18 @@ namespace COL.GlycoSequence
             _NumCompostionSet = true;
             _peptideMass = MW.GetMonoMW(argPeptideSequence, argIsCYS_CAM);//(float)(_y1MZ - MassLib.Atoms.ProtonMass) * _y1charge -GlycanMass.GetGlycanAVGMass(Glycan.Type.HexNAc);
             _structureRules = ReadFilterRules.ReadFilterRule();
+        }
+
+        public float ScoreAlpha
+        {
+            get {return _scorealpha;}
+            set { _scorealpha = value; }
+        }
+
+        public float ScoreBeta
+        {
+            get {return _scorebeta;}
+            set { _scorebeta = value; }
         }
         public TargetPeptide Peptide
         {

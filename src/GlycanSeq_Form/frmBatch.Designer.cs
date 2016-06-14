@@ -42,6 +42,15 @@
             this.rdoScanList = new System.Windows.Forms.RadioButton();
             this.rdoScanRange = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtScoreAlpha = new System.Windows.Forms.TextBox();
+            this.txtScoreBeta = new System.Windows.Forms.TextBox();
+            this.txtFDRPrecentage = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.lblDecoyMass = new System.Windows.Forms.Label();
+            this.txtDecoyMass = new System.Windows.Forms.TextBox();
+            this.chkDecoy = new System.Windows.Forms.CheckBox();
             this.rdoMascotExtractor = new System.Windows.Forms.RadioButton();
             this.btnChkPeptideCandidate = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
@@ -78,6 +87,8 @@
             this.chkPrecursorCreate = new System.Windows.Forms.CheckBox();
             this.btnScanList = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.txtHCDScore = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
             this.chkSeqHCD = new System.Windows.Forms.CheckBox();
             this.chkHCD = new System.Windows.Forms.CheckBox();
             this.lblEndScan = new System.Windows.Forms.Label();
@@ -115,6 +126,9 @@
             this.label15 = new System.Windows.Forms.Label();
             this.txtTopDiagPeaks_j = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.label21 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -124,6 +138,7 @@
             this.groupBox5.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnRawBrowse
@@ -138,7 +153,7 @@
             // 
             // txtFasta
             // 
-            this.txtFasta.Location = new System.Drawing.Point(9, 175);
+            this.txtFasta.Location = new System.Drawing.Point(9, 156);
             this.txtFasta.Name = "txtFasta";
             this.txtFasta.Size = new System.Drawing.Size(301, 20);
             this.txtFasta.TabIndex = 5;
@@ -152,7 +167,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(568, 394);
+            this.btnStart.Location = new System.Drawing.Point(693, 420);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 25;
@@ -162,7 +177,7 @@
             // 
             // btnPeptideBrowse
             // 
-            this.btnPeptideBrowse.Location = new System.Drawing.Point(313, 173);
+            this.btnPeptideBrowse.Location = new System.Drawing.Point(313, 154);
             this.btnPeptideBrowse.Name = "btnPeptideBrowse";
             this.btnPeptideBrowse.Size = new System.Drawing.Size(23, 23);
             this.btnPeptideBrowse.TabIndex = 6;
@@ -248,6 +263,15 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtScoreAlpha);
+            this.groupBox2.Controls.Add(this.txtScoreBeta);
+            this.groupBox2.Controls.Add(this.txtFDRPrecentage);
+            this.groupBox2.Controls.Add(this.label24);
+            this.groupBox2.Controls.Add(this.label23);
+            this.groupBox2.Controls.Add(this.label22);
+            this.groupBox2.Controls.Add(this.lblDecoyMass);
+            this.groupBox2.Controls.Add(this.txtDecoyMass);
+            this.groupBox2.Controls.Add(this.chkDecoy);
             this.groupBox2.Controls.Add(this.rdoMascotExtractor);
             this.groupBox2.Controls.Add(this.btnChkPeptideCandidate);
             this.groupBox2.Controls.Add(this.label14);
@@ -273,10 +297,91 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Location = new System.Drawing.Point(426, 177);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(342, 211);
+            this.groupBox2.Size = new System.Drawing.Size(342, 239);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Peptide";
+            // 
+            // txtScoreAlpha
+            // 
+            this.txtScoreAlpha.Location = new System.Drawing.Point(49, 208);
+            this.txtScoreAlpha.Name = "txtScoreAlpha";
+            this.txtScoreAlpha.Size = new System.Drawing.Size(38, 20);
+            this.txtScoreAlpha.TabIndex = 53;
+            this.txtScoreAlpha.Text = "1.0";
+            // 
+            // txtScoreBeta
+            // 
+            this.txtScoreBeta.Location = new System.Drawing.Point(126, 208);
+            this.txtScoreBeta.Name = "txtScoreBeta";
+            this.txtScoreBeta.Size = new System.Drawing.Size(38, 20);
+            this.txtScoreBeta.TabIndex = 52;
+            this.txtScoreBeta.Text = "1.0";
+            // 
+            // txtFDRPrecentage
+            // 
+            this.txtFDRPrecentage.Location = new System.Drawing.Point(263, 208);
+            this.txtFDRPrecentage.Name = "txtFDRPrecentage";
+            this.txtFDRPrecentage.Size = new System.Drawing.Size(36, 20);
+            this.txtFDRPrecentage.TabIndex = 51;
+            this.txtFDRPrecentage.Text = "0.05";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(193, 212);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(81, 13);
+            this.label24.TabIndex = 50;
+            this.label24.Text = "Score FDR <    ";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(10, 212);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(33, 13);
+            this.label23.TabIndex = 49;
+            this.label23.Text = "alpha";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(91, 212);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(28, 13);
+            this.label22.TabIndex = 48;
+            this.label22.Text = "beta";
+            // 
+            // lblDecoyMass
+            // 
+            this.lblDecoyMass.AutoSize = true;
+            this.lblDecoyMass.Enabled = false;
+            this.lblDecoyMass.Location = new System.Drawing.Point(176, 184);
+            this.lblDecoyMass.Name = "lblDecoyMass";
+            this.lblDecoyMass.Size = new System.Drawing.Size(66, 13);
+            this.lblDecoyMass.TabIndex = 47;
+            this.lblDecoyMass.Text = "Decoy Mass";
+            // 
+            // txtDecoyMass
+            // 
+            this.txtDecoyMass.Enabled = false;
+            this.txtDecoyMass.Location = new System.Drawing.Point(248, 180);
+            this.txtDecoyMass.Name = "txtDecoyMass";
+            this.txtDecoyMass.Size = new System.Drawing.Size(28, 20);
+            this.txtDecoyMass.TabIndex = 46;
+            this.txtDecoyMass.Text = "40";
+            // 
+            // chkDecoy
+            // 
+            this.chkDecoy.AutoSize = true;
+            this.chkDecoy.Location = new System.Drawing.Point(9, 183);
+            this.chkDecoy.Name = "chkDecoy";
+            this.chkDecoy.Size = new System.Drawing.Size(161, 17);
+            this.chkDecoy.TabIndex = 42;
+            this.chkDecoy.Text = "Decoy search (AA: X added)";
+            this.chkDecoy.UseVisualStyleBackColor = true;
+            this.chkDecoy.CheckedChanged += new System.EventHandler(this.chkDecoy_CheckedChanged);
             // 
             // rdoMascotExtractor
             // 
@@ -304,7 +409,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(302, 64);
+            this.label14.Location = new System.Drawing.Point(302, 45);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(28, 13);
             this.label14.TabIndex = 40;
@@ -323,7 +428,7 @@
             // 
             // txtTolTime
             // 
-            this.txtTolTime.Location = new System.Drawing.Point(270, 60);
+            this.txtTolTime.Location = new System.Drawing.Point(270, 41);
             this.txtTolTime.Name = "txtTolTime";
             this.txtTolTime.Size = new System.Drawing.Size(29, 20);
             this.txtTolTime.TabIndex = 39;
@@ -333,7 +438,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 148);
+            this.label10.Location = new System.Drawing.Point(6, 129);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(113, 13);
             this.label10.TabIndex = 31;
@@ -346,7 +451,7 @@
             "No Mutation",
             "Aspartic Acid(D) -> Asparagine (N)",
             "Any -> Asparagine (N)"});
-            this.cboPepMutation.Location = new System.Drawing.Point(126, 145);
+            this.cboPepMutation.Location = new System.Drawing.Point(126, 126);
             this.cboPepMutation.Name = "cboPepMutation";
             this.cboPepMutation.Size = new System.Drawing.Size(202, 21);
             this.cboPepMutation.TabIndex = 30;
@@ -355,7 +460,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(209, 64);
+            this.label13.Location = new System.Drawing.Point(209, 45);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(55, 13);
             this.label13.TabIndex = 38;
@@ -364,7 +469,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(4, 64);
+            this.label12.Location = new System.Drawing.Point(4, 45);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(52, 13);
             this.label12.TabIndex = 37;
@@ -374,7 +479,7 @@
             // 
             this.chkEnzy_GlucE.AutoSize = true;
             this.chkEnzy_GlucE.Enabled = false;
-            this.chkEnzy_GlucE.Location = new System.Drawing.Point(123, 90);
+            this.chkEnzy_GlucE.Location = new System.Drawing.Point(123, 71);
             this.chkEnzy_GlucE.Name = "chkEnzy_GlucE";
             this.chkEnzy_GlucE.Size = new System.Drawing.Size(65, 17);
             this.chkEnzy_GlucE.TabIndex = 29;
@@ -386,7 +491,7 @@
             // 
             this.chkEnzy_Trypsin.AutoSize = true;
             this.chkEnzy_Trypsin.Enabled = false;
-            this.chkEnzy_Trypsin.Location = new System.Drawing.Point(194, 90);
+            this.chkEnzy_Trypsin.Location = new System.Drawing.Point(194, 71);
             this.chkEnzy_Trypsin.Name = "chkEnzy_Trypsin";
             this.chkEnzy_Trypsin.Size = new System.Drawing.Size(60, 17);
             this.chkEnzy_Trypsin.TabIndex = 28;
@@ -397,7 +502,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(139, 64);
+            this.label11.Location = new System.Drawing.Point(139, 45);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(28, 13);
             this.label11.TabIndex = 36;
@@ -407,7 +512,7 @@
             // 
             this.chkEnzy_GlucED.AutoSize = true;
             this.chkEnzy_GlucED.Enabled = false;
-            this.chkEnzy_GlucED.Location = new System.Drawing.Point(266, 90);
+            this.chkEnzy_GlucED.Location = new System.Drawing.Point(266, 71);
             this.chkEnzy_GlucED.Name = "chkEnzy_GlucED";
             this.chkEnzy_GlucED.Size = new System.Drawing.Size(73, 17);
             this.chkEnzy_GlucED.TabIndex = 27;
@@ -421,7 +526,7 @@
             this.chkEnzy_None.Checked = true;
             this.chkEnzy_None.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnzy_None.Enabled = false;
-            this.chkEnzy_None.Location = new System.Drawing.Point(65, 90);
+            this.chkEnzy_None.Location = new System.Drawing.Point(65, 71);
             this.chkEnzy_None.Name = "chkEnzy_None";
             this.chkEnzy_None.Size = new System.Drawing.Size(52, 17);
             this.chkEnzy_None.TabIndex = 26;
@@ -431,7 +536,7 @@
             // 
             // txtShiftTime
             // 
-            this.txtShiftTime.Location = new System.Drawing.Point(90, 60);
+            this.txtShiftTime.Location = new System.Drawing.Point(90, 41);
             this.txtShiftTime.Name = "txtShiftTime";
             this.txtShiftTime.Size = new System.Drawing.Size(43, 20);
             this.txtShiftTime.TabIndex = 35;
@@ -453,7 +558,7 @@
             "7",
             "8",
             "9"});
-            this.cboMissCleavage.Location = new System.Drawing.Point(65, 118);
+            this.cboMissCleavage.Location = new System.Drawing.Point(65, 99);
             this.cboMissCleavage.Name = "cboMissCleavage";
             this.cboMissCleavage.Size = new System.Drawing.Size(31, 21);
             this.cboMissCleavage.TabIndex = 7;
@@ -466,7 +571,7 @@
             this.lstModification.FormattingEnabled = true;
             this.lstModification.Items.AddRange(new object[] {
             "Cys_CAM"});
-            this.lstModification.Location = new System.Drawing.Point(274, 120);
+            this.lstModification.Location = new System.Drawing.Point(274, 101);
             this.lstModification.Name = "lstModification";
             this.lstModification.Size = new System.Drawing.Size(54, 17);
             this.lstModification.TabIndex = 20;
@@ -477,7 +582,7 @@
             this.cboShiftSign.Items.AddRange(new object[] {
             "+",
             "-"});
-            this.cboShiftSign.Location = new System.Drawing.Point(57, 60);
+            this.cboShiftSign.Location = new System.Drawing.Point(57, 41);
             this.cboShiftSign.Name = "cboShiftSign";
             this.cboShiftSign.Size = new System.Drawing.Size(30, 21);
             this.cboShiftSign.TabIndex = 34;
@@ -486,7 +591,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(200, 122);
+            this.label3.Location = new System.Drawing.Point(200, 103);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(64, 13);
             this.label3.TabIndex = 25;
@@ -496,7 +601,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Enabled = false;
-            this.label1.Location = new System.Drawing.Point(4, 92);
+            this.label1.Location = new System.Drawing.Point(4, 73);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 23;
@@ -506,7 +611,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Enabled = false;
-            this.label2.Location = new System.Drawing.Point(4, 121);
+            this.label2.Location = new System.Drawing.Point(4, 102);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(182, 13);
             this.label2.TabIndex = 22;
@@ -515,7 +620,7 @@
             // rdoPeptideWithTime
             // 
             this.rdoPeptideWithTime.AutoSize = true;
-            this.rdoPeptideWithTime.Location = new System.Drawing.Point(45, 432);
+            this.rdoPeptideWithTime.Location = new System.Drawing.Point(28, 36);
             this.rdoPeptideWithTime.Name = "rdoPeptideWithTime";
             this.rdoPeptideWithTime.Size = new System.Drawing.Size(148, 17);
             this.rdoPeptideWithTime.TabIndex = 33;
@@ -561,7 +666,7 @@
             // 
             // txtCompReward
             // 
-            this.txtCompReward.Location = new System.Drawing.Point(653, 429);
+            this.txtCompReward.Location = new System.Drawing.Point(158, 76);
             this.txtCompReward.Name = "txtCompReward";
             this.txtCompReward.Size = new System.Drawing.Size(29, 20);
             this.txtCompReward.TabIndex = 35;
@@ -572,7 +677,7 @@
             // 
             this.lblCompReward.AutoSize = true;
             this.lblCompReward.Enabled = false;
-            this.lblCompReward.Location = new System.Drawing.Point(516, 432);
+            this.lblCompReward.Location = new System.Drawing.Point(28, 79);
             this.lblCompReward.Name = "lblCompReward";
             this.lblCompReward.Size = new System.Drawing.Size(124, 13);
             this.lblCompReward.TabIndex = 34;
@@ -642,7 +747,7 @@
             this.chkPrecursorCreate.AutoSize = true;
             this.chkPrecursorCreate.Checked = true;
             this.chkPrecursorCreate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPrecursorCreate.Location = new System.Drawing.Point(395, 433);
+            this.chkPrecursorCreate.Location = new System.Drawing.Point(206, 59);
             this.chkPrecursorCreate.Name = "chkPrecursorCreate";
             this.chkPrecursorCreate.Size = new System.Drawing.Size(122, 17);
             this.chkPrecursorCreate.TabIndex = 26;
@@ -662,6 +767,8 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.txtHCDScore);
+            this.groupBox6.Controls.Add(this.label20);
             this.groupBox6.Controls.Add(this.chkSeqHCD);
             this.groupBox6.Controls.Add(this.chkHCD);
             this.groupBox6.Controls.Add(this.btnScanList);
@@ -677,11 +784,30 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Scans";
             // 
+            // txtHCDScore
+            // 
+            this.txtHCDScore.Enabled = false;
+            this.txtHCDScore.Location = new System.Drawing.Point(355, 25);
+            this.txtHCDScore.Name = "txtHCDScore";
+            this.txtHCDScore.Size = new System.Drawing.Size(39, 20);
+            this.txtHCDScore.TabIndex = 36;
+            this.txtHCDScore.Text = "0.5";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Enabled = false;
+            this.label20.Location = new System.Drawing.Point(273, 29);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(76, 13);
+            this.label20.TabIndex = 35;
+            this.label20.Text = "HCD Score >=";
+            // 
             // chkSeqHCD
             // 
             this.chkSeqHCD.AutoSize = true;
             this.chkSeqHCD.Enabled = false;
-            this.chkSeqHCD.Location = new System.Drawing.Point(274, 26);
+            this.chkSeqHCD.Location = new System.Drawing.Point(274, 49);
             this.chkSeqHCD.Name = "chkSeqHCD";
             this.chkSeqHCD.Size = new System.Drawing.Size(101, 17);
             this.chkSeqHCD.TabIndex = 33;
@@ -826,7 +952,7 @@
             this.chkHuman.AutoSize = true;
             this.chkHuman.Checked = true;
             this.chkHuman.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkHuman.Location = new System.Drawing.Point(329, 433);
+            this.chkHuman.Location = new System.Drawing.Point(140, 59);
             this.chkHuman.Name = "chkHuman";
             this.chkHuman.Size = new System.Drawing.Size(60, 17);
             this.chkHuman.TabIndex = 4;
@@ -839,7 +965,7 @@
             this.chkAvgMass.AutoSize = true;
             this.chkAvgMass.Checked = true;
             this.chkAvgMass.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAvgMass.Location = new System.Drawing.Point(216, 433);
+            this.chkAvgMass.Location = new System.Drawing.Point(31, 59);
             this.chkAvgMass.Name = "chkAvgMass";
             this.chkAvgMass.Size = new System.Drawing.Size(94, 17);
             this.chkAvgMass.TabIndex = 32;
@@ -1009,7 +1135,7 @@
             // 
             // txtTopDiagPeaks_j
             // 
-            this.txtTopDiagPeaks_j.Location = new System.Drawing.Point(217, 422);
+            this.txtTopDiagPeaks_j.Location = new System.Drawing.Point(219, 17);
             this.txtTopDiagPeaks_j.Name = "txtTopDiagPeaks_j";
             this.txtTopDiagPeaks_j.Size = new System.Drawing.Size(41, 20);
             this.txtTopDiagPeaks_j.TabIndex = 6;
@@ -1019,37 +1145,69 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(20, 426);
+            this.label16.Location = new System.Drawing.Point(21, 20);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(194, 13);
             this.label16.TabIndex = 1;
             this.label16.Text = "Get top j peaks as peptide + core peak:";
             this.label16.Visible = false;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(274, 2);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 37;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.label16);
+            this.groupBox8.Controls.Add(this.button1);
+            this.groupBox8.Controls.Add(this.txtTopDiagPeaks_j);
+            this.groupBox8.Controls.Add(this.rdoPeptideWithTime);
+            this.groupBox8.Controls.Add(this.chkHuman);
+            this.groupBox8.Controls.Add(this.txtCompReward);
+            this.groupBox8.Controls.Add(this.chkAvgMass);
+            this.groupBox8.Controls.Add(this.lblCompReward);
+            this.groupBox8.Controls.Add(this.chkPrecursorCreate);
+            this.groupBox8.Location = new System.Drawing.Point(6, 420);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(328, 100);
+            this.groupBox8.TabIndex = 40;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Old component";
+            this.groupBox8.Visible = false;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(395, 420);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(273, 13);
+            this.label21.TabIndex = 41;
+            this.label21.Text = "Integrated score = alpha * core + beta * branch + extend";
+            // 
             // frmBatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.ClientSize = new System.Drawing.Size(773, 454);
+            this.ClientSize = new System.Drawing.Size(773, 450);
+            this.Controls.Add(this.groupBox8);
+            this.Controls.Add(this.label21);
+            this.Controls.Add(this.btnStart);
             this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.txtCompReward);
-            this.Controls.Add(this.chkPrecursorCreate);
-            this.Controls.Add(this.txtTopDiagPeaks_j);
-            this.Controls.Add(this.lblCompReward);
             this.Controls.Add(this.chkGlycanList);
-            this.Controls.Add(this.chkHuman);
-            this.Controls.Add(this.rdoPeptideWithTime);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.label16);
-            this.Controls.Add(this.chkAvgMass);
             this.Controls.Add(this.grpGlycan);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.btnStart);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MainMenuStrip = this.menuStrip1;
@@ -1074,6 +1232,8 @@
             this.menuStrip1.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1168,5 +1328,19 @@
         private System.Windows.Forms.Button btnChkPeptideCandidate;
         private System.Windows.Forms.ToolStripMenuItem mascotProteinIDExtractorToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkUnknownPeptideSearch;
+        private System.Windows.Forms.TextBox txtHCDScore;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label lblDecoyMass;
+        private System.Windows.Forms.TextBox txtDecoyMass;
+        private System.Windows.Forms.CheckBox chkDecoy;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.TextBox txtScoreAlpha;
+        private System.Windows.Forms.TextBox txtScoreBeta;
+        private System.Windows.Forms.TextBox txtFDRPrecentage;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label21;
     }
 }

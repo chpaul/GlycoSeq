@@ -186,3 +186,6 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+src/GlycanSeq_Form/Properties/Resources.resx.orig
+src/GlycanSeq_Form/frmBatch.cs.orig
+.gitignore

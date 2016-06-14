@@ -49,6 +49,20 @@ namespace COL.GlycoSequence
         private bool _NGlycan = true;
         private bool _ExportIndividualSpectrum = false;
 
+        private float _scoreAlpha = 1.0f;
+        private float _scoreBeta = 1.0f;
+
+        public float ScoreAlpha
+        {
+            get { return _scoreAlpha; }
+            set { _scoreAlpha = value; }
+        }
+
+        public float ScoreBeta
+        {
+            get {return _scoreBeta;}
+            set { _scoreBeta = value; }
+        }
         public int StartScan
         {
             get { return _StartScan; }
